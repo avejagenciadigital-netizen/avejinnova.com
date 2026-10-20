@@ -178,27 +178,9 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
 .pollen.p5{animation-delay:-2.9s,-1.2s;}
 .hero-content{position:relative; z-index:1;}
 
-/* tour virtual */
-.tour-wrap{border:1px solid var(--line); border-radius:4px; overflow:hidden; background:var(--bg); margin-bottom:12px;}
-.tour{position:relative; width:100%; aspect-ratio:3/4; overflow:hidden; background:#000; cursor:grab; touch-action:pan-y; user-select:none; -webkit-user-select:none;}
-.tour.dragging{cursor:grabbing;}
-.tour-img{position:absolute; top:0; left:0; width:128%; max-width:none; height:auto; will-change:transform; transition:opacity .45s ease; pointer-events:none;}
-.tour-img.hide{opacity:0;}
-.tour-badge{position:absolute; top:12px; left:12px; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:.06em; padding:4px 10px; background:rgba(23,24,26,.78); color:#F1EDE6; border-radius:2px;}
-.tour-count{position:absolute; top:12px; right:12px; font-size:12px; font-weight:600; padding:4px 9px; background:rgba(23,24,26,.78); color:#F1EDE6; border-radius:2px;}
-.tour-hint{position:absolute; left:50%; bottom:14px; transform:translateX(-50%); font-size:12px; padding:5px 10px; background:rgba(23,24,26,.7); color:#F1EDE6; border-radius:999px; white-space:nowrap; transition:opacity .4s;}
-.tour-hint.off{opacity:0;}
-.tour-arrow{position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:none; background:rgba(23,24,26,.75); color:#F1EDE6; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
-.tour-arrow.prev{left:10px;} .tour-arrow.next{right:10px;}
-.tour-info{padding:14px 16px; border-top:1px solid var(--line);}
-.tour-info b{display:block; font-size:15.5px; margin-bottom:2px;}
-.tour-info span{font-size:13.5px; color:var(--ink-muted);}
-.tour-bar{display:flex; gap:8px; align-items:center; padding:0 16px 14px;}
-.tour-toggle{flex:1; padding:10px 12px; font-size:14px;}
-.tour-thumbs{display:flex; gap:8px; overflow-x:auto; padding:0 16px 16px; scrollbar-width:thin;}
-.tour-thumbs button{flex:0 0 auto; width:54px; height:72px; padding:0; border:2px solid transparent; border-radius:3px; overflow:hidden; cursor:pointer; background:#000; opacity:.6;}
-.tour-thumbs button.on{border-color:var(--copper); opacity:1;}
-.tour-thumbs img{width:100%; height:100%; object-fit:cover;}
+/* tour virtual (recorrido embebido) */
+.tour-embed{position:relative; width:100%; height:min(80vh,620px); min-height:480px; border:1px solid var(--line); border-radius:4px; overflow:hidden; background:#141517; margin-bottom:12px;}
+.tour-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0; display:block;}
 
 /* guía */
 .guide{display:grid; grid-template-columns:120px 1fr; gap:18px; align-items:start; margin-bottom:20px;}
@@ -487,25 +469,13 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
 <section class="section" id="tour">
   <p class="kicker">Nuevo · Servicio adicional</p>
   <h2>Tour virtual por nuestras transformaciones</h2>
-  <p class="lead">Recorre los espacios que hemos transformado. Arrastra para mirar alrededor y toca “Ver cómo estaba” para comparar con la foto real.</p>
+  <p class="lead">Así se ve un recorrido real: la Panadería San Cayetano con nuestra propuesta. Arrastra para mirar, toca los puntos para moverte y usa “Hoy” para ver cómo está ahora.</p>
 
-  <div class="tour-wrap">
-    <div class="tour" id="tour-view" aria-roledescription="recorrido virtual">
-      <img class="tour-img" id="tour-after" alt="">
-      <img class="tour-img hide" id="tour-before" alt="">
-      <span class="tour-badge" id="tour-badge">RENOVADO</span>
-      <span class="tour-count" id="tour-count">1 / 1</span>
-      <span class="tour-hint" id="tour-hint">↔ Arrastra para mirar alrededor</span>
-      <button class="tour-arrow prev" id="tour-prev" type="button" aria-label="Escena anterior">‹</button>
-      <button class="tour-arrow next" id="tour-next" type="button" aria-label="Escena siguiente">›</button>
-    </div>
-    <div class="tour-info" id="tour-info"><b></b><span></span></div>
-    <div class="tour-bar">
-      <button class="btn btn-ghost tour-toggle" id="tour-toggle" type="button">Ver cómo estaba</button>
-    </div>
-    <div class="tour-thumbs" id="tour-thumbs" role="tablist" aria-label="Escenas del recorrido"></div>
+  <div class="tour-embed">
+    <iframe src="recorridos/san-cayetano/" title="Recorrido virtual: Panadería San Cayetano" loading="lazy" allow="fullscreen"></iframe>
   </div>
-  <p class="note" style="margin:0 0 24px;">Imágenes de ejemplo de propuestas de diseño.</p>
+  <a class="btn btn-ghost btn-block" href="recorridos/san-cayetano/" target="_blank" rel="noopener">Abrir el recorrido en pantalla completa</a>
+  <p class="note" style="margin:10px 0 24px;">Caso: Panadería San Cayetano · Propuesta “Marca San Cayetano” de AVEJ Innova.</p>
 
   <div class="plan featured">
     <p class="tag">Servicio adicional</p>
@@ -662,104 +632,6 @@ setPay('cf-pay', CONFIG.pagoCasa, CONFIG.precioCasa);
   var a = document.getElementById('tour-pay');
   if(CONFIG.pagoTour){ a.href = CONFIG.pagoTour; a.textContent = 'Agregar Tour virtual — ' + CONFIG.precioTour; }
   else { a.href = waLink('Hola, quiero agregar el Tour virtual (' + CONFIG.precioTour + ') a mi Kit'); a.textContent = 'Agregar Tour virtual — ' + CONFIG.precioTour; }
-})();
-
-/* tour virtual: arma las escenas con los casos antes/después de la página */
-(function(){
-  var view = document.getElementById('tour-view'); if(!view) return;
-  var scenes = [];
-  document.querySelectorAll('#locales .ba-block, #casas .ba-block').forEach(function(b){
-    var aft = b.querySelector('.ba-after img'), bef = b.querySelector('.ba-before img'), nm = b.querySelector('.ba-name');
-    if(!aft || !bef) return;
-    var t = nm ? nm.textContent.trim() : '';
-    var parts = t.split('→');
-    var title = parts[0].split(':')[0].trim();
-    scenes.push({
-      title: title,
-      text: parts.length > 1 ? 'Antes: ' + parts[0].replace(title + ':', '').trim() + ' · Ahora: ' + parts[1].trim() : t,
-      after: aft.src, before: bef.src
-    });
-  });
-  if(!scenes.length){ document.getElementById('tour').style.display = 'none'; return; }
-
-  var imgA = document.getElementById('tour-after'), imgB = document.getElementById('tour-before');
-  var badge = document.getElementById('tour-badge'), count = document.getElementById('tour-count');
-  var info = document.getElementById('tour-info'), toggle = document.getElementById('tour-toggle');
-  var thumbs = document.getElementById('tour-thumbs'), hint = document.getElementById('tour-hint');
-  var idx = 0, showBefore = false, px = .5, py = .35, t0 = performance.now(), dragging = false, lastUser = 0;
-
-  scenes.forEach(function(sc, i){
-    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab');
-    b.setAttribute('aria-label', 'Escena ' + (i+1) + ': ' + sc.title);
-    var im = document.createElement('img'); im.src = sc.after; im.alt = ''; b.appendChild(im);
-    b.addEventListener('click', function(){ go(i); });
-    thumbs.appendChild(b);
-  });
-
-  function place(){
-    var W = view.clientWidth, H = view.clientHeight;
-    [imgA, imgB].forEach(function(im){
-      var iw = im.offsetWidth, ih = im.offsetHeight;
-      var x = -Math.max(0, iw - W) * px, y = -Math.max(0, ih - H) * py;
-      im.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-    });
-  }
-  function setMode(before){
-    showBefore = before;
-    imgB.classList.toggle('hide', !before); imgA.classList.toggle('hide', before);
-    badge.textContent = before ? 'ASÍ ESTABA' : 'RENOVADO';
-    toggle.textContent = before ? 'Ver renovado' : 'Ver cómo estaba';
-  }
-  function go(i){
-    idx = (i + scenes.length) % scenes.length;
-    var sc = scenes[idx];
-    imgA.src = sc.after; imgB.src = sc.before;
-    imgA.alt = 'Renovado: ' + sc.title; imgB.alt = 'Antes: ' + sc.title;
-    info.querySelector('b').textContent = sc.title;
-    info.querySelector('span').textContent = sc.text;
-    count.textContent = (idx+1) + ' / ' + scenes.length;
-    thumbs.querySelectorAll('button').forEach(function(b, j){ b.classList.toggle('on', j === idx); b.setAttribute('aria-selected', j === idx); });
-    var on = thumbs.children[idx]; if(on) thumbs.scrollTo({left: on.offsetLeft - 16, behavior: 'smooth'});
-    setMode(false); px = .5; py = .35; t0 = performance.now();
-    requestAnimationFrame(place);
-  }
-  toggle.addEventListener('click', function(){ setMode(!showBefore); });
-  document.getElementById('tour-prev').addEventListener('click', function(e){ e.stopPropagation(); go(idx-1); });
-  document.getElementById('tour-next').addEventListener('click', function(e){ e.stopPropagation(); go(idx+1); });
-  imgA.addEventListener('load', place);
-
-  /* arrastrar para mirar alrededor */
-  var sx, sy, spx, spy;
-  view.addEventListener('pointerdown', function(e){
-    if(e.target.closest('button')) return;
-    dragging = true; view.classList.add('dragging'); hint.classList.add('off');
-    sx = e.clientX; sy = e.clientY; spx = px; spy = py;
-    if(view.setPointerCapture) view.setPointerCapture(e.pointerId);
-  });
-  view.addEventListener('pointermove', function(e){
-    if(!dragging) return;
-    var W = view.clientWidth, H = view.clientHeight;
-    var rx = Math.max(1, imgA.offsetWidth - W), ry = Math.max(1, imgA.offsetHeight - H);
-    px = Math.min(1, Math.max(0, spx - (e.clientX - sx) / rx));
-    if(e.pointerType === 'mouse') py = Math.min(1, Math.max(0, spy - (e.clientY - sy) / ry));
-    place();
-  });
-  function end(){ if(dragging){ dragging = false; view.classList.remove('dragging'); lastUser = performance.now(); } }
-  view.addEventListener('pointerup', end); view.addEventListener('pointercancel', end); view.addEventListener('pointerleave', end);
-
-  /* cámara que se desliza sola cuando nadie la toca */
-  var visible = true;
-  if('IntersectionObserver' in window){ new IntersectionObserver(function(en){ visible = en[0].isIntersecting; }).observe(view); }
-  function tick(now){
-    if(visible && !dragging && now - lastUser > 2500){
-      px += (0.5 + 0.5 * Math.sin((now - t0) / 4200) - px) * 0.02;
-      py += (0.3 + 0.25 * Math.sin((now - t0) / 6100) - py) * 0.02;
-      place();
-    }
-    requestAnimationFrame(tick);
-  }
-  window.addEventListener('resize', place);
-  go(0); requestAnimationFrame(tick);
 })();
 
 /* sliders antes/después */
