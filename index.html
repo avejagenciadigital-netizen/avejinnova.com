@@ -178,6 +178,38 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
 .pollen.p5{animation-delay:-2.9s,-1.2s;}
 .hero-content{position:relative; z-index:1;}
 
+/* tour virtual */
+.tour-wrap{border:1px solid var(--line); border-radius:4px; overflow:hidden; background:var(--bg); margin-bottom:12px;}
+.tour{position:relative; width:100%; aspect-ratio:3/4; overflow:hidden; background:#000; cursor:grab; touch-action:pan-y; user-select:none; -webkit-user-select:none;}
+.tour.dragging{cursor:grabbing;}
+.tour-img{position:absolute; top:0; left:0; width:128%; max-width:none; height:auto; will-change:transform; transition:opacity .45s ease; pointer-events:none;}
+.tour-img.hide{opacity:0;}
+.tour-badge{position:absolute; top:12px; left:12px; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:.06em; padding:4px 10px; background:rgba(23,24,26,.78); color:#F1EDE6; border-radius:2px;}
+.tour-count{position:absolute; top:12px; right:12px; font-size:12px; font-weight:600; padding:4px 9px; background:rgba(23,24,26,.78); color:#F1EDE6; border-radius:2px;}
+.tour-hint{position:absolute; left:50%; bottom:14px; transform:translateX(-50%); font-size:12px; padding:5px 10px; background:rgba(23,24,26,.7); color:#F1EDE6; border-radius:999px; white-space:nowrap; transition:opacity .4s;}
+.tour-hint.off{opacity:0;}
+.tour-arrow{position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:none; background:rgba(23,24,26,.75); color:#F1EDE6; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.tour-arrow.prev{left:10px;} .tour-arrow.next{right:10px;}
+.tour-info{padding:14px 16px; border-top:1px solid var(--line);}
+.tour-info b{display:block; font-size:15.5px; margin-bottom:2px;}
+.tour-info span{font-size:13.5px; color:var(--ink-muted);}
+.tour-bar{display:flex; gap:8px; align-items:center; padding:0 16px 14px;}
+.tour-toggle{flex:1; padding:10px 12px; font-size:14px;}
+.tour-thumbs{display:flex; gap:8px; overflow-x:auto; padding:0 16px 16px; scrollbar-width:thin;}
+.tour-thumbs button{flex:0 0 auto; width:54px; height:72px; padding:0; border:2px solid transparent; border-radius:3px; overflow:hidden; cursor:pointer; background:#000; opacity:.6;}
+.tour-thumbs button.on{border-color:var(--copper); opacity:1;}
+.tour-thumbs img{width:100%; height:100%; object-fit:cover;}
+
+/* guía */
+.guide{display:grid; grid-template-columns:120px 1fr; gap:18px; align-items:start; margin-bottom:20px;}
+.guide-cover{aspect-ratio:3/4; border-radius:2px 6px 6px 2px; background:linear-gradient(160deg,#2a2b28 0%,#17181A 100%); border:1px solid var(--copper-dim); border-left:6px solid var(--copper); padding:12px 10px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 20px rgba(0,0,0,.35);}
+.guide-cover small{font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--copper); font-weight:700;}
+.guide-cover strong{font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:21px; line-height:.95; color:var(--ink);}
+.guide-cover em{font-style:normal; font-size:9px; color:var(--ink-muted);}
+.guide ul{margin:0; padding-left:18px; color:var(--ink-muted); font-size:14.5px;}
+.guide li{margin-bottom:6px;}
+.pay-note{font-size:12.5px; color:var(--ink-muted); margin:10px 0 0; text-align:center;}
+
 @media (min-width:560px){ .hero h1{font-size:64px;} }
 </style>
 </head>
@@ -208,6 +240,7 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     <a class="btn btn-primary" href="#locales">Tengo un negocio</a>
     <a class="btn btn-ghost" href="#casas">Es para mi casa</a>
   </div>
+  <p style="font-size:14px; margin:14px 0 0;"><a href="#guia" style="color:var(--copper); font-weight:600;">¿Prefieres hacerlo tú? Llévate la guía por $9.99 →</a></p>
   <div class="proof">
     <div><b>3</b><span>propuestas en tus estilos</span></div>
     <div><b>48 h</b><span>tiempo de entrega</span></div>
@@ -334,7 +367,7 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     <h3>Kit Local</h3>
     <div class="checkout-row"><span>3 propuestas + plano + materiales + presupuesto</span><span class="price-local"></span></div>
     <a class="btn btn-primary btn-block" id="lf-pay" href="#" target="_blank" rel="noopener">Pagar y comenzar</a>
-    <p class="checkout-note">Si prefieres, te enviamos el enlace de pago por WhatsApp.</p>
+    <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp. ¿Quieres verlo por dentro? Suma el <a href="#tour" style="color:var(--copper);">Tour virtual</a>.</p>
   </div>
 </section>
 
@@ -447,7 +480,45 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     <h3>Kit Reimagina</h3>
     <div class="checkout-row"><span>3 propuestas + video + plano + materiales + presupuesto</span><span class="price-casa"></span></div>
     <a class="btn btn-primary btn-block" id="cf-pay" href="#" target="_blank" rel="noopener">Pagar y comenzar</a>
-    <p class="checkout-note">Si prefieres, te enviamos el enlace de pago por WhatsApp.</p>
+    <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp. ¿Quieres verlo por dentro? Suma el <a href="#tour" style="color:var(--copper);">Tour virtual</a>.</p>
+  </div>
+</section>
+
+<section class="section" id="tour">
+  <p class="kicker">Nuevo · Servicio adicional</p>
+  <h2>Tour virtual por nuestras transformaciones</h2>
+  <p class="lead">Recorre los espacios que hemos transformado. Arrastra para mirar alrededor y toca “Ver cómo estaba” para comparar con la foto real.</p>
+
+  <div class="tour-wrap">
+    <div class="tour" id="tour-view" aria-roledescription="recorrido virtual">
+      <img class="tour-img" id="tour-after" alt="">
+      <img class="tour-img hide" id="tour-before" alt="">
+      <span class="tour-badge" id="tour-badge">RENOVADO</span>
+      <span class="tour-count" id="tour-count">1 / 1</span>
+      <span class="tour-hint" id="tour-hint">↔ Arrastra para mirar alrededor</span>
+      <button class="tour-arrow prev" id="tour-prev" type="button" aria-label="Escena anterior">‹</button>
+      <button class="tour-arrow next" id="tour-next" type="button" aria-label="Escena siguiente">›</button>
+    </div>
+    <div class="tour-info" id="tour-info"><b></b><span></span></div>
+    <div class="tour-bar">
+      <button class="btn btn-ghost tour-toggle" id="tour-toggle" type="button">Ver cómo estaba</button>
+    </div>
+    <div class="tour-thumbs" id="tour-thumbs" role="tablist" aria-label="Escenas del recorrido"></div>
+  </div>
+  <p class="note" style="margin:0 0 24px;">Imágenes de ejemplo de propuestas de diseño.</p>
+
+  <div class="plan featured">
+    <p class="tag">Servicio adicional</p>
+    <h3>Tour virtual de tu espacio renovado — <span class="price-tour"></span></h3>
+    <ul>
+      <li>Un recorrido como este, hecho con la propuesta que elegiste de tu Kit</li>
+      <li>Escena por escena: la entrada, el interior y cada zona clave</li>
+      <li>Botón para comparar con la foto real de cómo está hoy</li>
+      <li>Te llega un enlace con la marca AVEJ: se abre en cualquier celular, sin instalar nada</li>
+      <li>Ideal para mostrárselo a tu socio, a tu familia o a tu maestro de obra antes de invertir</li>
+    </ul>
+    <p style="margin:10px 0 14px;">Se agrega al Kit Local o al Kit Reimagina. Es un recorrido por vistas conectadas de tu espacio, no un video 360°.</p>
+    <a class="btn btn-primary btn-block" id="tour-pay" href="#" target="_blank" rel="noopener">Agregar Tour virtual</a>
   </div>
 </section>
 
@@ -460,6 +531,28 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
   <details><summary>¿Lo puede hacer mi propio maestro de obra?</summary><p>Sí. El plano y la lista de materiales están pensados para que cualquier maestro de obra los siga. Si no tienes uno, te conectamos con la red AVEJ en tu ciudad.</p></details>
   <details><summary>¿Sirve para mi tipo de negocio?</summary><p>Trabajamos con barberías, salones, panaderías, cafeterías, restaurantes, tiendas, ferreterías y tiendas de ropa. Si el tuyo es otro, escríbenos y te decimos si aplica antes de que pagues.</p></details>
   <!-- Cuando tengas clientes reales, agrega aquí sus testimonios (con su permiso). -->
+</section>
+
+<section class="section alt" id="guia">
+  <p class="kicker">Guía digital · AVEJ Innova</p>
+  <h2>Locales pequeños que venden más</h2>
+  <p class="lead">¿Todavía no vas a remodelar? Empieza con la guía y aplica tú mismo las ideas que usamos en cada propuesta.</p>
+  <div class="guide">
+    <div class="guide-cover" aria-hidden="true">
+      <small>AVEJ Innova</small>
+      <strong>Locales pequeños que venden más</strong>
+      <em>Guía digital</em>
+    </div>
+    <ul>
+      <li>Para dueños de barberías, cafeterías, tiendas y locales de pocos metros</li>
+      <li>Cómo hacer que tu producto se vea desde la calle</li>
+      <li>Cómo ganar puestos y orden sin mudarte</li>
+      <li>Ideas que puedes aplicar por etapas y con poco presupuesto</li>
+      <li>Descarga inmediata: la lees en el celular o la computadora</li>
+    </ul>
+  </div>
+  <a class="btn btn-primary btn-block" id="guia-pay" href="#" target="_blank" rel="noopener">Comprar la guía</a>
+  <p class="pay-note">Pago seguro con Hotmart. Recibes el acceso en tu correo apenas pagas.</p>
 </section>
 
 <section class="section alt" id="mas">
@@ -483,7 +576,8 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
   <details><summary>¿Cómo se hacen las propuestas?</summary><p>Partimos de tu foto y tus medidas. Las propuestas visuales se generan con inteligencia artificial y nuestro equipo prepara el plano, la lista de materiales y el presupuesto de la opción que elijas.</p></details>
   <details><summary>¿En cuánto tiempo las recibo?</summary><p>En 48 horas desde que recibimos tu foto, tus medidas y el pago.</p></details>
   <details><summary>¿Trabajan en mi ciudad?</summary><p>Las propuestas y los planos se entregan en línea a cualquier país. La ejecución depende de si tenemos profesionales en tu ciudad; escríbenos y te confirmamos.</p></details>
-  <details><summary>¿Cómo pago?</summary><p>Con el botón de pago después de enviar tus datos, o pídenos el enlace por WhatsApp.</p></details>
+  <details><summary>¿Cómo pago?</summary><p>Con el botón de pago después de enviar tus datos: el pago se hace en Hotmart con tarjeta o medios locales. Si prefieres Binance o PayPal, escríbenos por WhatsApp y te enviamos los datos.</p></details>
+  <details><summary>¿Qué es el Tour virtual?</summary><p>Un recorrido por tu espacio renovado, escena por escena, con la propuesta que elegiste. Lo abres desde un enlace en el celular y puedes comparar cada vista con la foto real. Es un servicio adicional a tu Kit.</p></details>
   <details><summary>¿Y si no me gusta ninguna propuesta?</summary><p>Escríbenos por WhatsApp y ajustamos la que más se acerque a lo que buscas.</p></details>
 </section>
 
@@ -530,8 +624,12 @@ var CONFIG = {
   whatsapp: '573138287521',
   precioLocal: '$15.99',     // precio del Kit Local
   precioCasa: '$9.99',       // precio del Kit Reimagina
-  pagoLocal: '',             // pega aquí tu enlace de pago del Kit Local (Hotmart, PayPal, Wompi...). Vacío = se pide por WhatsApp
-  pagoCasa: ''               // pega aquí tu enlace de pago del Kit Reimagina
+  precioTour: '$19.99',      // precio del Tour virtual (servicio adicional)
+  precioGuia: '$9.99',       // precio de la guía "Locales pequeños que venden más"
+  pagoLocal: 'https://pay.hotmart.com/L108101091V',            // Hotmart — Kit Local
+  pagoCasa: 'https://pay.hotmart.com/W108100979C',             // Hotmart — Kit Reimagina
+  pagoGuia: 'https://pay.hotmart.com/P108056690W?off=z6t186dy', // Hotmart — guía
+  pagoTour: ''               // pega aquí el enlace de Hotmart del Tour virtual. Vacío = se pide por WhatsApp
 };
 /* ==================================================== */
 
@@ -539,6 +637,7 @@ function waLink(text){ return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + en
 
 document.querySelectorAll('.price-local').forEach(function(el){ el.textContent = CONFIG.precioLocal; });
 document.querySelectorAll('.price-casa').forEach(function(el){ el.textContent = CONFIG.precioCasa; });
+document.querySelectorAll('.price-tour').forEach(function(el){ el.textContent = CONFIG.precioTour; });
 document.querySelectorAll('[data-wa]').forEach(function(a){
   a.href = waLink(a.getAttribute('data-wa')); a.target = '_blank'; a.rel = 'noopener';
 });
@@ -550,6 +649,118 @@ function setPay(id, link, label){
 }
 setPay('lf-pay', CONFIG.pagoLocal, CONFIG.precioLocal);
 setPay('cf-pay', CONFIG.pagoCasa, CONFIG.precioCasa);
+
+/* guía */
+(function(){
+  var a = document.getElementById('guia-pay');
+  if(CONFIG.pagoGuia){ a.href = CONFIG.pagoGuia; a.textContent = 'Comprar la guía — ' + CONFIG.precioGuia; }
+  else { a.href = waLink('Hola, quiero la guía "Locales pequeños que venden más" (' + CONFIG.precioGuia + ')'); a.textContent = 'Pedir la guía por WhatsApp'; }
+})();
+
+/* tour virtual: pago */
+(function(){
+  var a = document.getElementById('tour-pay');
+  if(CONFIG.pagoTour){ a.href = CONFIG.pagoTour; a.textContent = 'Agregar Tour virtual — ' + CONFIG.precioTour; }
+  else { a.href = waLink('Hola, quiero agregar el Tour virtual (' + CONFIG.precioTour + ') a mi Kit'); a.textContent = 'Agregar Tour virtual — ' + CONFIG.precioTour; }
+})();
+
+/* tour virtual: arma las escenas con los casos antes/después de la página */
+(function(){
+  var view = document.getElementById('tour-view'); if(!view) return;
+  var scenes = [];
+  document.querySelectorAll('#locales .ba-block, #casas .ba-block').forEach(function(b){
+    var aft = b.querySelector('.ba-after img'), bef = b.querySelector('.ba-before img'), nm = b.querySelector('.ba-name');
+    if(!aft || !bef) return;
+    var t = nm ? nm.textContent.trim() : '';
+    var parts = t.split('→');
+    var title = parts[0].split(':')[0].trim();
+    scenes.push({
+      title: title,
+      text: parts.length > 1 ? 'Antes: ' + parts[0].replace(title + ':', '').trim() + ' · Ahora: ' + parts[1].trim() : t,
+      after: aft.src, before: bef.src
+    });
+  });
+  if(!scenes.length){ document.getElementById('tour').style.display = 'none'; return; }
+
+  var imgA = document.getElementById('tour-after'), imgB = document.getElementById('tour-before');
+  var badge = document.getElementById('tour-badge'), count = document.getElementById('tour-count');
+  var info = document.getElementById('tour-info'), toggle = document.getElementById('tour-toggle');
+  var thumbs = document.getElementById('tour-thumbs'), hint = document.getElementById('tour-hint');
+  var idx = 0, showBefore = false, px = .5, py = .35, t0 = performance.now(), dragging = false, lastUser = 0;
+
+  scenes.forEach(function(sc, i){
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab');
+    b.setAttribute('aria-label', 'Escena ' + (i+1) + ': ' + sc.title);
+    var im = document.createElement('img'); im.src = sc.after; im.alt = ''; b.appendChild(im);
+    b.addEventListener('click', function(){ go(i); });
+    thumbs.appendChild(b);
+  });
+
+  function place(){
+    var W = view.clientWidth, H = view.clientHeight;
+    [imgA, imgB].forEach(function(im){
+      var iw = im.offsetWidth, ih = im.offsetHeight;
+      var x = -Math.max(0, iw - W) * px, y = -Math.max(0, ih - H) * py;
+      im.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    });
+  }
+  function setMode(before){
+    showBefore = before;
+    imgB.classList.toggle('hide', !before); imgA.classList.toggle('hide', before);
+    badge.textContent = before ? 'ASÍ ESTABA' : 'RENOVADO';
+    toggle.textContent = before ? 'Ver renovado' : 'Ver cómo estaba';
+  }
+  function go(i){
+    idx = (i + scenes.length) % scenes.length;
+    var sc = scenes[idx];
+    imgA.src = sc.after; imgB.src = sc.before;
+    imgA.alt = 'Renovado: ' + sc.title; imgB.alt = 'Antes: ' + sc.title;
+    info.querySelector('b').textContent = sc.title;
+    info.querySelector('span').textContent = sc.text;
+    count.textContent = (idx+1) + ' / ' + scenes.length;
+    thumbs.querySelectorAll('button').forEach(function(b, j){ b.classList.toggle('on', j === idx); b.setAttribute('aria-selected', j === idx); });
+    var on = thumbs.children[idx]; if(on) thumbs.scrollTo({left: on.offsetLeft - 16, behavior: 'smooth'});
+    setMode(false); px = .5; py = .35; t0 = performance.now();
+    requestAnimationFrame(place);
+  }
+  toggle.addEventListener('click', function(){ setMode(!showBefore); });
+  document.getElementById('tour-prev').addEventListener('click', function(e){ e.stopPropagation(); go(idx-1); });
+  document.getElementById('tour-next').addEventListener('click', function(e){ e.stopPropagation(); go(idx+1); });
+  imgA.addEventListener('load', place);
+
+  /* arrastrar para mirar alrededor */
+  var sx, sy, spx, spy;
+  view.addEventListener('pointerdown', function(e){
+    if(e.target.closest('button')) return;
+    dragging = true; view.classList.add('dragging'); hint.classList.add('off');
+    sx = e.clientX; sy = e.clientY; spx = px; spy = py;
+    if(view.setPointerCapture) view.setPointerCapture(e.pointerId);
+  });
+  view.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var W = view.clientWidth, H = view.clientHeight;
+    var rx = Math.max(1, imgA.offsetWidth - W), ry = Math.max(1, imgA.offsetHeight - H);
+    px = Math.min(1, Math.max(0, spx - (e.clientX - sx) / rx));
+    if(e.pointerType === 'mouse') py = Math.min(1, Math.max(0, spy - (e.clientY - sy) / ry));
+    place();
+  });
+  function end(){ if(dragging){ dragging = false; view.classList.remove('dragging'); lastUser = performance.now(); } }
+  view.addEventListener('pointerup', end); view.addEventListener('pointercancel', end); view.addEventListener('pointerleave', end);
+
+  /* cámara que se desliza sola cuando nadie la toca */
+  var visible = true;
+  if('IntersectionObserver' in window){ new IntersectionObserver(function(en){ visible = en[0].isIntersecting; }).observe(view); }
+  function tick(now){
+    if(visible && !dragging && now - lastUser > 2500){
+      px += (0.5 + 0.5 * Math.sin((now - t0) / 4200) - px) * 0.02;
+      py += (0.3 + 0.25 * Math.sin((now - t0) / 6100) - py) * 0.02;
+      place();
+    }
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize', place);
+  go(0); requestAnimationFrame(tick);
+})();
 
 /* sliders antes/después */
 document.querySelectorAll('.ba').forEach(function(block){
