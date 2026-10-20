@@ -192,6 +192,50 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
 .guide li{margin-bottom:6px;}
 .pay-note{font-size:12.5px; color:var(--ink-muted); margin:10px 0 0; text-align:center;}
 
+/* menú rápido (fijo arriba) */
+.quicknav{display:flex; gap:6px; overflow-x:auto; padding:0 20px 10px; max-width:640px; margin:0 auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent);}
+.quicknav::-webkit-scrollbar{display:none;}
+.quicknav a{flex:0 0 auto; font-size:12.5px; font-weight:600; padding:6px 12px; border:1px solid var(--line); border-radius:999px; text-decoration:none; color:var(--ink-muted); white-space:nowrap; transition:background .15s, color .15s, border-color .15s;}
+.quicknav a:hover{color:var(--ink); border-color:var(--copper);}
+.quicknav a.on{background:var(--copper); border-color:var(--copper); color:#17181A;}
+main section[id]{scroll-margin-top:var(--hdr,112px);}
+
+/* panel de opciones (hero) */
+.panel-title{font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-muted); margin:26px 0 10px;}
+.panel{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.tile{display:flex; flex-direction:column; gap:3px; padding:14px; border:1px solid var(--line); border-radius:6px; background:color-mix(in srgb, var(--surface) 92%, transparent); text-decoration:none; min-height:104px; transition:border-color .15s, transform .15s;}
+.tile:hover, .tile:focus-visible{border-color:var(--copper); transform:translateY(-2px); outline:none;}
+.tile svg{width:24px; height:24px; stroke:var(--copper); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; margin-bottom:6px;}
+.tile b{font-size:15px; line-height:1.2;}
+.tile span{font-size:12.5px; color:var(--ink-muted); line-height:1.3;}
+.tile.main{border-color:var(--copper-dim);}
+@media (min-width:560px){ .panel{grid-template-columns:repeat(3,1fr);} }
+
+/* contenido plegable */
+.more-cases[hidden], .fold[hidden]{display:none !important;}
+.btn-more{margin:-8px 0 28px;}
+.opener{margin-top:6px;}
+.field textarea{width:100%; min-height:90px; padding:11px 12px; border-radius:2px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font-family:inherit; font-size:16px; resize:vertical;}
+.field textarea:focus{outline:2px solid var(--copper); outline-offset:1px;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.benefits.grid{grid-template-columns:1fr 1fr;}
+.benefits.grid li{padding:12px; font-size:14px;}
+.benefits.grid li b{font-size:14.5px;}
+.benefits.grid li span{font-size:13px;}
+
+/* proyectos grandes */
+.big-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px;}
+.big-card{border:1px solid var(--line); border-radius:6px; padding:14px; background:var(--bg);}
+.big-card svg{width:24px; height:24px; stroke:var(--copper); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; margin-bottom:6px;}
+.big-card b{display:block; font-size:15px; margin-bottom:2px;}
+.big-card span{font-size:13px; color:var(--ink-muted); line-height:1.35; display:block;}
+.checks{list-style:none; padding:0; margin:0 0 18px; display:grid; gap:8px;}
+.checks li{display:flex; gap:10px; font-size:14.5px; color:var(--ink);}
+.checks li:before{content:"✓"; color:var(--copper); font-weight:700;}
+
+.hero{padding:28px 20px 30px;}
+.hero h1{font-size:46px; margin-bottom:12px;}
+.hero p.panel-title{margin:20px 0 10px;}
 @media (min-width:560px){ .hero h1{font-size:64px;} }
 </style>
 </head>
@@ -205,6 +249,17 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     </a>
     <a class="nav-cta" data-wa="Hola, vengo de Instagram y quiero una propuesta para mi local" href="#">Escribir</a>
   </div>
+  <nav class="quicknav" id="quicknav" aria-label="Secciones">
+    <a href="#locales">Negocios</a>
+    <a href="#casas">Casas</a>
+    <a href="#grandes">Proyectos grandes</a>
+    <a href="#tour">Tour virtual</a>
+    <a href="#guia">Guía</a>
+    <a href="#empresas">Empresas</a>
+    <a href="#como">Cómo funciona</a>
+    <a href="#faq">Preguntas</a>
+    <a href="#red">Red AVEJ</a>
+  </nav>
 </header>
 
 <main id="top">
@@ -215,19 +270,17 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     <div class="pollen p1"></div><div class="pollen p2"></div><div class="pollen p3"></div><div class="pollen p4"></div><div class="pollen p5"></div>
   </div>
   <div class="hero-content">
-  <p class="eyebrow">Diseño de locales y espacios pequeños</p>
+  <p class="eyebrow">Diseño de espacios · AVEJ Innova</p>
   <h1>Tu local puede vender más sin mudarte.</h1>
-  <p>El cliente decide en segundos, desde la puerta. Si no ve tu producto, no tiene dónde sentarse o encuentra desorden, se va. Optimizamos cada metro de tu local para que venda más con el mismo arriendo.</p>
-  <div class="cta-row">
-    <a class="btn btn-primary" href="#locales">Tengo un negocio</a>
-    <a class="btn btn-ghost" href="#casas">Es para mi casa</a>
-  </div>
-  <p style="font-size:14px; margin:14px 0 0;"><a href="#guia" style="color:var(--copper); font-weight:600;">¿Prefieres hacerlo tú? Llévate la guía por $9.99 →</a></p>
-  <div class="proof">
-    <div><b>3</b><span>propuestas en tus estilos</span></div>
-    <div><b>48 h</b><span>tiempo de entrega</span></div>
-    <div><b>$15.99</b><span>precio del Kit Local</span></div>
-    <div><b>0</b><span>obras para ver el resultado</span></div>
+  <p>Propuestas visuales para negocios, casas y proyectos grandes, listas en 48 horas. Toca lo que necesitas:</p>
+  <p class="panel-title">¿Qué estás buscando?</p>
+  <div class="panel">
+    <a class="tile main" href="#locales"><svg viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/></svg><b>Mi negocio</b><span>Kit Local · <span class="price-local"></span></span></a>
+    <a class="tile" href="#casas"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Mi casa</b><span>Kit Reimagina · <span class="price-casa"></span></span></a>
+    <a class="tile" href="#grandes"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l6-3v16"/><path d="M11 21V3l8 4v14"/><path d="M14 9h2M14 13h2M14 17h2M7.5 11h1M7.5 15h1"/></svg><b>Proyecto grande</b><span>Cotización a medida</span></a>
+    <a class="tile" href="#tour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><b>Tour virtual</b><span>Recorrido · <span class="price-tour"></span></span></a>
+    <a class="tile" href="#guia"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><b>Guía digital</b><span>Hazlo tú · <span class="price-guia"></span></span></a>
+    <a class="tile" href="#empresas"><svg viewBox="0 0 24 24"><path d="M6 21V4h2v17"/><path d="M4 21h8"/><path d="M8 4h12l-4 4"/><path d="M18 4v6"/><rect x="16" y="10" width="4" height="3"/></svg><b>Empresas</b><span>Constructoras e inmobiliarias</span></a>
   </div>
   </div>
 </section>
@@ -235,7 +288,7 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
 <section class="section" id="locales">
   <p class="kicker">Para negocios</p>
   <h2>Diseño inteligente para tu local</h2>
-  <p class="lead">Un local mal distribuido pierde ventas todos los días sin que lo notes. Desliza para ver cómo cambia un negocio cuando cada metro trabaja.</p>
+  <p class="lead">Un local mal distribuido pierde ventas cada día. Desliza la imagen para ver el cambio.</p>
   <div class="ba-block">
     <p class="ba-name">Panadería: el pan escondido → el pan a la vista desde la calle</p>
     <div class="ba">
@@ -245,6 +298,7 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
       <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y propuesta: panadería">
     </div>
   </div>
+  <div class="more-cases" id="more-locales" hidden>
   <div class="ba-block">
     <p class="ba-name">Barbería: 1 silla amontonada → 2 puestos trabajando a la vez</p>
     <div class="ba">
@@ -272,10 +326,12 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
       <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y propuesta: local de comida">
     </div>
   </div>
-  <p class="note">Imágenes de ejemplo de propuestas de diseño. Para agregar otro caso, copia un bloque .ba-block y cambia las dos imágenes.</p>
+  </div>
+  <button type="button" class="btn btn-ghost btn-block btn-more" data-show="more-locales">Ver 3 casos más</button>
+  <!-- Para agregar otro caso, copia un bloque .ba-block dentro de .more-cases y cambia las dos imágenes. -->
 
   <h3 class="sub">Lo que un mal espacio te está costando</h3>
-  <ul class="benefits">
+  <ul class="benefits grid">
     <li><b>Producto que no se ve, no se vende</b><span>Una vitrina que mira a la entrada y luz cálida hacen que el cliente entre y compre más.</span></li>
     <li><b>Cliente que no tiene dónde sentarse, se va</b><span>Bancas corridas, barras en la ventana y mesas que se juntan multiplican los puestos.</span></li>
     <li><b>Desorden es espera, y espera es venta perdida</b><span>Exhibidores de piso a techo: el cliente ve, escoge y paga rápido.</span></li>
@@ -294,7 +350,8 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     </ul>
   </div>
 
-  <form id="lf-form">
+  <button type="button" class="btn btn-primary btn-block opener" data-open="lf-form">Empezar mi Kit Local</button>
+  <form id="lf-form" class="fold" hidden>
     <div class="field"><label for="lf-name">Nombre</label><input type="text" id="lf-name" autocomplete="name" required></div>
     <div class="field"><label for="lf-phone">WhatsApp</label><input type="tel" id="lf-phone" autocomplete="tel" required></div>
     <div class="field"><label for="lf-city">Ciudad</label><input type="text" id="lf-city" required></div>
@@ -353,39 +410,6 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
   </div>
 </section>
 
-<section class="section alt" id="como">
-  <p class="kicker">Cómo funciona</p>
-  <h2>De la foto al plano en 48 horas</h2>
-  <ol class="steps">
-    <li><div><b>Nos envías una foto y las medidas</b><span>Desde la entrada, como la vería un cliente. No importa si está desordenado.</span></div></li>
-    <li><div><b>Recibes 3 propuestas visuales</b><span>Una por cada estilo que elegiste, adaptadas a tu negocio y presupuesto.</span></div></li>
-    <li><div><b>Eliges la que más te guste</b><span>Te entregamos plano, lista de materiales y presupuesto estimado.</span></div></li>
-    <li><div><b>Lo ejecutas tú o lo hacemos contigo</b><span>Con tu maestro de obra o con la red de profesionales AVEJ en tu ciudad.</span></div></li>
-  </ol>
-</section>
-
-<section class="section" id="empresas">
-  <p class="kicker">Para empresas</p>
-  <h2>Constructoras, inmobiliarias y marcas del sector</h2>
-  <p class="lead">Convertimos espacios vacíos o en obra gris en videos de transformación que venden.</p>
-  <div class="plan">
-    <p class="tag">Constructoras</p>
-    <h3>Videos de preventa</h3>
-    <p>Tu proyecto en obra gris transformado en un apartamento terminado y amoblado, listo para redes y sala de ventas.</p>
-  </div>
-  <div class="plan">
-    <p class="tag">Inmobiliarias y alquileres</p>
-    <h3>Inmuebles amoblados con IA</h3>
-    <p>Fotos y video de tus inmuebles vacíos amoblados en 2 o 3 estilos para que el cliente imagine su vida ahí.</p>
-  </div>
-  <div class="plan">
-    <p class="tag">Ferreterías, muebles y acabados</p>
-    <h3>Contenido mensual</h3>
-    <p>Reels de transformación donde tus productos aparecen instalados, en el formato que ya probamos en nuestras redes.</p>
-  </div>
-  <a class="btn btn-primary btn-block" data-wa="Hola, represento a una empresa y quiero una muestra gratis de video de transformación" href="#">Pedir una muestra gratis</a>
-</section>
-
 <section class="section alt" id="casas">
   <p class="kicker">Para tu casa</p>
   <h2>Reimagina tu espacio</h2>
@@ -422,7 +446,8 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
     </ul>
   </div>
 
-  <form id="cf-form">
+  <button type="button" class="btn btn-primary btn-block opener" data-open="cf-form">Empezar mi Kit Reimagina</button>
+  <form id="cf-form" class="fold" hidden>
     <div class="field"><label for="cf-name">Nombre</label><input type="text" id="cf-name" autocomplete="name" required></div>
     <div class="field"><label for="cf-contact">WhatsApp</label><input type="tel" id="cf-contact" autocomplete="tel" required></div>
     <div class="field"><label for="cf-city">Ciudad</label><input type="text" id="cf-city" required></div>
@@ -466,7 +491,72 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
   </div>
 </section>
 
-<section class="section" id="tour">
+<section class="section" id="grandes">
+  <p class="kicker">Proyectos grandes</p>
+  <h2>Proyectos grandes, a tu medida</h2>
+  <p class="lead">Diseñamos el conjunto completo, espacio por espacio, y te enviamos una cotización según el tamaño de tu proyecto.</p>
+  <div class="big-grid">
+    <div class="big-card"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Casas grandes</b><span>Todos los espacios con un mismo estilo, de la fachada al jardín.</span></div>
+    <div class="big-card"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><b>Negocios de varios espacios</b><span>Restaurantes, hoteles, clínicas y tiendas con varias áreas.</span></div>
+    <div class="big-card"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/><path d="M11 21v-3h2v3"/></svg><b>Oficinas</b><span>Complejos de oficinas, coworking, recepción y zonas comunes.</span></div>
+    <div class="big-card"><svg viewBox="0 0 24 24"><path d="M12 3l6 8h-3l4 5H5l4-5H6z"/><path d="M12 16v5"/></svg><b>Urbanismos</b><span>Conjuntos residenciales: fachadas, accesos, parques y zonas comunes.</span></div>
+  </div>
+  <ul class="checks">
+    <li>Propuestas visuales de cada espacio con un estilo unificado</li>
+    <li>Recorrido virtual del proyecto completo</li>
+    <li>Planos, lista de materiales y presupuesto estimado por etapas</li>
+    <li>Ejecución con la red de profesionales AVEJ, según tu ciudad</li>
+  </ul>
+  <button type="button" class="btn btn-primary btn-block opener" data-open="gf-form">Cotizar mi proyecto</button>
+  <form id="gf-form" class="fold" hidden>
+    <div class="field"><label for="gf-name">Nombre</label><input type="text" id="gf-name" autocomplete="name" required></div>
+    <div class="field"><label for="gf-phone">WhatsApp</label><input type="tel" id="gf-phone" autocomplete="tel" required></div>
+    <div class="field"><label for="gf-city">Ciudad y país</label><input type="text" id="gf-city" required></div>
+    <div class="field"><label for="gf-type">Tipo de proyecto</label>
+      <select id="gf-type" required>
+        <option value="">Selecciona una opción</option>
+        <option>Casa grande</option>
+        <option>Negocio de varios espacios</option>
+        <option>Hotel / restaurante</option>
+        <option>Complejo de oficinas / coworking</option>
+        <option>Urbanismo / conjunto residencial</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="gf-spaces">Número de espacios</label>
+        <select id="gf-spaces" required>
+          <option value="">Elige</option>
+          <option>2 a 4</option><option>5 a 10</option><option>Más de 10</option><option>No sé aún</option>
+        </select>
+      </div>
+      <div class="field"><label for="gf-area">Área aprox. (m²)</label><input type="text" id="gf-area" inputmode="numeric" placeholder="Opcional"></div>
+    </div>
+    <div class="field"><label for="gf-stage">¿En qué etapa está?</label>
+      <select id="gf-stage" required>
+        <option value="">Selecciona una opción</option>
+        <option>Es una idea</option>
+        <option>Tengo planos</option>
+        <option>Está en obra gris</option>
+        <option>Quiero remodelar algo existente</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="gf-budget">Presupuesto estimado</label><input type="text" id="gf-budget" placeholder="Opcional"></div>
+      <div class="field"><label for="gf-when">¿Para cuándo?</label>
+        <select id="gf-when">
+          <option>Lo antes posible</option><option>En 1 a 3 meses</option><option>En 3 a 6 meses</option><option>Más adelante</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label for="gf-desc">Cuéntanos del proyecto</label><textarea id="gf-desc" placeholder="Qué espacios quieres transformar y qué te gustaría lograr"></textarea></div>
+    <button type="submit" class="btn btn-primary btn-block">Enviar y cotizar por WhatsApp</button>
+    <p class="checkout-note">Al enviar se abre WhatsApp con tus datos. Ahí te pediremos fotos o planos para cotizar.</p>
+    <p class="form-msg" id="gf-msg">Se abrió WhatsApp con tus datos. Envía el mensaje y adjunta fotos o planos.</p>
+  </form>
+</section>
+
+<section class="section alt" id="tour">
   <p class="kicker">Nuevo · Servicio adicional</p>
   <h2>Tour virtual por nuestras transformaciones</h2>
   <p class="lead">Así se ve un recorrido real: la Panadería San Cayetano con nuestra propuesta. Arrastra para mirar, toca los puntos para moverte y usa “Hoy” para ver cómo está ahora.</p>
@@ -492,18 +582,7 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
   </div>
 </section>
 
-<section class="section" id="dudas">
-  <p class="kicker">Dueños de negocio nos preguntan</p>
-  <h2>¿Vale la pena para mi local?</h2>
-  <details open><summary>Mi local es muy pequeño, ¿sirve igual?</summary><p>Es justo donde más se nota. En un local de 3 × 4 m, mover el mostrador o cambiar sillas por una banca corrida puede sumar varios puestos o dejar tu producto a la vista desde la calle.</p></details>
-  <details><summary>No tengo mucho presupuesto para remodelar.</summary><p>Por eso cada propuesta trae presupuesto estimado y lista de materiales. Puedes empezar por el cambio que más vende (casi siempre la vitrina o la distribución) y hacer el resto por etapas.</p></details>
-  <details><summary>¿Tengo que cerrar el negocio?</summary><p>No para recibir las propuestas: solo necesitamos una foto y las medidas. Para ejecutar, el plano permite planear la obra en pocos días o por partes, sin cerrar.</p></details>
-  <details><summary>¿Lo puede hacer mi propio maestro de obra?</summary><p>Sí. El plano y la lista de materiales están pensados para que cualquier maestro de obra los siga. Si no tienes uno, te conectamos con la red AVEJ en tu ciudad.</p></details>
-  <details><summary>¿Sirve para mi tipo de negocio?</summary><p>Trabajamos con barberías, salones, panaderías, cafeterías, restaurantes, tiendas, ferreterías y tiendas de ropa. Si el tuyo es otro, escríbenos y te decimos si aplica antes de que pagues.</p></details>
-  <!-- Cuando tengas clientes reales, agrega aquí sus testimonios (con su permiso). -->
-</section>
-
-<section class="section alt" id="guia">
+<section class="section" id="guia">
   <p class="kicker">Guía digital · AVEJ Innova</p>
   <h2>Locales pequeños que venden más</h2>
   <p class="lead">¿Todavía no vas a remodelar? Empieza con la guía y aplica tú mismo las ideas que usamos en cada propuesta.</p>
@@ -525,37 +604,65 @@ footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-s
   <p class="pay-note">Pago seguro con Hotmart. Recibes el acceso en tu correo apenas pagas.</p>
 </section>
 
-<section class="section alt" id="mas">
-  <p class="kicker">Después de elegir</p>
-  <h2>Dos caminos</h2>
+<section class="section alt" id="empresas">
+  <p class="kicker">Para empresas</p>
+  <h2>Constructoras, inmobiliarias y marcas del sector</h2>
+  <p class="lead">Convertimos espacios vacíos o en obra gris en videos de transformación que venden.</p>
   <div class="plan">
-    <p class="tag">Planos</p>
-    <h3>Planos ya listos</h3>
-    <p>¿Viste una pieza en nuestros reels? Pide ese plano puntual por WhatsApp.</p>
+    <p class="tag">Constructoras</p>
+    <h3>Videos de preventa</h3>
+    <p>Tu proyecto en obra gris transformado en un apartamento terminado y amoblado, listo para redes y sala de ventas.</p>
   </div>
   <div class="plan">
-    <p class="tag">Ejecución</p>
-    <h3>Lo hacemos realidad</h3>
-    <p>Conectamos tu proyecto con la red de profesionales AVEJ en tu ciudad, con el plano y presupuesto que ya tienes.</p>
+    <p class="tag">Inmobiliarias y alquileres</p>
+    <h3>Inmuebles amoblados con IA</h3>
+    <p>Fotos y video de tus inmuebles vacíos amoblados en 2 o 3 estilos para que el cliente imagine su vida ahí.</p>
   </div>
+  <div class="plan">
+    <p class="tag">Ferreterías, muebles y acabados</p>
+    <h3>Contenido mensual</h3>
+    <p>Reels de transformación donde tus productos aparecen instalados, en el formato que ya probamos en nuestras redes.</p>
+  </div>
+  <a class="btn btn-primary btn-block" data-wa="Hola, represento a una empresa y quiero una muestra gratis de video de transformación" href="#">Pedir una muestra gratis</a>
 </section>
 
-<section class="section" id="faq">
+<section class="section" id="como">
+  <p class="kicker">Cómo funciona</p>
+  <h2>De la foto al plano en 48 horas</h2>
+  <ol class="steps">
+    <li><div><b>Nos envías una foto y las medidas</b><span>Desde la entrada, como la vería un cliente. No importa si está desordenado.</span></div></li>
+    <li><div><b>Recibes 3 propuestas visuales</b><span>Una por cada estilo que elegiste, adaptadas a tu negocio y presupuesto.</span></div></li>
+    <li><div><b>Eliges la que más te guste</b><span>Te entregamos plano, lista de materiales y presupuesto estimado.</span></div></li>
+    <li><div><b>Lo ejecutas tú o lo hacemos contigo</b><span>Con tu maestro de obra o con la red de profesionales AVEJ en tu ciudad.</span></div></li>
+  </ol>
+</section>
+
+<section class="section alt" id="faq">
   <p class="kicker">Preguntas frecuentes</p>
   <h2>Antes de empezar</h2>
   <details><summary>¿Cómo se hacen las propuestas?</summary><p>Partimos de tu foto y tus medidas. Las propuestas visuales se generan con inteligencia artificial y nuestro equipo prepara el plano, la lista de materiales y el presupuesto de la opción que elijas.</p></details>
   <details><summary>¿En cuánto tiempo las recibo?</summary><p>En 48 horas desde que recibimos tu foto, tus medidas y el pago.</p></details>
   <details><summary>¿Trabajan en mi ciudad?</summary><p>Las propuestas y los planos se entregan en línea a cualquier país. La ejecución depende de si tenemos profesionales en tu ciudad; escríbenos y te confirmamos.</p></details>
   <details><summary>¿Cómo pago?</summary><p>Con el botón de pago después de enviar tus datos: el pago se hace en Hotmart con tarjeta o medios locales. Si prefieres Binance o PayPal, escríbenos por WhatsApp y te enviamos los datos.</p></details>
+  <details><summary>Mi local es muy pequeño, ¿sirve igual?</summary><p>Es justo donde más se nota. En un local de 3 × 4 m, mover el mostrador o cambiar sillas por una banca corrida puede sumar varios puestos o dejar tu producto a la vista desde la calle.</p></details>
+  <details><summary>No tengo mucho presupuesto para remodelar.</summary><p>Por eso cada propuesta trae presupuesto estimado y lista de materiales. Puedes empezar por el cambio que más vende (casi siempre la vitrina o la distribución) y hacer el resto por etapas.</p></details>
+  <details><summary>¿Tengo que cerrar el negocio?</summary><p>No para recibir las propuestas: solo necesitamos una foto y las medidas. Para ejecutar, el plano permite planear la obra en pocos días o por partes, sin cerrar.</p></details>
+  <details><summary>¿Lo puede hacer mi propio maestro de obra?</summary><p>Sí. El plano y la lista de materiales están pensados para que cualquier maestro de obra los siga. Si no tienes uno, te conectamos con la red AVEJ en tu ciudad.</p></details>
+  <details><summary>¿Sirve para mi tipo de negocio?</summary><p>Trabajamos con barberías, salones, panaderías, cafeterías, restaurantes, tiendas, ferreterías y tiendas de ropa. Si el tuyo es otro, escríbenos y te decimos si aplica antes de que pagues.</p></details>
   <details><summary>¿Qué es el Tour virtual?</summary><p>Un recorrido por tu espacio renovado, escena por escena, con la propuesta que elegiste. Lo abres desde un enlace en el celular y puedes comparar cada vista con la foto real. Es un servicio adicional a tu Kit.</p></details>
   <details><summary>¿Y si no me gusta ninguna propuesta?</summary><p>Escríbenos por WhatsApp y ajustamos la que más se acerque a lo que buscas.</p></details>
+  <details><summary>¿Hacen proyectos grandes?</summary><p>Sí: casas grandes, negocios de varios espacios, oficinas y urbanismos. Llena el formulario de <a href="#grandes" style="color:var(--copper);">proyectos grandes</a> y te enviamos una cotización a medida por WhatsApp.</p></details>
+  <details><summary>¿Venden planos de las piezas de los reels?</summary><p>Sí. Si viste una pieza en nuestros reels, pide ese plano puntual por WhatsApp.</p></details>
+  <details><summary>¿Ustedes ejecutan la obra?</summary><p>Conectamos tu proyecto con la red de profesionales AVEJ en tu ciudad, con el plano y el presupuesto que ya tienes.</p></details>
+  <!-- Cuando tengas clientes reales, agrega aquí sus testimonios (con su permiso). -->
 </section>
 
-<section class="section alt">
+<section class="section" id="red">
   <div class="red-box">
     <h2>¿Trabajas en construcción o carpintería?</h2>
     <p>Súmate a la red de profesionales AVEJ. Coordinamos proyectos según la demanda en tu ciudad y te pagamos por tu trabajo.</p>
-    <form id="redForm">
+    <button type="button" class="btn btn-primary btn-block opener" data-open="redForm">Quiero unirme a la red</button>
+    <form id="redForm" class="fold" hidden>
       <div class="field"><label for="rf-name">Nombre completo</label><input type="text" id="rf-name" required></div>
       <div class="field"><label for="rf-city">Ciudad</label><input type="text" id="rf-city" required></div>
       <div class="field"><label for="rf-trade">Especialidad</label>
@@ -608,6 +715,44 @@ function waLink(text){ return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + en
 document.querySelectorAll('.price-local').forEach(function(el){ el.textContent = CONFIG.precioLocal; });
 document.querySelectorAll('.price-casa').forEach(function(el){ el.textContent = CONFIG.precioCasa; });
 document.querySelectorAll('.price-tour').forEach(function(el){ el.textContent = CONFIG.precioTour; });
+document.querySelectorAll('.price-guia').forEach(function(el){ el.textContent = CONFIG.precioGuia; });
+
+/* menú rápido: altura del encabezado, sección activa */
+(function(){
+  var header = document.querySelector('header'), qn = document.getElementById('quicknav');
+  function setH(){ document.documentElement.style.setProperty('--hdr', (header.offsetHeight + 8) + 'px'); }
+  setH(); window.addEventListener('resize', setH);
+  var links = {}; qn.querySelectorAll('a').forEach(function(a){ links[a.getAttribute('href').slice(1)] = a; });
+  var current = null;
+  function mark(id){
+    if(id === current) return; current = id;
+    Object.keys(links).forEach(function(k){ links[k].classList.toggle('on', k === id); });
+    var a = links[id]; if(a){ qn.scrollTo({left: a.offsetLeft - qn.clientWidth/2 + a.offsetWidth/2, behavior:'smooth'}); }
+  }
+  var secs = Object.keys(links).map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  function onScroll(){
+    var y = header.offsetHeight + 40, found = null;
+    secs.forEach(function(sec){ if(sec.getBoundingClientRect().top <= y) found = sec.id; });
+    mark(found);
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+})();
+
+/* contenido plegable: formularios y casos extra */
+document.querySelectorAll('[data-open]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var f = document.getElementById(btn.getAttribute('data-open'));
+    f.hidden = false; btn.hidden = true;
+    var first = f.querySelector('input, select, textarea');
+    f.scrollIntoView({behavior:'smooth', block:'start'});
+    if(first) setTimeout(function(){ first.focus({preventScroll:true}); }, 450);
+  });
+});
+document.querySelectorAll('[data-show]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.getElementById(btn.getAttribute('data-show')).hidden = false; btn.hidden = true;
+  });
+});
 document.querySelectorAll('[data-wa]').forEach(function(a){
   a.href = waLink(a.getAttribute('data-wa')); a.target = '_blank'; a.rel = 'noopener';
 });
@@ -714,6 +859,26 @@ document.getElementById('cf-form').addEventListener('submit', function(e){
   document.getElementById('cf-msg').classList.add('ok');
   var box = document.getElementById('cf-checkout'); box.classList.add('show');
   box.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* formulario proyectos grandes */
+document.getElementById('gf-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var lines = [
+    'Nuevo lead — Proyecto grande (cotización)',
+    'Nombre: ' + val('gf-name'),
+    'WhatsApp: ' + val('gf-phone'),
+    'Ciudad: ' + val('gf-city'),
+    'Tipo de proyecto: ' + val('gf-type'),
+    'Espacios: ' + val('gf-spaces'),
+    'Área aprox.: ' + (val('gf-area') ? val('gf-area') + ' m²' : 'sin dato'),
+    'Etapa: ' + val('gf-stage'),
+    'Presupuesto: ' + (val('gf-budget') || 'sin dato'),
+    'Para cuándo: ' + val('gf-when')
+  ];
+  if(val('gf-desc')) lines.push('Proyecto: ' + val('gf-desc'));
+  window.open(waLink(lines.join('\n')), '_blank');
+  document.getElementById('gf-msg').classList.add('ok');
 });
 
 /* formulario red de profesionales */
