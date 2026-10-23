@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AVEJ Innova — Diseño de locales y espacios pequeños</title>
-<meta name="description" content="Optimizamos el espacio de tu local para que venda más con el mismo arriendo. Envía una foto y recibe 3 propuestas en los estilos que elijas, desde 72 h, por $15.99.">
+<meta name="description" content="Optimizamos el espacio de tu local para que venda más con el mismo arriendo. Envía una foto y recibe propuestas de diseño para tu local desde 48 h, con precios para Latinoamérica, Europa y EE. UU.">
 <meta property="og:title" content="AVEJ Innova — Tu local puede vender más sin mudarte">
-<meta property="og:description" content="Envía una foto de tu local y recibe 3 propuestas de diseño desde 72 h.">
+<meta property="og:description" content="Envía una foto de tu local y recibe propuestas de diseño desde 48 h.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -233,6 +233,21 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
 .checks li{display:flex; gap:10px; font-size:14.5px; color:var(--ink);}
 .checks li:before{content:"✓"; color:var(--copper); font-weight:700;}
 
+/* región y planes */
+.region{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:0 0 16px;}
+.region-label{font-size:12.5px; color:var(--ink-muted); margin-right:2px;}
+.region button{font-family:inherit; font-size:13px; font-weight:600; padding:7px 12px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--ink-muted); cursor:pointer;}
+.region button[aria-pressed="true"]{background:var(--copper); border-color:var(--copper); color:#17181A;}
+.region button:focus-visible{outline:2px solid var(--copper); outline-offset:2px;}
+.plan .price{font-family:'Bebas Neue',sans-serif; font-size:40px; line-height:1; color:var(--ink); margin:0 0 12px;}
+.plan .price small{font-family:'Work Sans',sans-serif; font-size:13px; color:var(--ink-muted); margin-left:6px; letter-spacing:0;}
+.plan .btn{margin-top:14px;}
+.plan.chosen{box-shadow:0 0 0 2px var(--copper);}
+#planes, #lf-form, #lf-checkout, #cf-form, #cf-checkout{scroll-margin-top:var(--hdr,112px);}
+.guarantee{font-size:13px; color:var(--ink-muted); margin:4px 0 20px;}
+.form-plan{border:1px solid var(--copper-dim); border-radius:4px; padding:12px 14px; margin:0 0 16px; display:flex; justify-content:space-between; gap:10px; align-items:center;}
+.form-plan b{font-size:15px;}
+.form-plan button{font-family:inherit; font-size:12.5px; background:none; border:none; color:var(--copper); cursor:pointer; text-decoration:underline; padding:0;}
 .hero{padding:28px 20px 30px;}
 .hero h1{font-size:46px; margin-bottom:12px;}
 .hero p.panel-title{margin:20px 0 10px;}
@@ -272,16 +287,17 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
   <div class="hero-content">
   <p class="eyebrow">Diseño de espacios · AVEJ Innova</p>
   <h1>Tu local puede vender más sin mudarte.</h1>
-  <p>Propuestas visuales para negocios, casas y proyectos grandes, listas a partir de 72 horas. Toca lo que necesitas:</p>
+  <p>Propuestas visuales para negocios, casas y proyectos grandes, listas desde 48 horas. Toca lo que necesitas:</p>
   <p class="panel-title">¿Qué estás buscando?</p>
   <div class="panel">
-    <a class="tile main" href="#locales"><svg viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/></svg><b>Mi negocio</b><span>Kit Local · <span class="price-local"></span></span></a>
-    <a class="tile" href="#casas"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Mi casa</b><span>Kit Reimagina · <span class="price-casa"></span></span></a>
+    <a class="tile main" href="#locales"><svg viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/></svg><b>Mi negocio</b><span>Desde <span data-price="ie"></span></span></a>
+    <a class="tile" href="#casas"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Mi casa</b><span>Kit Hogar · <span data-price="hogar"></span></span></a>
     <a class="tile" href="#grandes"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l6-3v16"/><path d="M11 21V3l8 4v14"/><path d="M14 9h2M14 13h2M14 17h2M7.5 11h1M7.5 15h1"/></svg><b>Proyecto grande</b><span>Cotización a medida</span></a>
     <a class="tile" href="#tour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><b>Tour virtual</b><span>Recorrido · <span class="price-tour"></span></span></a>
     <a class="tile" href="#guia"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><b>Guía digital</b><span>Hazlo tú · <span class="price-guia"></span></span></a>
     <a class="tile" href="#empresas"><svg viewBox="0 0 24 24"><path d="M6 21V4h2v17"/><path d="M4 21h8"/><path d="M8 4h12l-4 4"/><path d="M18 4v6"/><rect x="16" y="10" width="4" height="3"/></svg><b>Empresas</b><span>Constructoras e inmobiliarias</span></a>
   </div>
+  <div class="region" style="margin:16px 0 0;" role="group" aria-label="Precios para tu región"><span class="region-label">Precios para</span><button type="button" data-region="latam">🌎 Latinoamérica</button><button type="button" data-region="eu">🇪🇸 España y Europa</button><button type="button" data-region="us">🇺🇸 EE. UU. y Canadá</button></div>
   </div>
 </section>
 
@@ -338,23 +354,58 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
     <li><b>Un local viejo baja el precio que te pagan</b><span>Un espacio cuidado te permite cobrar mejor por lo mismo que ya vendes.</span></li>
   </ul>
 
-  <div class="plan featured">
-    <p class="tag">Kit Local</p>
-    <h3>Diagnóstico y diseño de tu local — <span class="price-local"></span></h3>
+  <h3 class="sub" id="planes">Elige tu plan</h3>
+  <div class="region" role="group" aria-label="Precios para tu región"><span class="region-label">Precios para</span><button type="button" data-region="latam">🌎 Latinoamérica</button><button type="button" data-region="eu">🇪🇸 España y Europa</button><button type="button" data-region="us">🇺🇸 EE. UU. y Canadá</button></div>
+
+  <div class="plan" data-plan="ie">
+    <p class="tag">Para empezar</p>
+    <h3>Idea Express</h3>
+    <p class="price"><span data-price="ie"></span></p>
     <ul>
-      <li>3 propuestas visuales de tu local, en los 3 estilos que elijas</li>
-      <li>Eliges la que más te guste</li>
-      <li>Recibes plano, lista de materiales y presupuesto estimado</li>
-      <li>Entrega a partir de 72 horas</li>
-      <li>Enfocado en lo que más vende: distribución, exhibición y puestos</li>
+      <li>1 propuesta visual de tu local en el estilo que elijas</li>
+      <li>5 mejoras ordenadas según cuánto ayudan a vender</li>
+      <li>Entrega en 48 horas</li>
+      <li>Si pasas al Kit Local Pro en 14 días, te descontamos lo que pagaste</li>
     </ul>
+    <button type="button" class="btn btn-ghost btn-block" data-choose="ie">Elegir Idea Express</button>
   </div>
 
-  <button type="button" class="btn btn-primary btn-block opener" data-open="lf-form">Empezar mi Kit Local</button>
+  <div class="plan featured" data-plan="pro">
+    <p class="tag">El más elegido</p>
+    <h3>Kit Local Pro</h3>
+    <p class="price"><span data-price="pro"></span></p>
+    <ul>
+      <li>3 propuestas visuales, una por cada estilo que elijas</li>
+      <li>Plano de distribución, lista de materiales y presupuesto estimado</li>
+      <li>1 ajuste a la propuesta que elijas</li>
+      <li>Entrega en 5 días hábiles</li>
+      <li>Enfocado en lo que más vende: distribución, exhibición y puestos</li>
+    </ul>
+    <button type="button" class="btn btn-primary btn-block" data-choose="pro">Elegir Kit Local Pro</button>
+  </div>
+
+  <div class="plan" data-plan="premium">
+    <p class="tag">Apertura que vende</p>
+    <h3>Premium</h3>
+    <p class="price"><span data-price="premium"></span></p>
+    <ul>
+      <li>Todo lo del Kit Local Pro</li>
+      <li>Tour virtual de tu local renovado</li>
+      <li>Reel antes/después con tu marca, listo para anunciar tu reforma</li>
+      <li>Plan por etapas: qué hacer con poco, con algo más y con todo el presupuesto</li>
+      <li>Videollamada de 45 minutos para revisar tu propuesta</li>
+      <li>2 ajustes y entrega prioritaria en 72 horas</li>
+    </ul>
+    <button type="button" class="btn btn-ghost btn-block" data-choose="premium">Elegir Premium</button>
+  </div>
+  <p class="guarantee">Si ninguna propuesta te convence, la ajustamos sin costo.</p>
+
   <form id="lf-form" class="fold" hidden>
+    <div class="form-plan"><b id="lf-plan-label"></b><button type="button" id="lf-change">Cambiar plan</button></div>
     <div class="field"><label for="lf-name">Nombre</label><input type="text" id="lf-name" autocomplete="name" required></div>
     <div class="field"><label for="lf-phone">WhatsApp</label><input type="tel" id="lf-phone" autocomplete="tel" required></div>
-    <div class="field"><label for="lf-city">Ciudad</label><input type="text" id="lf-city" required></div>
+    <div class="field"><label for="lf-email">Email (opcional)</label><input type="email" id="lf-email" autocomplete="email"></div>
+    <div class="field"><label for="lf-city">Ciudad y país</label><input type="text" id="lf-city" required></div>
     <div class="field"><label for="lf-type">Tipo de negocio</label>
       <select id="lf-type" required>
         <option value="">Selecciona una opción</option>
@@ -364,6 +415,8 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
         <option>Tienda / minimercado</option>
         <option>Ferretería</option>
         <option>Tienda de ropa / accesorios</option>
+        <option>Consultorio / clínica / spa</option>
+        <option>Gimnasio / estudio de pilates o yoga</option>
         <option>Otro</option>
       </select>
     </div>
@@ -378,7 +431,13 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
         <option>Otro</option>
       </select>
     </div>
-    <div class="field"><span class="field-label">Elige hasta 3 estilos (uno por propuesta)</span>
+    <div class="field"><label for="lf-when">¿Cuándo quieres hacer el cambio?</label>
+      <select id="lf-when" required>
+        <option value="">Selecciona una opción</option>
+        <option>Este mes</option><option>En 1 a 3 meses</option><option>Más adelante, estoy mirando ideas</option>
+      </select>
+    </div>
+    <div class="field"><span class="field-label" id="lf-style-title">Elige hasta 3 estilos (uno por propuesta)</span>
       <div class="style-grid" id="lf-styles">
         <label class="style-chip"><input type="checkbox" name="lf-style" value="Moderno cálido"><span>Moderno cálido</span></label>
         <label class="style-chip"><input type="checkbox" name="lf-style" value="Industrial"><span>Industrial</span></label>
@@ -397,16 +456,16 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
       <p class="style-count" id="lf-style-count">0 de 3 elegidos</p>
     </div>
     <div class="field"><label for="lf-photo">Foto de tu local (desde la entrada)</label><input type="file" id="lf-photo" accept="image/*"></div>
-    <button type="submit" class="btn btn-primary btn-block">Quiero mis 3 propuestas</button>
+    <button type="submit" class="btn btn-primary btn-block">Enviar mis datos y pagar</button>
     <p class="form-msg" id="lf-msg">Se abrió WhatsApp con tus datos. Envía el mensaje y adjunta la foto de tu local.</p>
   </form>
 
   <div class="checkout" id="lf-checkout">
     <p class="tag">Resumen</p>
-    <h3>Kit Local</h3>
-    <div class="checkout-row"><span>3 propuestas + plano + materiales + presupuesto</span><span class="price-local"></span></div>
+    <h3 id="lf-ck-name">Kit Local Pro</h3>
+    <div class="checkout-row"><span id="lf-ck-desc"></span><span id="lf-ck-price"></span></div>
     <a class="btn btn-primary btn-block" id="lf-pay" href="#" target="_blank" rel="noopener">Pagar y comenzar</a>
-    <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp. ¿Quieres verlo por dentro? Suma el <a href="#tour" style="color:var(--copper);">Tour virtual</a>.</p>
+    <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp.</p>
   </div>
 </section>
 
@@ -436,9 +495,11 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
     </div>
   </div>
 
+  <div class="region" role="group" aria-label="Precios para tu región"><span class="region-label">Precios para</span><button type="button" data-region="latam">🌎 Latinoamérica</button><button type="button" data-region="eu">🇪🇸 España y Europa</button><button type="button" data-region="us">🇺🇸 EE. UU. y Canadá</button></div>
   <div class="plan featured">
-    <p class="tag">Kit Reimagina</p>
-    <h3>3 propuestas para tu casa — <span class="price-casa"></span></h3>
+    <p class="tag">Kit Hogar</p>
+    <h3>3 propuestas para tu casa</h3>
+    <p class="price"><span data-price="hogar"></span><small>por espacio</small></p>
     <ul>
       <li>3 propuestas visuales a partir de tu foto, en los estilos que elijas</li>
       <li>Eliges tu favorita</li>
@@ -446,11 +507,12 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
     </ul>
   </div>
 
-  <button type="button" class="btn btn-primary btn-block opener" data-open="cf-form">Empezar mi Kit Reimagina</button>
+  <button type="button" class="btn btn-primary btn-block opener" data-open="cf-form">Empezar mi Kit Hogar</button>
   <form id="cf-form" class="fold" hidden>
     <div class="field"><label for="cf-name">Nombre</label><input type="text" id="cf-name" autocomplete="name" required></div>
     <div class="field"><label for="cf-contact">WhatsApp</label><input type="tel" id="cf-contact" autocomplete="tel" required></div>
-    <div class="field"><label for="cf-city">Ciudad</label><input type="text" id="cf-city" required></div>
+    <div class="field"><label for="cf-email">Email (opcional)</label><input type="email" id="cf-email" autocomplete="email"></div>
+    <div class="field"><label for="cf-city">Ciudad y país</label><input type="text" id="cf-city" required></div>
     <div class="field"><label for="cf-space">Tipo de espacio</label>
       <select id="cf-space" required>
         <option value="">Selecciona una opción</option>
@@ -484,8 +546,8 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
 
   <div class="checkout" id="cf-checkout">
     <p class="tag">Resumen</p>
-    <h3>Kit Reimagina</h3>
-    <div class="checkout-row"><span>3 propuestas + video + plano + materiales + presupuesto</span><span class="price-casa"></span></div>
+    <h3>Kit Hogar</h3>
+    <div class="checkout-row"><span>3 propuestas + video + plano + materiales + presupuesto</span><span data-price="hogar"></span></div>
     <a class="btn btn-primary btn-block" id="cf-pay" href="#" target="_blank" rel="noopener">Pagar y comenzar</a>
     <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp. ¿Quieres verlo por dentro? Suma el <a href="#tour" style="color:var(--copper);">Tour virtual</a>.</p>
   </div>
@@ -577,7 +639,7 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
       <li>Te llega un enlace con la marca AVEJ: se abre en cualquier celular, sin instalar nada</li>
       <li>Ideal para mostrárselo a tu socio, a tu familia o a tu maestro de obra antes de invertir</li>
     </ul>
-    <p style="margin:10px 0 14px;">Se agrega al Kit Local o al Kit Reimagina. Es un recorrido por vistas conectadas de tu espacio, no un video 360°.</p>
+    <p style="margin:10px 0 14px;">Se agrega al Kit Local Pro o al Kit Hogar, y ya viene incluido en el plan Premium. Es un recorrido por vistas conectadas de tu espacio, no un video 360°.</p>
     <a class="btn btn-primary btn-block" id="tour-pay" href="#" target="_blank" rel="noopener">Agregar Tour virtual</a>
   </div>
 </section>
@@ -628,10 +690,10 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
 
 <section class="section" id="como">
   <p class="kicker">Cómo funciona</p>
-  <h2>De la foto al plano desde 72 horas</h2>
+  <h2>De la foto a la propuesta desde 48 horas</h2>
   <ol class="steps">
     <li><div><b>Nos envías una foto y las medidas</b><span>Desde la entrada, como la vería un cliente. No importa si está desordenado.</span></div></li>
-    <li><div><b>Recibes 3 propuestas visuales</b><span>Una por cada estilo que elegiste, adaptadas a tu negocio y presupuesto.</span></div></li>
+    <li><div><b>Recibes tus propuestas visuales</b><span>Una por cada estilo que elegiste, adaptadas a tu negocio y presupuesto.</span></div></li>
     <li><div><b>Eliges la que más te guste</b><span>Te entregamos plano, lista de materiales y presupuesto estimado.</span></div></li>
     <li><div><b>Lo ejecutas tú o lo hacemos contigo</b><span>Con tu maestro de obra o con la red de profesionales AVEJ en tu ciudad.</span></div></li>
   </ol>
@@ -641,7 +703,8 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
   <p class="kicker">Preguntas frecuentes</p>
   <h2>Antes de empezar</h2>
   <details><summary>¿Cómo se hacen las propuestas?</summary><p>Partimos de tu foto y tus medidas. Las propuestas visuales se generan con inteligencia artificial y nuestro equipo prepara el plano, la lista de materiales y el presupuesto de la opción que elijas.</p></details>
-  <details><summary>¿En cuánto tiempo las recibo?</summary><p>A partir de 72 horas desde que recibimos tu foto, tus medidas y el pago. En proyectos grandes el plazo depende del tamaño y te lo confirmamos en la cotización.</p></details>
+  <details><summary>¿En cuánto tiempo las recibo?</summary><p>Idea Express en 48 horas, Kit Local Pro en 5 días hábiles y Premium en 72 horas, contados desde que recibimos tu foto, tus medidas y el pago. En proyectos grandes el plazo depende del tamaño y te lo confirmamos en la cotización.</p></details>
+  <details><summary>¿Por qué el precio cambia según mi país?</summary><p>Ajustamos el precio al mercado de cada región: Latinoamérica, España y Europa, y EE. UU. y Canadá. El servicio que recibes es el mismo. Elige tu región arriba de los planes.</p></details>
   <details><summary>¿Trabajan en mi ciudad?</summary><p>Las propuestas y los planos se entregan en línea a cualquier país. La ejecución depende de si tenemos profesionales en tu ciudad; escríbenos y te confirmamos.</p></details>
   <details><summary>¿Cómo pago?</summary><p>Con el botón de pago después de enviar tus datos: el pago se hace en Hotmart con tarjeta o medios locales. Si prefieres Binance o PayPal, escríbenos por WhatsApp y te enviamos los datos.</p></details>
   <details><summary>Mi local es muy pequeño, ¿sirve igual?</summary><p>Es justo donde más se nota. En un local de 3 × 4 m, mover el mostrador o cambiar sillas por una banca corrida puede sumar varios puestos o dejar tu producto a la vista desde la calle.</p></details>
@@ -649,8 +712,8 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
   <details><summary>¿Tengo que cerrar el negocio?</summary><p>No para recibir las propuestas: solo necesitamos una foto y las medidas. Para ejecutar, el plano permite planear la obra en pocos días o por partes, sin cerrar.</p></details>
   <details><summary>¿Lo puede hacer mi propio maestro de obra?</summary><p>Sí. El plano y la lista de materiales están pensados para que cualquier maestro de obra los siga. Si no tienes uno, te conectamos con la red AVEJ en tu ciudad.</p></details>
   <details><summary>¿Sirve para mi tipo de negocio?</summary><p>Trabajamos con barberías, salones, panaderías, cafeterías, restaurantes, tiendas, ferreterías y tiendas de ropa. Si el tuyo es otro, escríbenos y te decimos si aplica antes de que pagues.</p></details>
-  <details><summary>¿Qué es el Tour virtual?</summary><p>Un recorrido por tu espacio renovado, escena por escena, con la propuesta que elegiste. Lo abres desde un enlace en el celular y puedes comparar cada vista con la foto real. Es un servicio adicional a tu Kit.</p></details>
-  <details><summary>¿Y si no me gusta ninguna propuesta?</summary><p>Escríbenos por WhatsApp y ajustamos la que más se acerque a lo que buscas.</p></details>
+  <details><summary>¿Qué es el Tour virtual?</summary><p>Un recorrido por tu espacio renovado, escena por escena, con la propuesta que elegiste. Lo abres desde un enlace en el celular y puedes comparar cada vista con la foto real. Es un servicio adicional a tu Kit y viene incluido en el plan Premium.</p></details>
+  <details><summary>¿Y si no me gusta ninguna propuesta?</summary><p>Escríbenos por WhatsApp y ajustamos sin costo la que más se acerque a lo que buscas. El Kit Local Pro incluye 1 ajuste y el Premium 2.</p></details>
   <details><summary>¿Hacen proyectos grandes?</summary><p>Sí: casas grandes, negocios de varios espacios, oficinas y urbanismos. Llena el formulario de <a href="#grandes" style="color:var(--copper);">proyectos grandes</a> y te enviamos una cotización a medida por WhatsApp.</p></details>
   <details><summary>¿Venden planos de las piezas de los reels?</summary><p>Sí. Si viste una pieza en nuestros reels, pide ese plano puntual por WhatsApp.</p></details>
   <details><summary>¿Ustedes ejecutan la obra?</summary><p>Conectamos tu proyecto con la red de profesionales AVEJ en tu ciudad, con el plano y el presupuesto que ya tienes.</p></details>
@@ -699,21 +762,59 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
 /* ===== CONFIGURACIÓN: cambia solo estos valores ===== */
 var CONFIG = {
   whatsapp: '573138287521',
-  precioLocal: '$15.99',     // precio del Kit Local
-  precioCasa: '$9.99',       // precio del Kit Reimagina
+  // Precios por región: latam = Latinoamérica, eu = España y Europa, us = EE. UU. y Canadá
+  precios: {
+    ie:      {latam:'US$19,99', eu:'59 €',  us:'US$67'},   // Idea Express
+    pro:     {latam:'US$89,99', eu:'259 €', us:'US$299'},  // Kit Local Pro
+    premium: {latam:'US$179',   eu:'669 €', us:'US$749'},  // Premium
+    hogar:   {latam:'US$29,99', eu:'97 €',  us:'US$112'}   // Kit Hogar (por espacio)
+  },
+  // Enlaces de pago de Hotmart por plan y región. Vacío = el botón pide el enlace por WhatsApp
+  pagos: {
+    ie:      {latam:'', eu:'', us:''},
+    pro:     {latam:'', eu:'', us:''},
+    premium: {latam:'', eu:'', us:''},
+    hogar:   {latam:'', eu:'', us:''}
+  },
   precioTour: '$19.99',      // precio del Tour virtual (servicio adicional)
   precioGuia: '$9.99',       // precio de la guía "Locales pequeños que venden más"
-  pagoLocal: 'https://pay.hotmart.com/L108101091V',            // Hotmart — Kit Local
-  pagoCasa: 'https://pay.hotmart.com/W108100979C',             // Hotmart — Kit Reimagina
   pagoGuia: 'https://pay.hotmart.com/P108056690W?off=z6t186dy', // Hotmart — guía
   pagoTour: ''               // pega aquí el enlace de Hotmart del Tour virtual. Vacío = se pide por WhatsApp
 };
+var PLANES = {
+  ie:      {nombre:'Idea Express',  desc:'1 propuesta + 5 mejoras · 48 h', estilos:1},
+  pro:     {nombre:'Kit Local Pro', desc:'3 propuestas + plano + materiales + presupuesto · 5 días hábiles', estilos:3},
+  premium: {nombre:'Premium',       desc:'Kit Local Pro + tour + reel + plan por etapas + videollamada · 72 h', estilos:3},
+  hogar:   {nombre:'Kit Hogar',     desc:'3 propuestas + video + plano + materiales + presupuesto', estilos:3}
+};
+var REGIONES = {latam:'Latinoamérica', eu:'España y Europa', us:'EE. UU. y Canadá'};
 /* ==================================================== */
 
 function waLink(text){ return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(text); }
 
-document.querySelectorAll('.price-local').forEach(function(el){ el.textContent = CONFIG.precioLocal; });
-document.querySelectorAll('.price-casa').forEach(function(el){ el.textContent = CONFIG.precioCasa; });
+/* región: ?r=latam|eu|us, luego lo guardado, luego la zona horaria */
+var STATE = {region:'latam', plan:'pro'};
+function detectRegion(){
+  var q = new URLSearchParams(location.search).get('r');
+  if(q && REGIONES[q]) return q;
+  try{ var s = localStorage.getItem('avej-region'); if(s && REGIONES[s]) return s; }catch(e){}
+  var tz = ''; try{ tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; }catch(e){}
+  if(/^Europe\//.test(tz) || tz === 'Atlantic/Canary' || tz === 'Atlantic/Madeira') return 'eu';
+  if(/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Juneau|Indiana|Kentucky|North_Dakota|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Whitehorse)/.test(tz) || tz === 'Pacific/Honolulu') return 'us';
+  return 'latam';
+}
+function precio(plan){ return CONFIG.precios[plan][STATE.region]; }
+function setRegion(r){
+  STATE.region = r;
+  try{ localStorage.setItem('avej-region', r); }catch(e){}
+  document.querySelectorAll('[data-price]').forEach(function(el){ el.textContent = precio(el.getAttribute('data-price')); });
+  document.querySelectorAll('[data-region]').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-region') === r ? 'true' : 'false'); });
+  refreshLocal();
+  setPay('cf-pay', 'hogar');
+}
+document.querySelectorAll('[data-region]').forEach(function(b){
+  b.addEventListener('click', function(){ setRegion(b.getAttribute('data-region')); });
+});
 document.querySelectorAll('.price-tour').forEach(function(el){ el.textContent = CONFIG.precioTour; });
 document.querySelectorAll('.price-guia').forEach(function(el){ el.textContent = CONFIG.precioGuia; });
 
@@ -757,13 +858,39 @@ document.querySelectorAll('[data-wa]').forEach(function(a){
   a.href = waLink(a.getAttribute('data-wa')); a.target = '_blank'; a.rel = 'noopener';
 });
 
-function setPay(id, link, label){
-  var a = document.getElementById(id);
-  if(link){ a.href = link; a.textContent = 'Pagar ' + label + ' y comenzar'; }
-  else { a.href = waLink('Hola, ya envié mis datos. ¿Me compartes el enlace de pago de ' + label + '?'); a.textContent = 'Pedir enlace de pago por WhatsApp'; }
+function setPay(id, plan){
+  var a = document.getElementById(id), link = CONFIG.pagos[plan][STATE.region], p = precio(plan);
+  if(link){ a.href = link; a.textContent = 'Pagar ' + p + ' y comenzar'; }
+  else { a.href = waLink('Hola, ya envié mis datos. Quiero pagar ' + PLANES[plan].nombre + ' (' + p + ', ' + REGIONES[STATE.region] + '). ¿Me compartes el enlace de pago?'); a.textContent = 'Pedir enlace de pago por WhatsApp'; }
 }
-setPay('lf-pay', CONFIG.pagoLocal, CONFIG.precioLocal);
-setPay('cf-pay', CONFIG.pagoCasa, CONFIG.precioCasa);
+
+/* planes de negocio */
+function refreshLocal(){
+  var pl = PLANES[STATE.plan];
+  document.getElementById('lf-plan-label').textContent = 'Tu plan: ' + pl.nombre + ' · ' + precio(STATE.plan);
+  document.getElementById('lf-ck-name').textContent = pl.nombre;
+  document.getElementById('lf-ck-desc').textContent = pl.desc;
+  document.getElementById('lf-ck-price').textContent = precio(STATE.plan);
+  document.getElementById('lf-style-title').textContent = pl.estilos === 1 ? 'Elige 1 estilo' : 'Elige hasta 3 estilos (uno por propuesta)';
+  document.querySelectorAll('.plan[data-plan]').forEach(function(c){ c.classList.toggle('chosen', c.getAttribute('data-plan') === STATE.plan && !document.getElementById('lf-form').hidden); });
+  if(typeof styleRefresh === 'function') styleRefresh();
+  setPay('lf-pay', STATE.plan);
+}
+function choosePlan(p){
+  STATE.plan = p;
+  var f = document.getElementById('lf-form');
+  f.hidden = false;
+  document.getElementById('lf-checkout').classList.remove('show');
+  refreshLocal();
+  f.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(function(){ var first = f.querySelector('input'); if(first) first.focus({preventScroll:true}); }, 450);
+}
+document.querySelectorAll('[data-choose]').forEach(function(b){
+  b.addEventListener('click', function(){ choosePlan(b.getAttribute('data-choose')); });
+});
+document.getElementById('lf-change').addEventListener('click', function(){
+  document.getElementById('planes').scrollIntoView({behavior:'smooth', block:'start'});
+});
 
 /* guía */
 (function(){
@@ -792,17 +919,20 @@ function val(id){ return document.getElementById(id).value.trim(); }
 function hasFile(id){ var f = document.getElementById(id); return f && f.files && f.files.length > 0; }
 
 
-/* selector de estilos: máximo 3 */
-function setupStyles(prefix){
+/* selector de estilos: máximo según el plan */
+var styleRefresh = null;
+function setupStyles(prefix, getMax){
   var boxes = document.querySelectorAll('input[name="' + prefix + '-style"]');
   var count = document.getElementById(prefix + '-style-count');
   function refresh(){
-    var n = 0; boxes.forEach(function(b){ if(b.checked) n++; });
-    boxes.forEach(function(b){ b.disabled = !b.checked && n >= 3; });
-    count.textContent = n + ' de 3 elegidos'; count.classList.remove('err');
+    var max = getMax(), n = 0;
+    boxes.forEach(function(b){ if(b.checked){ n++; if(n > max) { b.checked = false; n--; } } });
+    boxes.forEach(function(b){ b.disabled = !b.checked && n >= max; });
+    count.textContent = n + ' de ' + max + (max === 1 ? ' elegido' : ' elegidos'); count.classList.remove('err');
   }
   boxes.forEach(function(b){ b.addEventListener('change', refresh); });
   refresh();
+  return refresh;
 }
 function getStyles(prefix){
   var out = []; document.querySelectorAll('input[name="' + prefix + '-style"]:checked').forEach(function(b){ out.push(b.value); });
@@ -812,27 +942,39 @@ function requireStyles(prefix){
   var st = getStyles(prefix);
   if(st.length === 0){
     var c = document.getElementById(prefix + '-style-count');
-    c.textContent = 'Elige al menos 1 estilo (máximo 3)'; c.classList.add('err');
+    c.textContent = 'Elige al menos 1 estilo'; c.classList.add('err');
     document.getElementById(prefix + '-styles').scrollIntoView({behavior:'smooth', block:'center'});
     return null;
   }
   return st;
 }
-setupStyles('lf'); setupStyles('cf');
+styleRefresh = setupStyles('lf', function(){ return PLANES[STATE.plan].estilos; });
+setupStyles('cf', function(){ return 3; });
+
+/* arranque: región y plan desde el enlace (?r=eu&plan=pro#locales) */
+(function(){
+  setRegion(detectRegion());
+  var p = new URLSearchParams(location.search).get('plan');
+  if(p && PLANES[p] && p !== 'hogar'){ setTimeout(function(){ choosePlan(p); }, 300); }
+  else if(p === 'hogar'){ setTimeout(function(){ var b = document.querySelector('[data-open="cf-form"]'); if(b) b.click(); }, 300); }
+})();
 
 /* formulario negocios */
 document.getElementById('lf-form').addEventListener('submit', function(e){
   e.preventDefault();
   var estilos = requireStyles('lf'); if(!estilos) return;
   var lines = [
-    'Nuevo lead — Kit Local (' + CONFIG.precioLocal + ')',
+    'Nuevo lead — ' + PLANES[STATE.plan].nombre + ' (' + precio(STATE.plan) + ')',
+    'Región: ' + REGIONES[STATE.region],
     'Nombre: ' + val('lf-name'),
     'WhatsApp: ' + val('lf-phone'),
-    'Ciudad: ' + val('lf-city'),
+    'Email: ' + (val('lf-email') || 'sin dato'),
+    'Ciudad y país: ' + val('lf-city'),
     'Negocio: ' + val('lf-type'),
     'Medidas: ' + val('lf-size'),
     'Quiere resolver: ' + val('lf-problem'),
-    'Estilos (3 propuestas): ' + estilos.join(', '),
+    'Cuándo: ' + val('lf-when'),
+    'Estilos: ' + estilos.join(', '),
     hasFile('lf-photo') ? 'Foto: la adjunto en este chat' : 'Foto: pendiente de enviar'
   ];
   window.open(waLink(lines.join('\n')), '_blank');
@@ -846,10 +988,12 @@ document.getElementById('cf-form').addEventListener('submit', function(e){
   e.preventDefault();
   var estilos = requireStyles('cf'); if(!estilos) return;
   var lines = [
-    'Nuevo lead — Kit Reimagina (' + CONFIG.precioCasa + ')',
+    'Nuevo lead — Kit Hogar (' + precio('hogar') + ')',
+    'Región: ' + REGIONES[STATE.region],
     'Nombre: ' + val('cf-name'),
     'WhatsApp: ' + val('cf-contact'),
-    'Ciudad: ' + val('cf-city'),
+    'Email: ' + (val('cf-email') || 'sin dato'),
+    'Ciudad y país: ' + val('cf-city'),
     'Espacio: ' + val('cf-space'),
     'Estilos (3 propuestas): ' + estilos.join(', '),
     'Presupuesto: ' + val('cf-budget'),
