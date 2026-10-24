@@ -390,11 +390,13 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
     <p class="price"><span data-price="premium"></span></p>
     <ul>
       <li>Todo lo del Kit Local Pro</li>
+      <li>Branding de tu negocio</li>
       <li>Tour virtual de tu local renovado</li>
       <li>Reel antes/después con tu marca, listo para anunciar tu reforma</li>
+      <li>Guía práctica de decoración por temporadas y fechas especiales</li>
       <li>Plan por etapas: qué hacer con poco, con algo más y con todo el presupuesto</li>
       <li>Videollamada de 45 minutos para revisar tu propuesta</li>
-      <li>2 ajustes y entrega prioritaria en 72 horas</li>
+      <li>2 ajustes y entrega en 4 días hábiles</li>
     </ul>
     <button type="button" class="btn btn-ghost btn-block" data-choose="premium">Elegir Premium</button>
   </div>
@@ -703,7 +705,7 @@ main section[id]{scroll-margin-top:var(--hdr,112px);}
   <p class="kicker">Preguntas frecuentes</p>
   <h2>Antes de empezar</h2>
   <details><summary>¿Cómo se hacen las propuestas?</summary><p>Partimos de tu foto y tus medidas. Las propuestas visuales se generan con inteligencia artificial y nuestro equipo prepara el plano, la lista de materiales y el presupuesto de la opción que elijas.</p></details>
-  <details><summary>¿En cuánto tiempo las recibo?</summary><p>Idea Express en 48 horas, Kit Local Pro en 5 días hábiles y Premium en 72 horas, contados desde que recibimos tu foto, tus medidas y el pago. En proyectos grandes el plazo depende del tamaño y te lo confirmamos en la cotización.</p></details>
+  <details><summary>¿En cuánto tiempo las recibo?</summary><p>Idea Express en 48 horas, Kit Local Pro en 5 días hábiles y Premium en 4 días hábiles, contados desde que recibimos tu foto, tus medidas y el pago. En proyectos grandes el plazo depende del tamaño y te lo confirmamos en la cotización.</p></details>
   <details><summary>¿Por qué el precio cambia según mi país?</summary><p>Ajustamos el precio al mercado de cada región: Latinoamérica, España y Europa, y EE. UU. y Canadá. El servicio que recibes es el mismo. Elige tu región arriba de los planes.</p></details>
   <details><summary>¿Trabajan en mi ciudad?</summary><p>Las propuestas y los planos se entregan en línea a cualquier país. La ejecución depende de si tenemos profesionales en tu ciudad; escríbenos y te confirmamos.</p></details>
   <details><summary>¿Cómo pago?</summary><p>Con el botón de pago después de enviar tus datos: el pago se hace en Hotmart con tarjeta o medios locales. Si prefieres Binance o PayPal, escríbenos por WhatsApp y te enviamos los datos.</p></details>
@@ -765,16 +767,16 @@ var CONFIG = {
   // Precios por región: latam = Latinoamérica, eu = España y Europa, us = EE. UU. y Canadá
   precios: {
     ie:      {latam:'US$19,99', eu:'59 €',  us:'US$67'},   // Idea Express
-    pro:     {latam:'US$89,99', eu:'259 €', us:'US$299'},  // Kit Local Pro
-    premium: {latam:'US$179',   eu:'669 €', us:'US$749'},  // Premium
+    pro:     {latam:'US$49,99', eu:'159 €', us:'US$219'},  // Kit Local Pro
+    premium: {latam:'US$179',   eu:'469 €', us:'US$549'},  // Premium
     hogar:   {latam:'US$29,99', eu:'97 €',  us:'US$112'}   // Kit Hogar (por espacio)
   },
   // Enlaces de pago de Hotmart por plan y región. Vacío = el botón pide el enlace por WhatsApp
   pagos: {
-    ie:      {latam:'', eu:'', us:''},
-    pro:     {latam:'', eu:'', us:''},
-    premium: {latam:'', eu:'', us:''},
-    hogar:   {latam:'', eu:'', us:''}
+    ie:      {latam:'https://pay.hotmart.com/B108170255W', eu:'https://pay.hotmart.com/E108170362L', us:'https://pay.hotmart.com/N108171418C'},
+    pro:     {latam:'https://pay.hotmart.com/S108171452Q', eu:'https://pay.hotmart.com/U108171489F', us:'https://pay.hotmart.com/G108171519L'},
+    premium: {latam:'https://pay.hotmart.com/J108171557N', eu:'https://pay.hotmart.com/I108171578M', us:'https://pay.hotmart.com/O108171601U'},
+    hogar:   {latam:'https://pay.hotmart.com/N108171623S', eu:'https://pay.hotmart.com/P108171648V', us:'https://pay.hotmart.com/G108171674K'}
   },
   precioTour: '$19.99',      // precio del Tour virtual (servicio adicional)
   precioGuia: '$9.99',       // precio de la guía "Locales pequeños que venden más"
@@ -784,7 +786,7 @@ var CONFIG = {
 var PLANES = {
   ie:      {nombre:'Idea Express',  desc:'1 propuesta + 5 mejoras · 48 h', estilos:1},
   pro:     {nombre:'Kit Local Pro', desc:'3 propuestas + plano + materiales + presupuesto · 5 días hábiles', estilos:3},
-  premium: {nombre:'Premium',       desc:'Kit Local Pro + tour + reel + plan por etapas + videollamada · 72 h', estilos:3},
+  premium: {nombre:'Premium',       desc:'Kit Local Pro + branding + tour + reel + guía por temporadas + videollamada · 4 días hábiles', estilos:3},
   hogar:   {nombre:'Kit Hogar',     desc:'3 propuestas + video + plano + materiales + presupuesto', estilos:3}
 };
 var REGIONES = {latam:'Latinoamérica', eu:'España y Europa', us:'EE. UU. y Canadá'};
