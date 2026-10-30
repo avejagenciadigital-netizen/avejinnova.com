@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /nuevo/
+Disallow: /pago-recibido.html
+Disallow: /gracias.html
+Sitemap: https://avejinnova.com/sitemap.xml
