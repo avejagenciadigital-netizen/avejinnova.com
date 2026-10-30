@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AVEJ Innova — Diseño de locales y espacios pequeños</title>
+<meta name="description" content="Optimizamos el espacio de tu local para que venda más con el mismo arriendo. Envía una foto y recibe propuestas de diseño para tu local desde 48 h, con precios para Latinoamérica, Europa y EE. UU.">
+<meta property="og:title" content="AVEJ Innova — Tu local puede vender más sin mudarte">
+<meta property="og:description" content="Envía una foto de tu local y recibe propuestas de diseño desde 48 h.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#17181A; --surface:#212320; --line:#3A3C37;
+  --ink:#F1EDE6; --ink-muted:#A6A297;
+  --copper:#C9702F; --copper-dim:#8C4E22;
+}
+html{scroll-behavior:smooth;}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:'Work Sans',ui-sans-serif,system-ui,sans-serif; line-height:1.5; overflow-x:hidden;}
+h1,h2,.display{font-family:'Bebas Neue',ui-sans-serif,sans-serif; letter-spacing:0.02em; line-height:0.95; font-weight:400;}
+a{color:inherit;}
+img{max-width:100%; display:block;}
+main{max-width:640px; margin:0 auto;}
+
+/* header */
+header{position:sticky; top:0; z-index:10; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,0px);}
+.nav{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 20px; max-width:640px; margin:0 auto;}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+.nav-logo{height:40px; width:auto; display:block; flex-shrink:0;}
+.wordmark{font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.04em;}
+.wordmark span{color:var(--copper);}
+.nav-cta{font-size:13px; font-weight:600; border:1px solid var(--copper); color:var(--copper); padding:7px 14px; border-radius:2px; text-decoration:none; white-space:nowrap;}
+
+/* hero */
+.hero{padding:44px 20px 36px; border-bottom:1px solid var(--line); position:relative; overflow:hidden;}
+.eyebrow{font-size:13px; color:var(--copper); font-weight:600; letter-spacing:.04em; text-transform:uppercase; margin:0 0 12px;}
+.hero h1{font-size:54px; margin:0 0 18px; max-width:11ch;}
+.hero p{font-size:16px; color:var(--ink-muted); max-width:36ch; margin:0 0 24px;}
+.cta-row{display:flex; gap:10px; flex-wrap:wrap;}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:13px 20px; border-radius:2px; font-weight:600; font-size:15px; text-decoration:none; border:1px solid transparent; cursor:pointer; font-family:inherit;}
+.btn-primary{background:var(--copper); color:#17181A;}
+.btn-ghost{border-color:var(--line); color:var(--ink); background:transparent;}
+.btn-block{width:100%;}
+.proof{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:28px;}
+.proof div{background:var(--bg); padding:12px 14px;}
+.proof b{display:block; font-family:'Bebas Neue',sans-serif; font-size:28px; font-weight:400; color:var(--ink); line-height:1;}
+.proof span{font-size:12.5px; color:var(--ink-muted);}
+
+/* sections */
+.section{padding:40px 20px; border-bottom:1px solid var(--line);}
+.section h2{font-size:34px; margin:0 0 8px;}
+.section .lead{color:var(--ink-muted); font-size:15px; margin:0 0 24px; max-width:40ch;}
+.kicker{font-size:12px; color:var(--copper); font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin:0 0 8px;}
+.alt{background:var(--surface);}
+
+/* benefits */
+.benefits{list-style:none; padding:0; margin:0 0 28px; display:grid; gap:10px;}
+.benefits li{border:1px solid var(--line); border-radius:4px; padding:14px 16px; font-size:15px;}
+.benefits li b{display:block; font-size:15.5px; margin-bottom:2px;}
+.benefits li span{color:var(--ink-muted); font-size:14px;}
+
+/* before/after slider */
+.ba-block{margin-bottom:28px;}
+.ba-name{font-size:15px; font-weight:700; margin:0 0 10px;}
+.ba{position:relative; width:100%; aspect-ratio:3/4; border-radius:4px; overflow:hidden; border:1px solid var(--line); user-select:none; touch-action:pan-y; background:#000;}
+.ba-layer{position:absolute; inset:0; width:100%; height:100%;}
+.ba-layer img{width:100%; height:100%; object-fit:cover;}
+.ba-before{clip-path: inset(0 50% 0 0);}
+.ba-label{position:absolute; bottom:12px; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:0.06em; padding:4px 10px; background:rgba(23,24,26,.75); color:#F1EDE6; border-radius:2px;}
+.ba-before-label{left:12px;}
+.ba-after-label{right:12px;}
+.ba-handle{position:absolute; top:0; bottom:0; left:50%; width:2px; background:var(--copper); transform:translateX(-1px); pointer-events:none;}
+.ba-grip{position:absolute; top:50%; left:50%; width:38px; height:38px; border-radius:50%; background:var(--copper); transform:translate(-50%,-50%); display:flex; align-items:center; justify-content:center; color:#17181A; font-size:15px; box-shadow:0 2px 8px rgba(0,0,0,.3); pointer-events:none;}
+.ba-range{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:ew-resize; margin:0;}
+.ba-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.ba-row .ba{aspect-ratio:3/4;}
+.ba-row .ba-name{font-size:13.5px;}
+.ba-row .ba-label{font-size:11px; padding:3px 6px; bottom:8px;}
+.ba-row .ba-before-label{left:6px;} .ba-row .ba-after-label{right:6px;}
+.ba-row .ba-grip{width:30px; height:30px; font-size:13px;}
+
+.note{font-size:12.5px; color:var(--ink-muted); margin:-12px 0 24px;}
+.sub{font-family:'Work Sans',sans-serif; font-size:18px; font-weight:700; margin:0 0 12px;}
+
+/* plans */
+.plan{border:1px solid var(--line); border-radius:4px; padding:20px; margin-bottom:14px; position:relative; background:var(--bg);}
+.plan.featured{border-color:var(--copper);}
+.plan .tag{font-size:12px; color:var(--copper); font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin:0 0 8px;}
+.plan h3{font-family:'Work Sans',sans-serif; font-size:19px; font-weight:700; margin:0 0 8px;}
+.plan ul{margin:0 0 4px; padding-left:18px; color:var(--ink-muted); font-size:14.5px;}
+.plan li{margin-bottom:4px;}
+.plan p{color:var(--ink-muted); font-size:14.5px; margin:0 0 14px;}
+
+/* steps */
+.steps{list-style:none; padding:0; margin:0; counter-reset:s;}
+.steps li{counter-increment:s; display:grid; grid-template-columns:44px 1fr; gap:12px; padding:14px 0; border-top:1px solid var(--line);}
+.steps li:first-child{border-top:none;}
+.steps li:before{content:counter(s); font-family:'Bebas Neue',sans-serif; font-size:34px; color:var(--copper); line-height:1;}
+.steps b{display:block; font-size:15.5px;}
+.steps span{color:var(--ink-muted); font-size:14px;}
+
+/* stats */
+.stats{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.stat{border:1px solid var(--line); border-radius:4px; padding:16px;}
+.stat b{display:block; font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:36px; line-height:1; color:var(--copper);}
+.stat span{font-size:13.5px; color:var(--ink-muted);}
+
+/* faq */
+details{border-top:1px solid var(--line); padding:14px 0;}
+details:last-of-type{border-bottom:1px solid var(--line);}
+summary{cursor:pointer; font-weight:600; font-size:15.5px; list-style:none; display:flex; justify-content:space-between; gap:12px;}
+summary::-webkit-details-marker{display:none;}
+summary:after{content:"+"; color:var(--copper); font-size:20px; line-height:1;}
+details[open] summary:after{content:"–";}
+details p{color:var(--ink-muted); font-size:14.5px; margin:10px 0 0;}
+
+/* red */
+.red-box{border:1px dashed var(--copper); border-radius:4px; padding:24px 20px;}
+.red-box h2{font-size:28px; margin:0 0 10px;}
+.red-box p{color:var(--ink-muted); font-size:15px; margin:0 0 20px; max-width:36ch;}
+
+/* form */
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:13px; color:var(--ink-muted); margin-bottom:6px;}
+.field input, .field select{width:100%; padding:11px 12px; border-radius:2px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font-family:inherit; font-size:16px;}
+.field input:focus, .field select:focus{outline:2px solid var(--copper); outline-offset:1px;}
+.field-label{display:block; font-size:13px; color:var(--ink-muted); margin-bottom:8px;}
+.style-grid{display:flex; flex-wrap:wrap; gap:8px;}
+.style-chip{position:relative; cursor:pointer;}
+.style-chip input{position:absolute; opacity:0; width:1px; height:1px;}
+.style-chip span{display:inline-block; padding:8px 12px; border:1px solid var(--line); border-radius:999px; font-size:14px; color:var(--ink); background:var(--bg); transition:background .15s, border-color .15s;}
+.style-chip input:checked + span{background:var(--copper); border-color:var(--copper); color:#fff;}
+.style-chip input:focus-visible + span{outline:2px solid var(--copper); outline-offset:2px;}
+.style-chip input:disabled + span{opacity:.4; cursor:not-allowed;}
+.style-count{font-size:12px; color:var(--ink-muted); margin-top:8px;}
+.style-count.err{color:#c0392b;}
+.form-msg{font-size:14px; margin-top:12px; display:none;}
+.form-msg.ok{color:var(--copper); display:block;}
+
+/* checkout */
+.checkout{display:none; margin-top:18px; border:1px solid var(--copper); border-radius:4px; padding:20px; background:var(--surface);}
+.checkout.show{display:block;}
+.checkout h3{margin:0 0 12px;}
+.checkout-row{display:flex; justify-content:space-between; font-size:15px; margin-bottom:16px; color:var(--ink-muted); gap:10px;}
+.checkout-note{font-size:12.5px; color:var(--ink-muted); margin-top:12px;}
+
+/* footer */
+footer{padding:32px 20px 96px; text-align:center; color:var(--ink-muted); font-size:13px;}
+.social-row{display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:16px;}
+.social-row a{font-size:13px; font-weight:600; border:1px solid var(--line); padding:8px 14px; border-radius:2px; text-decoration:none;}
+
+/* floating whatsapp */
+.float-wa{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:20; background:var(--copper); color:#17181A; height:52px; padding:0 18px; border-radius:26px; display:flex; align-items:center; gap:8px; text-decoration:none; box-shadow:0 4px 14px rgba(0,0,0,.35); font-weight:700; font-size:14px;}
+
+/* abeja animada de fondo */
+.hero{position:relative; overflow:hidden;}
+.bee-fx{position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+.bee-fly{position:absolute; width:150px; top:0; left:0; opacity:.5; filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));
+  offset-path: path('M -60,420 C 40,140 180,460 300,220 C 400,20 520,300 640,160');
+  offset-rotate: 0deg;
+  animation: beeflight 17s ease-in-out infinite, beewing .32s ease-in-out infinite alternate;
+}
+.bee-fly img{width:100%; display:block;}
+@keyframes beeflight{0%{offset-distance:0%;}100%{offset-distance:100%;}}
+@keyframes beewing{from{transform:scaleX(1) rotate(-3deg);}to{transform:scaleX(.88) rotate(3deg);}}
+.pollen{position:absolute; width:7px; height:7px; border-radius:50%; top:0; left:0;
+  background:radial-gradient(circle, var(--copper) 0%, transparent 72%);
+  offset-path: path('M -60,420 C 40,140 180,460 300,220 C 400,20 520,300 640,160');
+  animation: beeflight 17s ease-in-out infinite, pollenfade 2.4s ease-in-out infinite;
+}
+@keyframes pollenfade{0%{opacity:0; transform:scale(.4);}35%{opacity:.75; transform:scale(1);}100%{opacity:0; transform:scale(.2);}}
+.pollen.p1{animation-delay:-.5s,0s;}
+.pollen.p2{animation-delay:-1s,-.3s;}
+.pollen.p3{animation-delay:-1.6s,-.6s;}
+.pollen.p4{animation-delay:-2.2s,-.9s;}
+.pollen.p5{animation-delay:-2.9s,-1.2s;}
+.hero-content{position:relative; z-index:1;}
+
+/* tour virtual (recorrido embebido) */
+.tour-embed{position:relative; width:100%; height:clamp(600px,85vh,700px); border:1px solid var(--line); border-radius:4px; overflow:hidden; background:#141517; margin-bottom:12px;}
+.tour-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0; display:block;}
+
+/* guía */
+.guide{display:grid; grid-template-columns:120px 1fr; gap:18px; align-items:start; margin-bottom:20px;}
+.guide-cover{aspect-ratio:3/4; border-radius:2px 6px 6px 2px; background:linear-gradient(160deg,#2a2b28 0%,#17181A 100%); border:1px solid var(--copper-dim); border-left:6px solid var(--copper); padding:12px 10px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 20px rgba(0,0,0,.35);}
+.guide-cover small{font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--copper); font-weight:700;}
+.guide-cover strong{font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:21px; line-height:.95; color:var(--ink);}
+.guide-cover em{font-style:normal; font-size:9px; color:var(--ink-muted);}
+.guide ul{margin:0; padding-left:18px; color:var(--ink-muted); font-size:14.5px;}
+.guide li{margin-bottom:6px;}
+.pay-note{font-size:12.5px; color:var(--ink-muted); margin:10px 0 0; text-align:center;}
+
+/* menú rápido (fijo arriba) */
+.quicknav{display:flex; gap:6px; overflow-x:auto; padding:0 20px 10px; max-width:640px; margin:0 auto; scrollbar-width:none; -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent);}
+.quicknav::-webkit-scrollbar{display:none;}
+.quicknav a{flex:0 0 auto; font-size:12.5px; font-weight:600; padding:6px 12px; border:1px solid var(--line); border-radius:999px; text-decoration:none; color:var(--ink-muted); white-space:nowrap; transition:background .15s, color .15s, border-color .15s;}
+.quicknav a:hover{color:var(--ink); border-color:var(--copper);}
+.quicknav a.on{background:var(--copper); border-color:var(--copper); color:#17181A;}
+main section[id]{scroll-margin-top:var(--hdr,112px);}
+
+/* panel de opciones (hero) */
+.panel-title{font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-muted); margin:26px 0 10px;}
+.panel{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.tile{display:flex; flex-direction:column; gap:3px; padding:14px; border:1px solid var(--line); border-radius:6px; background:color-mix(in srgb, var(--surface) 92%, transparent); text-decoration:none; min-height:104px; transition:border-color .15s, transform .15s;}
+.tile:hover, .tile:focus-visible{border-color:var(--copper); transform:translateY(-2px); outline:none;}
+.tile svg{width:24px; height:24px; stroke:var(--copper); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; margin-bottom:6px;}
+.tile b{font-size:15px; line-height:1.2;}
+.tile span{font-size:12.5px; color:var(--ink-muted); line-height:1.3;}
+.tile.main{border-color:var(--copper-dim);}
+@media (min-width:560px){ .panel{grid-template-columns:repeat(3,1fr);} }
+
+/* contenido plegable */
+.more-cases[hidden], .fold[hidden]{display:none !important;}
+.btn-more{margin:-8px 0 28px;}
+.opener{margin-top:6px;}
+.field textarea{width:100%; min-height:90px; padding:11px 12px; border-radius:2px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font-family:inherit; font-size:16px; resize:vertical;}
+.field textarea:focus{outline:2px solid var(--copper); outline-offset:1px;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.benefits.grid{grid-template-columns:1fr 1fr;}
+.benefits.grid li{padding:12px; font-size:14px;}
+.benefits.grid li b{font-size:14.5px;}
+.benefits.grid li span{font-size:13px;}
+
+/* proyectos grandes */
+.big-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px;}
+.big-card{border:1px solid var(--line); border-radius:6px; padding:14px; background:var(--bg);}
+.big-card svg{width:24px; height:24px; stroke:var(--copper); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; margin-bottom:6px;}
+.big-card b{display:block; font-size:15px; margin-bottom:2px;}
+.big-card span{font-size:13px; color:var(--ink-muted); line-height:1.35; display:block;}
+.checks{list-style:none; padding:0; margin:0 0 18px; display:grid; gap:8px;}
+.checks li{display:flex; gap:10px; font-size:14.5px; color:var(--ink);}
+.checks li:before{content:"✓"; color:var(--copper); font-weight:700;}
+
+/* región y planes */
+.region{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:0 0 16px;}
+.region-label{font-size:12.5px; color:var(--ink-muted); margin-right:2px;}
+.region button{font-family:inherit; font-size:13px; font-weight:600; padding:7px 12px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--ink-muted); cursor:pointer;}
+.region button[aria-pressed="true"]{background:var(--copper); border-color:var(--copper); color:#17181A;}
+.region button:focus-visible{outline:2px solid var(--copper); outline-offset:2px;}
+.plan .price{font-family:'Bebas Neue',sans-serif; font-size:40px; line-height:1; color:var(--ink); margin:0 0 12px;}
+.plan .price small{font-family:'Work Sans',sans-serif; font-size:13px; color:var(--ink-muted); margin-left:6px; letter-spacing:0;}
+.plan .btn{margin-top:14px;}
+.plan.chosen{box-shadow:0 0 0 2px var(--copper);}
+#planes, #lf-form, #lf-checkout, #cf-form, #cf-checkout{scroll-margin-top:var(--hdr,112px);}
+.guarantee{font-size:13px; color:var(--ink-muted); margin:4px 0 20px;}
+.form-plan{border:1px solid var(--copper-dim); border-radius:4px; padding:12px 14px; margin:0 0 16px; display:flex; justify-content:space-between; gap:10px; align-items:center;}
+.form-plan b{font-size:15px;}
+.form-plan button{font-family:inherit; font-size:12.5px; background:none; border:none; color:var(--copper); cursor:pointer; text-decoration:underline; padding:0;}
+.hero{padding:28px 20px 30px;}
+.hero h1{font-size:46px; margin-bottom:12px;}
+.hero p.panel-title{margin:20px 0 10px;}
+@media (min-width:560px){ .hero h1{font-size:64px;} }
+
+.nav-flag{background:transparent; border:1px solid var(--line); border-radius:999px; font-size:18px; line-height:1; padding:6px 9px; margin-right:8px; cursor:pointer;}
+.geo{position:fixed; inset:0; z-index:100; background:rgba(10,10,11,.78); display:flex; align-items:center; justify-content:center; padding:16px;}
+.geo[hidden]{display:none;}
+.geo-box{background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:22px 18px; width:100%; max-width:440px; max-height:90vh; overflow:auto;}
+.geo-title{font-family:'Bebas Neue',sans-serif; font-size:30px; line-height:1; margin:0 0 6px;}
+.geo-sub{color:var(--ink-muted); font-size:14px; margin:0 0 14px;}
+.geo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+.geo-grid button{font-family:inherit; background:transparent; border:1px solid var(--line); border-radius:6px; color:var(--ink); padding:10px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px;}
+.geo-grid button span{font-size:26px; line-height:1;}
+.geo-grid button[aria-pressed="true"]{border-color:var(--copper); background:rgba(201,112,47,.15);}
+.hl-form{background:#fff; border-radius:6px; padding:6px; min-height:1350px; margin-top:18px;}
+.buy-note{font-size:13px; color:var(--ink-muted); text-align:center; margin:6px 0 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#top">
+      <img class="nav-logo" src="img/img-01.webp" alt="AVEJ">
+      <div class="wordmark">AVEJ <span>INNOVA</span></div>
+    </a>
+    <button type="button" class="nav-flag" id="flag-btn" aria-label="Cambiar país"><span id="flag-now">🌎</span></button>
+    <a class="nav-cta" data-wa="Hola, vengo de Instagram y quiero una propuesta para mi local" href="#">Escribir</a>
+  </div>
+  <nav class="quicknav" id="quicknav" aria-label="Secciones">
+    <a href="#locales">Negocios</a>
+    <a href="#diagnostico">Diagnóstico gratis</a>
+    <a href="#casas">Casas</a>
+    <a href="#grandes">Proyectos grandes</a>
+    <a href="#tour">Tour virtual</a>
+    <a href="#guia">Guía</a>
+    <a href="#empresas">Empresas</a>
+    <a href="#como">Cómo funciona</a>
+    <a href="#faq">Preguntas</a>
+    <a href="#red">Red AVEJ</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="bee-fx" aria-hidden="true">
+    <div class="bee-fly"><img src="img/img-02.webp" alt=""></div>
+    <div class="pollen p1"></div><div class="pollen p2"></div><div class="pollen p3"></div><div class="pollen p4"></div><div class="pollen p5"></div>
+  </div>
+  <div class="hero-content">
+  <p class="eyebrow">Diseño de espacios · AVEJ Innova</p>
+  <h1>Tu local puede vender más sin mudarte.</h1>
+  <p>Propuestas visuales para negocios, casas y proyectos grandes, listas desde 48 horas. Toca lo que necesitas:</p>
+  <p class="panel-title">¿Qué estás buscando?</p>
+  <div class="panel">
+    <a class="tile" href="#diagnostico"><svg viewBox="0 0 24 24"><path d="M9 3h6v4H9z"/><path d="M5 5h4M15 5h4v16H5V5"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg><b>Diagnóstico gratis</b><span>Tu local de 1 a 10</span></a>
+    <a class="tile main" href="#locales"><svg viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M3 9h18"/><path d="M9 20v-6h6v6"/></svg><b>Mi negocio</b><span>Desde <span data-price="ie"></span></span></a>
+    <a class="tile" href="#casas"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Mi casa</b><span>Kit Hogar · <span data-price="hogar"></span></span></a>
+    <a class="tile" href="#grandes"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l6-3v16"/><path d="M11 21V3l8 4v14"/><path d="M14 9h2M14 13h2M14 17h2M7.5 11h1M7.5 15h1"/></svg><b>Proyecto grande</b><span>Cotización a medida</span></a>
+    <a class="tile" href="#tour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><b>Tour virtual</b><span>Recorrido · <span class="price-tour"></span></span></a>
+    <a class="tile" href="#guia"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7"/></svg><b>Guía digital</b><span>Hazlo tú · <span class="price-guia"></span></span></a>
+    <a class="tile" href="#empresas"><svg viewBox="0 0 24 24"><path d="M6 21V4h2v17"/><path d="M4 21h8"/><path d="M8 4h12l-4 4"/><path d="M18 4v6"/><rect x="16" y="10" width="4" height="3"/></svg><b>Empresas</b><span>Constructoras e inmobiliarias</span></a>
+  </div>
+  <div class="region" style="margin:16px 0 0;" role="group" aria-label="Precios para tu región"><span class="region-label">Precios para</span><button type="button" data-region="latam">🌎 Latinoamérica</button><button type="button" data-region="eu">🇪🇸 España y Europa</button><button type="button" data-region="us">🇺🇸 EE. UU. y Canadá</button></div>
+  </div>
+</section>
+
+<section class="section" id="locales">
+  <p class="kicker">Para negocios</p>
+  <h2>Diseño inteligente para tu local</h2>
+  <p class="lead">Un local mal distribuido pierde ventas cada día. Desliza la imagen para ver el cambio.</p>
+  <div class="ba-block">
+    <p class="ba-name">Panadería: el pan escondido → el pan a la vista desde la calle</p>
+    <div class="ba">
+      <div class="ba-layer ba-after"><img src="img/img-03.webp" alt="Propuesta: panadería" loading="lazy"><span class="ba-label ba-after-label">PROPUESTA</span></div>
+      <div class="ba-layer ba-before"><img src="img/img-04.webp" alt="Antes: panadería" loading="lazy"><span class="ba-label ba-before-label">ANTES</span></div>
+      <div class="ba-handle"></div><div class="ba-grip">↔</div>
+      <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y propuesta: panadería">
+    </div>
+  </div>
+  <div class="more-cases" id="more-locales" hidden>
+  <div class="ba-block">
+    <p class="ba-name">Barbería: 1 silla amontonada → 2 puestos trabajando a la vez</p>
+    <div class="ba">
+      <div class="ba-layer ba-after"><img src="img/img-05.webp" alt="Propuesta: barbería" loading="lazy"><span class="ba-label ba-after-label">PROPUESTA</span></div>
+      <div class="ba-layer ba-before"><img src="img/img-06.webp" alt="Antes: barbería" loading="lazy"><span class="ba-label ba-before-label">ANTES</span></div>
+      <div class="ba-handle"></div><div class="ba-grip">↔</div>
+      <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y propuesta: barbería">
+    </div>
+  </div>
+  <div class="ba-block">
+    <p class="ba-name">Cafetería de 3 × 4 m: clientes de pie → todos sentados</p>
+    <div class="ba">
+      <div class="ba-layer ba-after"><img src="img/img-07.webp" alt="Propuesta: cafetería" loading="lazy"><span class="ba-label ba-after-label">PROPUESTA</span></div>
+      <div class="ba-layer ba-before"><img src="img/img-08.webp" alt="Antes: cafetería" loading="lazy"><span class="ba-label ba-before-label">ANTES</span></div>
+      <div class="ba-handle"></div><div class="ba-grip">↔</div>
+      <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y propuesta: cafetería">
+    </div>
+  </div>
+  <div class="ba-block">
+    <p class="ba-name">Local de comida → barra industrial renovada</p>
+    <div class="ba">
+      <div class="ba-layer ba-after"><img src="img/img-09.webp" alt="Propuesta: local de comida" loading="lazy"><span class="ba-label ba-after-label">PROPUESTA</span></div>
+      <div class="ba-layer ba-before"><img src="img/img-10.webp" alt="Antes: local de comida" loading="lazy"><span class="ba-label ba-before-label">ANTES</span></div>
+      <div class="ba-handle"></div><div class="ba-grip">↔</div>
+      <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y propuesta: local de comida">
+    </div>
+  </div>
+  </div>
+  <button type="button" class="btn btn-ghost btn-block btn-more" data-show="more-locales">Ver 3 casos más</button>
+  <!-- Para agregar otro caso, copia un bloque .ba-block dentro de .more-cases y cambia las dos imágenes. -->
+
+  <h3 class="sub">Lo que un mal espacio te está costando</h3>
+  <ul class="benefits grid">
+    <li><b>Producto que no se ve, no se vende</b><span>Una vitrina que mira a la entrada y luz cálida hacen que el cliente entre y compre más.</span></li>
+    <li><b>Cliente que no tiene dónde sentarse, se va</b><span>Bancas corridas, barras en la ventana y mesas que se juntan multiplican los puestos.</span></li>
+    <li><b>Desorden es espera, y espera es venta perdida</b><span>Exhibidores de piso a techo: el cliente ve, escoge y paga rápido.</span></li>
+    <li><b>Un local viejo baja el precio que te pagan</b><span>Un espacio cuidado te permite cobrar mejor por lo mismo que ya vendes.</span></li>
+  </ul>
+
+  <h3 class="sub" id="planes">Elige tu plan</h3>
+  <div class="region" role="group" aria-label="Precios para tu región"><span class="region-label">Precios para</span><button type="button" data-region="latam">🌎 Latinoamérica</button><button type="button" data-region="eu">🇪🇸 España y Europa</button><button type="button" data-region="us">🇺🇸 EE. UU. y Canadá</button></div>
+
+  <div class="plan" data-plan="ie">
+    <p class="tag">Para empezar</p>
+    <h3>Idea Express</h3>
+    <p class="price"><span data-price="ie"></span></p>
+    <ul>
+      <li>1 propuesta visual de tu local en el estilo que elijas</li>
+      <li>5 mejoras ordenadas según cuánto ayudan a vender</li>
+      <li>Entrega en 48 horas</li>
+      <li>Si pasas al Kit Local Pro en 14 días, te descontamos lo que pagaste</li>
+    </ul>
+    <button type="button" class="btn btn-ghost btn-block" data-buy="ie">Elegir Idea Express</button>
+  </div>
+
+  <div class="plan featured" data-plan="pro">
+    <p class="tag">El más elegido</p>
+    <h3>Kit Local Pro</h3>
+    <p class="price"><span data-price="pro"></span></p>
+    <ul>
+      <li>3 propuestas visuales, una por cada estilo que elijas</li>
+      <li>Plano de distribución, lista de materiales y presupuesto estimado</li>
+      <li>1 ajuste a la propuesta que elijas</li>
+      <li>Entrega en 5 días hábiles</li>
+      <li>Enfocado en lo que más vende: distribución, exhibición y puestos</li>
+    </ul>
+    <button type="button" class="btn btn-primary btn-block" data-buy="pro">Elegir Kit Local Pro</button>
+  </div>
+
+  <div class="plan" data-plan="premium">
+    <p class="tag">Apertura que vende</p>
+    <h3>Premium</h3>
+    <p class="price"><span data-price="premium"></span></p>
+    <ul>
+      <li>Todo lo del Kit Local Pro</li>
+      <li>Branding de tu negocio</li>
+      <li>Tour virtual de tu local renovado</li>
+      <li>Reel antes/después con tu marca, listo para anunciar tu reforma</li>
+      <li>Guía práctica de decoración por temporadas y fechas especiales</li>
+      <li>Plan por etapas: qué hacer con poco, con algo más y con todo el presupuesto</li>
+      <li>Videollamada de 45 minutos para revisar tu propuesta</li>
+      <li>2 ajustes y entrega en 4 días hábiles</li>
+    </ul>
+    <button type="button" class="btn btn-ghost btn-block" data-buy="premium">Elegir Premium</button>
+  </div>
+  <p class="guarantee">Si ninguna propuesta te convence, la ajustamos sin costo.</p>
+  <p class="buy-note">Pagas seguro en Hotmart (tarjeta y medios locales). Justo después nos envías las fotos y los datos de tu local en 2 minutos.</p>
+  <a class="btn btn-ghost btn-block" href="#diagnostico">¿Aún no decides? Pide tu diagnóstico gratis</a>
+
+  <form id="lf-form" class="fold" hidden>
+    <div class="form-plan"><b id="lf-plan-label"></b><button type="button" id="lf-change">Cambiar plan</button></div>
+    <div class="field"><label for="lf-name">Nombre</label><input type="text" id="lf-name" autocomplete="name" required></div>
+    <div class="field"><label for="lf-phone">WhatsApp</label><input type="tel" id="lf-phone" autocomplete="tel" required></div>
+    <div class="field"><label for="lf-email">Email (opcional)</label><input type="email" id="lf-email" autocomplete="email"></div>
+    <div class="field"><label for="lf-city">Ciudad y país</label><input type="text" id="lf-city" required></div>
+    <div class="field"><label for="lf-type">Tipo de negocio</label>
+      <select id="lf-type" required>
+        <option value="">Selecciona una opción</option>
+        <option>Barbería / salón de belleza</option>
+        <option>Panadería / cafetería</option>
+        <option>Restaurante / comidas rápidas</option>
+        <option>Tienda / minimercado</option>
+        <option>Ferretería</option>
+        <option>Tienda de ropa / accesorios</option>
+        <option>Consultorio / clínica / spa</option>
+        <option>Gimnasio / estudio de pilates o yoga</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="field"><label for="lf-size">Medidas aproximadas (largo × ancho)</label><input type="text" id="lf-size" placeholder="Ej.: 3 × 4 m" required></div>
+    <div class="field"><label for="lf-problem">¿Qué quieres resolver?</label>
+      <select id="lf-problem" required>
+        <option value="">Selecciona una opción</option>
+        <option>No caben más clientes o puestos</option>
+        <option>El producto no se ve desde afuera</option>
+        <option>Desorden / falta de almacenaje</option>
+        <option>El local se ve viejo</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="field"><label for="lf-when">¿Cuándo quieres hacer el cambio?</label>
+      <select id="lf-when" required>
+        <option value="">Selecciona una opción</option>
+        <option>Este mes</option><option>En 1 a 3 meses</option><option>Más adelante, estoy mirando ideas</option>
+      </select>
+    </div>
+    <div class="field"><span class="field-label" id="lf-style-title">Elige hasta 3 estilos (uno por propuesta)</span>
+      <div class="style-grid" id="lf-styles">
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Moderno cálido"><span>Moderno cálido</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Industrial"><span>Industrial</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Nórdico"><span>Nórdico</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Minimalista"><span>Minimalista</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Japandi"><span>Japandi</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Rústico contemporáneo"><span>Rústico contemporáneo</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Boho"><span>Boho</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Tropical"><span>Tropical</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Clásico elegante"><span>Clásico elegante</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Vintage / retro"><span>Vintage / retro</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Premium oscuro"><span>Premium oscuro</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Colores de mi marca"><span>Colores de mi marca</span></label>
+        <label class="style-chip"><input type="checkbox" name="lf-style" value="Recomiéndenme ustedes"><span>Recomiéndenme ustedes</span></label>
+      </div>
+      <p class="style-count" id="lf-style-count">0 de 3 elegidos</p>
+    </div>
+    <div class="field"><label for="lf-photo">Foto de tu local (desde la entrada)</label><input type="file" id="lf-photo" accept="image/*"></div>
+    <button type="submit" class="btn btn-primary btn-block">Enviar mis datos y pagar</button>
+    <p class="form-msg" id="lf-msg">Se abrió WhatsApp con tus datos. Envía el mensaje y adjunta la foto de tu local.</p>
+  </form>
+
+  <div class="checkout" id="lf-checkout">
+    <p class="tag">Resumen</p>
+    <h3 id="lf-ck-name">Kit Local Pro</h3>
+    <div class="checkout-row"><span id="lf-ck-desc"></span><span id="lf-ck-price"></span></div>
+    <a class="btn btn-primary btn-block" id="lf-pay" href="#" target="_blank" rel="noopener">Pagar y comenzar</a>
+    <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp.</p>
+  </div>
+</section>
+
+
+<section class="section alt" id="diagnostico">
+  <p class="kicker">Gratis · sin compromiso</p>
+  <h2>Diagnóstico gratuito de tu negocio</h2>
+  <p class="lead">Envíanos fotos de tu local y te devolvemos un diagnóstico en PDF: una nota de 1 a 10 de cómo tu espacio ayuda a vender, tu presencia en redes y las 3 cosas que hoy te cuestan clientes.</p>
+  <ul class="benefits">
+    <li><b>Te llega por WhatsApp y correo</b><span>Revisado por nuestro equipo, no es un reporte automático genérico.</span></li>
+    <li><b>Sin pagar nada</b><span>Solo te pedimos que sigas a @avej.innova en Instagram.</span></li>
+  </ul>
+  <div class="hl-form">
+    <iframe src="https://api.leadconnectorhq.com/widget/form/1CyI1yTtw2NuGjsoy7VO" style="width:100%;height:100%;border:none;border-radius:3px" id="inline-1CyI1yTtw2NuGjsoy7VO" data-layout="{'id':'INLINE'}" data-trigger-type="alwaysShow" data-trigger-value="" data-activation-type="alwaysActivated" data-activation-value="" data-deactivation-type="neverDeactivate" data-deactivation-value="" data-form-name="Diagnóstico gratuito AVEJ" data-height="1350" data-layout-iframe-id="inline-1CyI1yTtw2NuGjsoy7VO" data-form-id="1CyI1yTtw2NuGjsoy7VO" title="Diagnóstico gratuito AVEJ"></iframe>
+  </div>
+</section>
+
+<section class="section" id="casas">
+  <p class="kicker">Para tu casa</p>
+  <h2>Reimagina tu espacio</h2>
+  <p class="lead">Cuartos pequeños, salas, baños y patios. Sube una foto y recibe 3 formas de transformarlo en los estilos que elijas.</p>
+
+  <div class="ba-row">
+    <div class="ba-block">
+      <p class="ba-name">Habitación → loft</p>
+      <div class="ba">
+        <div class="ba-layer ba-after"><img src="img/img-11.webp" alt="Después: habitación loft"><span class="ba-label ba-after-label">PROPUESTA</span></div>
+        <div class="ba-layer ba-before"><img src="img/img-12.webp" alt="Antes: habitación simple"><span class="ba-label ba-before-label">ANTES</span></div>
+        <div class="ba-handle"></div><div class="ba-grip">↔</div>
+        <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y después: habitación">
+      </div>
+    </div>
+    <div class="ba-block">
+      <p class="ba-name">Baño → piedra e iluminación</p>
+      <div class="ba">
+        <div class="ba-layer ba-after"><img src="img/img-13.webp" alt="Después: baño de piedra"><span class="ba-label ba-after-label">PROPUESTA</span></div>
+        <div class="ba-layer ba-before"><img src="img/img-14.webp" alt="Antes: baño deteriorado"><span class="ba-label ba-before-label">ANTES</span></div>
+        <div class="ba-handle"></div><div class="ba-grip">↔</div>
+        <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Comparar antes y después: baño">
+      </div>
+    </div>
+  </div>
+
+  <div class="region" role="group" aria-label="Precios para tu región"><span class="region-label">Precios para</span><button type="button" data-region="latam">🌎 Latinoamérica</button><button type="button" data-region="eu">🇪🇸 España y Europa</button><button type="button" data-region="us">🇺🇸 EE. UU. y Canadá</button></div>
+  <div class="plan featured">
+    <p class="tag">Kit Hogar</p>
+    <h3>3 propuestas para tu casa</h3>
+    <p class="price"><span data-price="hogar"></span><small>por espacio</small></p>
+    <ul>
+      <li>3 propuestas visuales a partir de tu foto, en los estilos que elijas</li>
+      <li>Eliges tu favorita</li>
+      <li>Recibes video de la transformación, plano, lista de materiales y presupuesto estimado</li>
+    </ul>
+  </div>
+
+  <button type="button" class="btn btn-primary btn-block opener" data-buy="hogar">Empezar mi Kit Hogar</button>
+  <form id="cf-form" class="fold" hidden>
+    <div class="field"><label for="cf-name">Nombre</label><input type="text" id="cf-name" autocomplete="name" required></div>
+    <div class="field"><label for="cf-contact">WhatsApp</label><input type="tel" id="cf-contact" autocomplete="tel" required></div>
+    <div class="field"><label for="cf-email">Email (opcional)</label><input type="email" id="cf-email" autocomplete="email"></div>
+    <div class="field"><label for="cf-city">Ciudad y país</label><input type="text" id="cf-city" required></div>
+    <div class="field"><label for="cf-space">Tipo de espacio</label>
+      <select id="cf-space" required>
+        <option value="">Selecciona una opción</option>
+        <option>Habitación</option><option>Cocina</option><option>Baño</option>
+        <option>Sala / comedor</option><option>Apartaestudio</option>
+        <option>Patio / balcón</option><option>Mueble específico</option><option>Otro</option>
+      </select>
+    </div>
+    <div class="field"><span class="field-label">Elige hasta 3 estilos (uno por propuesta)</span>
+      <div class="style-grid" id="cf-styles">
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Moderno cálido"><span>Moderno cálido</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Industrial"><span>Industrial</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Nórdico"><span>Nórdico</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Minimalista"><span>Minimalista</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Japandi"><span>Japandi</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Rústico contemporáneo"><span>Rústico contemporáneo</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Boho"><span>Boho</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Tropical"><span>Tropical</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Clásico elegante"><span>Clásico elegante</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Vintage / retro"><span>Vintage / retro</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Premium oscuro"><span>Premium oscuro</span></label>
+        <label class="style-chip"><input type="checkbox" name="cf-style" value="Recomiéndenme ustedes"><span>Recomiéndenme ustedes</span></label>
+      </div>
+      <p class="style-count" id="cf-style-count">0 de 3 elegidos</p>
+    </div>
+    <div class="field"><label for="cf-budget">Presupuesto aproximado</label><input type="text" id="cf-budget" required></div>
+    <div class="field"><label for="cf-photo">Foto de tu espacio</label><input type="file" id="cf-photo" accept="image/*"></div>
+    <button type="submit" class="btn btn-primary btn-block">Quiero mis 3 propuestas</button>
+    <p class="form-msg" id="cf-msg">Se abrió WhatsApp con tus datos. Envía el mensaje y adjunta la foto de tu espacio.</p>
+  </form>
+
+  <div class="checkout" id="cf-checkout">
+    <p class="tag">Resumen</p>
+    <h3>Kit Hogar</h3>
+    <div class="checkout-row"><span>3 propuestas + video + plano + materiales + presupuesto</span><span data-price="hogar"></span></div>
+    <a class="btn btn-primary btn-block" id="cf-pay" href="#" target="_blank" rel="noopener">Pagar y comenzar</a>
+    <p class="checkout-note">Pago seguro con Hotmart (tarjeta y medios locales). Si prefieres Binance o PayPal, escríbenos por WhatsApp. ¿Quieres verlo por dentro? Suma el <a href="#tour" style="color:var(--copper);">Tour virtual</a>.</p>
+  </div>
+</section>
+
+<section class="section alt" id="grandes">
+  <p class="kicker">Proyectos grandes</p>
+  <h2>Proyectos grandes, a tu medida</h2>
+  <p class="lead">Diseñamos el conjunto completo, espacio por espacio, y te enviamos una cotización según el tamaño de tu proyecto.</p>
+  <div class="big-grid">
+    <div class="big-card"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><b>Casas grandes</b><span>Todos los espacios con un mismo estilo, de la fachada al jardín.</span></div>
+    <div class="big-card"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><b>Negocios de varios espacios</b><span>Restaurantes, hoteles, clínicas y tiendas con varias áreas.</span></div>
+    <div class="big-card"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/><path d="M11 21v-3h2v3"/></svg><b>Oficinas</b><span>Complejos de oficinas, coworking, recepción y zonas comunes.</span></div>
+    <div class="big-card"><svg viewBox="0 0 24 24"><path d="M12 3l6 8h-3l4 5H5l4-5H6z"/><path d="M12 16v5"/></svg><b>Urbanismos</b><span>Conjuntos residenciales: fachadas, accesos, parques y zonas comunes.</span></div>
+  </div>
+  <ul class="checks">
+    <li>Propuestas visuales de cada espacio con un estilo unificado</li>
+    <li>Recorrido virtual del proyecto completo</li>
+    <li>Planos, lista de materiales y presupuesto estimado por etapas</li>
+    <li>Ejecución con la red de profesionales AVEJ, según tu ciudad</li>
+  </ul>
+  <button type="button" class="btn btn-primary btn-block opener" data-open="gf-form">Cotizar mi proyecto</button>
+  <form id="gf-form" class="fold" hidden>
+    <div class="field"><label for="gf-name">Nombre</label><input type="text" id="gf-name" autocomplete="name" required></div>
+    <div class="field"><label for="gf-phone">WhatsApp</label><input type="tel" id="gf-phone" autocomplete="tel" required></div>
+    <div class="field"><label for="gf-city">Ciudad y país</label><input type="text" id="gf-city" required></div>
+    <div class="field"><label for="gf-type">Tipo de proyecto</label>
+      <select id="gf-type" required>
+        <option value="">Selecciona una opción</option>
+        <option>Casa grande</option>
+        <option>Negocio de varios espacios</option>
+        <option>Hotel / restaurante</option>
+        <option>Complejo de oficinas / coworking</option>
+        <option>Urbanismo / conjunto residencial</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="gf-spaces">Número de espacios</label>
+        <select id="gf-spaces" required>
+          <option value="">Elige</option>
+          <option>2 a 4</option><option>5 a 10</option><option>Más de 10</option><option>No sé aún</option>
+        </select>
+      </div>
+      <div class="field"><label for="gf-area">Área aprox. (m²)</label><input type="text" id="gf-area" inputmode="numeric" placeholder="Opcional"></div>
+    </div>
+    <div class="field"><label for="gf-stage">¿En qué etapa está?</label>
+      <select id="gf-stage" required>
+        <option value="">Selecciona una opción</option>
+        <option>Es una idea</option>
+        <option>Tengo planos</option>
+        <option>Está en obra gris</option>
+        <option>Quiero remodelar algo existente</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="gf-budget">Presupuesto estimado</label><input type="text" id="gf-budget" placeholder="Opcional"></div>
+      <div class="field"><label for="gf-when">¿Para cuándo?</label>
+        <select id="gf-when">
+          <option>Lo antes posible</option><option>En 1 a 3 meses</option><option>En 3 a 6 meses</option><option>Más adelante</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label for="gf-desc">Cuéntanos del proyecto</label><textarea id="gf-desc" placeholder="Qué espacios quieres transformar y qué te gustaría lograr"></textarea></div>
+    <button type="submit" class="btn btn-primary btn-block">Enviar y cotizar por WhatsApp</button>
+    <p class="checkout-note">Al enviar se abre WhatsApp con tus datos. Ahí te pediremos fotos o planos para cotizar.</p>
+    <p class="form-msg" id="gf-msg">Se abrió WhatsApp con tus datos. Envía el mensaje y adjunta fotos o planos.</p>
+  </form>
+</section>
+
+<section class="section" id="tour">
+  <p class="kicker">Nuevo · Servicio adicional</p>
+  <h2>Tour virtual por nuestras transformaciones</h2>
+  <p class="lead">Así se ve un recorrido real: la Panadería San Cayetano con nuestra propuesta. Arrastra para mirar, toca los puntos para moverte y usa “Hoy” para ver cómo está ahora.</p>
+
+  <div class="tour-embed">
+    <iframe src="recorridos/san-cayetano/" title="Recorrido virtual: Panadería San Cayetano" loading="lazy" allow="fullscreen"></iframe>
+  </div>
+  <a class="btn btn-ghost btn-block" href="recorridos/san-cayetano/" target="_blank" rel="noopener">Abrir el recorrido en pantalla completa</a>
+  <p class="note" style="margin:10px 0 24px;">Caso: Panadería San Cayetano · Propuesta “Marca San Cayetano” de AVEJ Innova.</p>
+
+  <div class="plan featured">
+    <p class="tag">Servicio adicional</p>
+    <h3>Tour virtual de tu espacio renovado — <span class="price-tour"></span></h3>
+    <ul>
+      <li>Un recorrido como este, hecho con la propuesta que elegiste de tu Kit</li>
+      <li>Escena por escena: la entrada, el interior y cada zona clave</li>
+      <li>Botón para comparar con la foto real de cómo está hoy</li>
+      <li>Te llega un enlace con la marca AVEJ: se abre en cualquier celular, sin instalar nada</li>
+      <li>Ideal para mostrárselo a tu socio, a tu familia o a tu maestro de obra antes de invertir</li>
+    </ul>
+    <p style="margin:10px 0 14px;">Se agrega al Kit Local Pro o al Kit Hogar, y ya viene incluido en el plan Premium. Es un recorrido por vistas conectadas de tu espacio, no un video 360°.</p>
+    <a class="btn btn-primary btn-block" id="tour-pay" href="#" target="_blank" rel="noopener">Agregar Tour virtual</a>
+  </div>
+</section>
+
+<section class="section alt" id="guia">
+  <p class="kicker">Guía digital · AVEJ Innova</p>
+  <h2>Locales pequeños que venden más</h2>
+  <p class="lead">¿Todavía no vas a remodelar? Empieza con la guía y aplica tú mismo las ideas que usamos en cada propuesta.</p>
+  <div class="guide">
+    <div class="guide-cover" aria-hidden="true">
+      <small>AVEJ Innova</small>
+      <strong>Locales pequeños que venden más</strong>
+      <em>Guía digital</em>
+    </div>
+    <ul>
+      <li>Para dueños de barberías, cafeterías, tiendas y locales de pocos metros</li>
+      <li>Cómo hacer que tu producto se vea desde la calle</li>
+      <li>Cómo ganar puestos y orden sin mudarte</li>
+      <li>Ideas que puedes aplicar por etapas y con poco presupuesto</li>
+      <li>Descarga inmediata: la lees en el celular o la computadora</li>
+    </ul>
+  </div>
+  <a class="btn btn-primary btn-block" id="guia-pay" href="#" target="_blank" rel="noopener">Comprar la guía</a>
+  <p class="pay-note">Pago seguro con Hotmart. Recibes el acceso en tu correo apenas pagas.</p>
+</section>
+
+<section class="section" id="empresas">
+  <p class="kicker">Para empresas</p>
+  <h2>Constructoras, inmobiliarias y marcas del sector</h2>
+  <p class="lead">Convertimos espacios vacíos o en obra gris en videos de transformación que venden.</p>
+  <div class="plan">
+    <p class="tag">Constructoras</p>
+    <h3>Videos de preventa</h3>
+    <p>Tu proyecto en obra gris transformado en un apartamento terminado y amoblado, listo para redes y sala de ventas.</p>
+  </div>
+  <div class="plan">
+    <p class="tag">Inmobiliarias y alquileres</p>
+    <h3>Inmuebles amoblados con IA</h3>
+    <p>Fotos y video de tus inmuebles vacíos amoblados en 2 o 3 estilos para que el cliente imagine su vida ahí.</p>
+  </div>
+  <div class="plan">
+    <p class="tag">Ferreterías, muebles y acabados</p>
+    <h3>Contenido mensual</h3>
+    <p>Reels de transformación donde tus productos aparecen instalados, en el formato que ya probamos en nuestras redes.</p>
+  </div>
+  <a class="btn btn-primary btn-block" data-wa="Hola, represento a una empresa y quiero una muestra gratis de video de transformación" href="#">Pedir una muestra gratis</a>
+</section>
+
+<section class="section alt" id="como">
+  <p class="kicker">Cómo funciona</p>
+  <h2>De la foto a la propuesta desde 48 horas</h2>
+  <ol class="steps">
+    <li><div><b>Nos envías una foto y las medidas</b><span>Desde la entrada, como la vería un cliente. No importa si está desordenado.</span></div></li>
+    <li><div><b>Recibes tus propuestas visuales</b><span>Una por cada estilo que elegiste, adaptadas a tu negocio y presupuesto.</span></div></li>
+    <li><div><b>Eliges la que más te guste</b><span>Te entregamos plano, lista de materiales y presupuesto estimado.</span></div></li>
+    <li><div><b>Lo ejecutas tú o lo hacemos contigo</b><span>Con tu maestro de obra o con la red de profesionales AVEJ en tu ciudad.</span></div></li>
+  </ol>
+</section>
+
+<section class="section" id="faq">
+  <p class="kicker">Preguntas frecuentes</p>
+  <h2>Antes de empezar</h2>
+  <details><summary>¿Cómo se hacen las propuestas?</summary><p>Partimos de tu foto y tus medidas. Las propuestas visuales se generan con inteligencia artificial y nuestro equipo prepara el plano, la lista de materiales y el presupuesto de la opción que elijas.</p></details>
+  <details><summary>¿En cuánto tiempo las recibo?</summary><p>Idea Express en 48 horas, Kit Local Pro en 5 días hábiles y Premium en 4 días hábiles, contados desde que recibimos tu foto, tus medidas y el pago. En proyectos grandes el plazo depende del tamaño y te lo confirmamos en la cotización.</p></details>
+  <details><summary>¿Por qué el precio cambia según mi país?</summary><p>Ajustamos el precio al mercado de cada región: Latinoamérica, España y Europa, y EE. UU. y Canadá. El servicio que recibes es el mismo. Elige tu región arriba de los planes.</p></details>
+  <details><summary>¿Trabajan en mi ciudad?</summary><p>Las propuestas y los planos se entregan en línea a cualquier país. La ejecución depende de si tenemos profesionales en tu ciudad; escríbenos y te confirmamos.</p></details>
+  <details><summary>¿Cómo pago?</summary><p>Con el botón de pago después de enviar tus datos: el pago se hace en Hotmart con tarjeta o medios locales. Si prefieres Binance o PayPal, escríbenos por WhatsApp y te enviamos los datos.</p></details>
+  <details><summary>Mi local es muy pequeño, ¿sirve igual?</summary><p>Es justo donde más se nota. En un local de 3 × 4 m, mover el mostrador o cambiar sillas por una banca corrida puede sumar varios puestos o dejar tu producto a la vista desde la calle.</p></details>
+  <details><summary>No tengo mucho presupuesto para remodelar.</summary><p>Por eso cada propuesta trae presupuesto estimado y lista de materiales. Puedes empezar por el cambio que más vende (casi siempre la vitrina o la distribución) y hacer el resto por etapas.</p></details>
+  <details><summary>¿Tengo que cerrar el negocio?</summary><p>No para recibir las propuestas: solo necesitamos una foto y las medidas. Para ejecutar, el plano permite planear la obra en pocos días o por partes, sin cerrar.</p></details>
+  <details><summary>¿Lo puede hacer mi propio maestro de obra?</summary><p>Sí. El plano y la lista de materiales están pensados para que cualquier maestro de obra los siga. Si no tienes uno, te conectamos con la red AVEJ en tu ciudad.</p></details>
+  <details><summary>¿Sirve para mi tipo de negocio?</summary><p>Trabajamos con barberías, salones, panaderías, cafeterías, restaurantes, tiendas, ferreterías y tiendas de ropa. Si el tuyo es otro, escríbenos y te decimos si aplica antes de que pagues.</p></details>
+  <details><summary>¿Qué es el Tour virtual?</summary><p>Un recorrido por tu espacio renovado, escena por escena, con la propuesta que elegiste. Lo abres desde un enlace en el celular y puedes comparar cada vista con la foto real. Es un servicio adicional a tu Kit y viene incluido en el plan Premium.</p></details>
+  <details><summary>¿Y si no me gusta ninguna propuesta?</summary><p>Escríbenos por WhatsApp y ajustamos sin costo la que más se acerque a lo que buscas. El Kit Local Pro incluye 1 ajuste y el Premium 2.</p></details>
+  <details><summary>¿Hacen proyectos grandes?</summary><p>Sí: casas grandes, negocios de varios espacios, oficinas y urbanismos. Llena el formulario de <a href="#grandes" style="color:var(--copper);">proyectos grandes</a> y te enviamos una cotización a medida por WhatsApp.</p></details>
+  <details><summary>¿Venden planos de las piezas de los reels?</summary><p>Sí. Si viste una pieza en nuestros reels, pide ese plano puntual por WhatsApp.</p></details>
+  <details><summary>¿Ustedes ejecutan la obra?</summary><p>Conectamos tu proyecto con la red de profesionales AVEJ en tu ciudad, con el plano y el presupuesto que ya tienes.</p></details>
+  <!-- Cuando tengas clientes reales, agrega aquí sus testimonios (con su permiso). -->
+</section>
+
+<section class="section alt" id="red">
+  <div class="red-box">
+    <h2>¿Trabajas en construcción o carpintería?</h2>
+    <p>Súmate a la red de profesionales AVEJ. Coordinamos proyectos según la demanda en tu ciudad y te pagamos por tu trabajo.</p>
+    <button type="button" class="btn btn-primary btn-block opener" data-open="redForm">Quiero unirme a la red</button>
+    <form id="redForm" class="fold" hidden>
+      <div class="field"><label for="rf-name">Nombre completo</label><input type="text" id="rf-name" required></div>
+      <div class="field"><label for="rf-city">Ciudad</label><input type="text" id="rf-city" required></div>
+      <div class="field"><label for="rf-trade">Especialidad</label>
+        <select id="rf-trade" required>
+          <option value="">Selecciona una opción</option>
+          <option>Albañilería</option><option>Ebanistería / carpintería</option><option>Herrería</option>
+          <option>Jardinería / exteriores</option><option>Pintura / acabados</option><option>Electricidad</option>
+          <option>Ornamentación (cemento / mosaico)</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="field"><label for="rf-exp">Años de experiencia</label><input type="text" id="rf-exp" required></div>
+      <div class="field"><label for="rf-phone">WhatsApp de contacto</label><input type="tel" id="rf-phone" required></div>
+      <div class="field"><label for="rf-portfolio">Link a tu portafolio o redes (opcional)</label><input type="text" id="rf-portfolio"></div>
+      <button type="submit" class="btn btn-primary btn-block">Enviar solicitud</button>
+      <p class="form-msg" id="rf-msg">Se abrió WhatsApp para confirmar tu envío.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<div class="geo" id="geo" hidden role="dialog" aria-modal="true" aria-labelledby="geo-title">
+  <div class="geo-box">
+    <p class="geo-title" id="geo-title">¿Desde dónde nos visitas?</p>
+    <p class="geo-sub">Te mostramos los precios de tu país.</p>
+    <div class="geo-grid" id="geo-grid"></div>
+    <button type="button" class="btn btn-primary btn-block" id="geo-ok">Continuar</button>
+  </div>
+</div>
+
+
+<footer>
+  <div class="social-row">
+    <a href="https://www.instagram.com/avej.innova" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.tiktok.com/@avejinnova8" target="_blank" rel="noopener">TikTok</a>
+    <a href="https://youtube.com/@avejinnova" target="_blank" rel="noopener">YouTube</a>
+  </div>
+  AVEJ Innova — Diseño de locales y espacios pequeños · +57 313 828 7521
+</footer>
+
+<a class="float-wa" data-wa="Hola, vengo de Instagram y tengo una pregunta" href="#" aria-label="Escribir por WhatsApp">💬 WhatsApp</a>
+
+<script>
+/* ===== CONFIGURACIÓN: cambia solo estos valores ===== */
+var CONFIG = {
+  whatsapp: '573138287521',
+  // Precios por región: latam = Latinoamérica, eu = España y Europa, us = EE. UU. y Canadá
+  precios: {
+    ie:      {latam:'US$12,99', eu:'15,99 €', us:'US$19,99'},  // Idea Express
+    pro:     {latam:'US$24,99', eu:'32,99 €', us:'US$39,99'},  // Kit Local Pro
+    premium: {latam:'US$45,99', eu:'59,99 €', us:'US$69,99'},  // Premium
+    hogar:   {latam:'US$24,99', eu:'32,99 €', us:'US$39,99'}   // Kit Hogar (por espacio)
+  },
+  // Enlaces de pago de Hotmart por plan y región. Vacío = el botón pide el enlace por WhatsApp
+  pagos: {
+    ie:      {latam:'https://pay.hotmart.com/T108238666H?off=9upsyvk0', eu:'https://pay.hotmart.com/T108238666H?off=dd7fpvhu', us:'https://pay.hotmart.com/T108238666H?off=vu4e42yb'},
+    // Kit Local Pro, Premium y Kit Hogar: aprobados en Hotmart (30 oct 2026).
+    // Links listos para activar cuando Hotmart los apruebe:
+    //   pro     latam https://pay.hotmart.com/W108239070B?off=klj05l7j  eu ?off=z4fsgw5r  us ?off=2tyk0m3e
+    //   premium latam https://pay.hotmart.com/A108239366T?off=sphb5em6  eu ?off=18wqag66  us ?off=5fazkmzw
+    //   hogar   latam https://pay.hotmart.com/R108239496M?off=94ohle52  eu ?off=tvatp1ur  us ?off=twqf4i7e
+    pro:     {latam:'https://pay.hotmart.com/W108239070B?off=klj05l7j', eu:'https://pay.hotmart.com/W108239070B?off=z4fsgw5r', us:'https://pay.hotmart.com/W108239070B?off=2tyk0m3e'},
+    premium: {latam:'https://pay.hotmart.com/A108239366T?off=sphb5em6', eu:'https://pay.hotmart.com/A108239366T?off=18wqag66', us:'https://pay.hotmart.com/A108239366T?off=5fazkmzw'},
+    hogar:   {latam:'https://pay.hotmart.com/R108239496M?off=94ohle52', eu:'https://pay.hotmart.com/R108239496M?off=tvatp1ur', us:'https://pay.hotmart.com/R108239496M?off=twqf4i7e'}
+  },
+  precioTour: '$19.99',      // precio del Tour virtual (servicio adicional)
+  precioGuia: '$9.99',       // precio de la guía "Locales pequeños que venden más"
+  pagoGuia: 'https://pay.hotmart.com/P108056690W?off=z6t186dy', // Hotmart — guía
+  pagoTour: ''               // pega aquí el enlace de Hotmart del Tour virtual. Vacío = se pide por WhatsApp
+};
+var PLANES = {
+  ie:      {nombre:'Idea Express',  desc:'1 propuesta + 5 mejoras · 48 h', estilos:1},
+  pro:     {nombre:'Kit Local Pro', desc:'3 propuestas + plano + materiales + presupuesto · 5 días hábiles', estilos:3},
+  premium: {nombre:'Premium',       desc:'Kit Local Pro + branding + tour + reel + guía por temporadas + videollamada · 4 días hábiles', estilos:3},
+  hogar:   {nombre:'Kit Hogar',     desc:'3 propuestas + video + plano + materiales + presupuesto', estilos:3}
+};
+var REGIONES = {latam:'Latinoamérica', eu:'España y Europa', us:'EE. UU. y Canadá'};
+/* ==================================================== */
+
+function waLink(text){ return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(text); }
+
+/* región: ?r=latam|eu|us, luego lo guardado, luego la zona horaria */
+var STATE = {region:'latam', plan:'pro'};
+function detectRegion(){
+  var q = new URLSearchParams(location.search).get('r');
+  if(q && REGIONES[q]) return q;
+  try{ var s = localStorage.getItem('avej-region'); if(s && REGIONES[s]) return s; }catch(e){}
+  var tz = ''; try{ tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; }catch(e){}
+  if(/^Europe\//.test(tz) || tz === 'Atlantic/Canary' || tz === 'Atlantic/Madeira') return 'eu';
+  if(/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Juneau|Indiana|Kentucky|North_Dakota|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Whitehorse)/.test(tz) || tz === 'Pacific/Honolulu') return 'us';
+  return 'latam';
+}
+function precio(plan){ return CONFIG.precios[plan][STATE.region]; }
+function setRegion(r){
+  STATE.region = r;
+  try{ localStorage.setItem('avej-region', r); }catch(e){}
+  document.querySelectorAll('[data-price]').forEach(function(el){ el.textContent = precio(el.getAttribute('data-price')); });
+  document.querySelectorAll('[data-region]').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-region') === r ? 'true' : 'false'); });
+  refreshLocal();
+  setPay('cf-pay', 'hogar');
+}
+document.querySelectorAll('[data-region]').forEach(function(b){
+  b.addEventListener('click', function(){ setRegion(b.getAttribute('data-region')); });
+});
+document.querySelectorAll('.price-tour').forEach(function(el){ el.textContent = CONFIG.precioTour; });
+document.querySelectorAll('.price-guia').forEach(function(el){ el.textContent = CONFIG.precioGuia; });
+
+/* menú rápido: altura del encabezado, sección activa */
+(function(){
+  var header = document.querySelector('header'), qn = document.getElementById('quicknav');
+  function setH(){ document.documentElement.style.setProperty('--hdr', (header.offsetHeight + 8) + 'px'); }
+  setH(); window.addEventListener('resize', setH);
+  var links = {}; qn.querySelectorAll('a').forEach(function(a){ links[a.getAttribute('href').slice(1)] = a; });
+  var current = null;
+  function mark(id){
+    if(id === current) return; current = id;
+    Object.keys(links).forEach(function(k){ links[k].classList.toggle('on', k === id); });
+    var a = links[id]; if(a){ qn.scrollTo({left: a.offsetLeft - qn.clientWidth/2 + a.offsetWidth/2, behavior:'smooth'}); }
+  }
+  var secs = Object.keys(links).map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  function onScroll(){
+    var y = header.offsetHeight + 40, found = null;
+    secs.forEach(function(sec){ if(sec.getBoundingClientRect().top <= y) found = sec.id; });
+    mark(found);
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+})();
+
+/* contenido plegable: formularios y casos extra */
+document.querySelectorAll('[data-open]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var f = document.getElementById(btn.getAttribute('data-open'));
+    f.hidden = false; btn.hidden = true;
+    var first = f.querySelector('input, select, textarea');
+    f.scrollIntoView({behavior:'smooth', block:'start'});
+    if(first) setTimeout(function(){ first.focus({preventScroll:true}); }, 450);
+  });
+});
+document.querySelectorAll('[data-show]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.getElementById(btn.getAttribute('data-show')).hidden = false; btn.hidden = true;
+  });
+});
+document.querySelectorAll('[data-wa]').forEach(function(a){
+  a.href = waLink(a.getAttribute('data-wa')); a.target = '_blank'; a.rel = 'noopener';
+});
+
+function setPay(id, plan){
+  var a = document.getElementById(id), link = CONFIG.pagos[plan][STATE.region], p = precio(plan);
+  if(link){ a.href = link; a.textContent = 'Pagar ' + p + ' y comenzar'; }
+  else { a.href = waLink('Hola, ya envié mis datos. Quiero pagar ' + PLANES[plan].nombre + ' (' + p + ', ' + REGIONES[STATE.region] + '). ¿Me compartes el enlace de pago?'); a.textContent = 'Pedir enlace de pago por WhatsApp'; }
+}
+
+/* planes de negocio */
+function refreshLocal(){
+  var pl = PLANES[STATE.plan];
+  document.getElementById('lf-plan-label').textContent = 'Tu plan: ' + pl.nombre + ' · ' + precio(STATE.plan);
+  document.getElementById('lf-ck-name').textContent = pl.nombre;
+  document.getElementById('lf-ck-desc').textContent = pl.desc;
+  document.getElementById('lf-ck-price').textContent = precio(STATE.plan);
+  document.getElementById('lf-style-title').textContent = pl.estilos === 1 ? 'Elige 1 estilo' : 'Elige hasta 3 estilos (uno por propuesta)';
+  document.querySelectorAll('.plan[data-plan]').forEach(function(c){ c.classList.toggle('chosen', c.getAttribute('data-plan') === STATE.plan && !document.getElementById('lf-form').hidden); });
+  if(typeof styleRefresh === 'function') styleRefresh();
+  setPay('lf-pay', STATE.plan);
+}
+function choosePlan(p){
+  STATE.plan = p;
+  var f = document.getElementById('lf-form');
+  f.hidden = false;
+  document.getElementById('lf-checkout').classList.remove('show');
+  refreshLocal();
+  f.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(function(){ var first = f.querySelector('input'); if(first) first.focus({preventScroll:true}); }, 450);
+}
+document.querySelectorAll('[data-choose]').forEach(function(b){
+  b.addEventListener('click', function(){ choosePlan(b.getAttribute('data-choose')); });
+});
+document.getElementById('lf-change').addEventListener('click', function(){
+  document.getElementById('planes').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* guía */
+(function(){
+  var a = document.getElementById('guia-pay');
+  if(CONFIG.pagoGuia){ a.href = CONFIG.pagoGuia; a.textContent = 'Comprar la guía — ' + CONFIG.precioGuia; }
+  else { a.href = waLink('Hola, quiero la guía "Locales pequeños que venden más" (' + CONFIG.precioGuia + ')'); a.textContent = 'Pedir la guía por WhatsApp'; }
+})();
+
+/* tour virtual: pago */
+(function(){
+  var a = document.getElementById('tour-pay');
+  if(CONFIG.pagoTour){ a.href = CONFIG.pagoTour; a.textContent = 'Agregar Tour virtual — ' + CONFIG.precioTour; }
+  else { a.href = waLink('Hola, quiero agregar el Tour virtual (' + CONFIG.precioTour + ') a mi Kit'); a.textContent = 'Agregar Tour virtual — ' + CONFIG.precioTour; }
+})();
+
+/* sliders antes/después */
+document.querySelectorAll('.ba').forEach(function(block){
+  var before = block.querySelector('.ba-before'), handle = block.querySelector('.ba-handle'),
+      grip = block.querySelector('.ba-grip'), range = block.querySelector('.ba-range');
+  function update(v){ before.style.clipPath = 'inset(0 ' + (100-v) + '% 0 0)'; handle.style.left = v + '%'; grip.style.left = v + '%'; }
+  range.addEventListener('input', function(e){ update(e.target.value); });
+  update(50);
+});
+
+function val(id){ return document.getElementById(id).value.trim(); }
+function hasFile(id){ var f = document.getElementById(id); return f && f.files && f.files.length > 0; }
+
+
+/* selector de estilos: máximo según el plan */
+var styleRefresh = null;
+function setupStyles(prefix, getMax){
+  var boxes = document.querySelectorAll('input[name="' + prefix + '-style"]');
+  var count = document.getElementById(prefix + '-style-count');
+  function refresh(){
+    var max = getMax(), n = 0;
+    boxes.forEach(function(b){ if(b.checked){ n++; if(n > max) { b.checked = false; n--; } } });
+    boxes.forEach(function(b){ b.disabled = !b.checked && n >= max; });
+    count.textContent = n + ' de ' + max + (max === 1 ? ' elegido' : ' elegidos'); count.classList.remove('err');
+  }
+  boxes.forEach(function(b){ b.addEventListener('change', refresh); });
+  refresh();
+  return refresh;
+}
+function getStyles(prefix){
+  var out = []; document.querySelectorAll('input[name="' + prefix + '-style"]:checked').forEach(function(b){ out.push(b.value); });
+  return out;
+}
+function requireStyles(prefix){
+  var st = getStyles(prefix);
+  if(st.length === 0){
+    var c = document.getElementById(prefix + '-style-count');
+    c.textContent = 'Elige al menos 1 estilo'; c.classList.add('err');
+    document.getElementById(prefix + '-styles').scrollIntoView({behavior:'smooth', block:'center'});
+    return null;
+  }
+  return st;
+}
+styleRefresh = setupStyles('lf', function(){ return PLANES[STATE.plan].estilos; });
+setupStyles('cf', function(){ return 3; });
+
+/* arranque: región y plan desde el enlace (?r=eu&plan=pro#locales) */
+(function(){
+  setRegion(detectRegion());
+  var p = new URLSearchParams(location.search).get('plan');
+  if(p && PLANES[p] && p !== 'hogar'){ setTimeout(function(){ document.getElementById('planes').scrollIntoView(); }, 300); }
+  else if(p === 'hogar'){ setTimeout(function(){ var b = document.querySelector('[data-open="cf-form"]'); if(b) b.click(); }, 300); }
+})();
+
+/* formulario negocios */
+document.getElementById('lf-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var estilos = requireStyles('lf'); if(!estilos) return;
+  var lines = [
+    'Nuevo lead — ' + PLANES[STATE.plan].nombre + ' (' + precio(STATE.plan) + ')',
+    'Región: ' + REGIONES[STATE.region],
+    'Nombre: ' + val('lf-name'),
+    'WhatsApp: ' + val('lf-phone'),
+    'Email: ' + (val('lf-email') || 'sin dato'),
+    'Ciudad y país: ' + val('lf-city'),
+    'Negocio: ' + val('lf-type'),
+    'Medidas: ' + val('lf-size'),
+    'Quiere resolver: ' + val('lf-problem'),
+    'Cuándo: ' + val('lf-when'),
+    'Estilos: ' + estilos.join(', '),
+    hasFile('lf-photo') ? 'Foto: la adjunto en este chat' : 'Foto: pendiente de enviar'
+  ];
+  window.open(waLink(lines.join('\n')), '_blank');
+  document.getElementById('lf-msg').classList.add('ok');
+  var box = document.getElementById('lf-checkout'); box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* formulario casas */
+document.getElementById('cf-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var estilos = requireStyles('cf'); if(!estilos) return;
+  var lines = [
+    'Nuevo lead — Kit Hogar (' + precio('hogar') + ')',
+    'Región: ' + REGIONES[STATE.region],
+    'Nombre: ' + val('cf-name'),
+    'WhatsApp: ' + val('cf-contact'),
+    'Email: ' + (val('cf-email') || 'sin dato'),
+    'Ciudad y país: ' + val('cf-city'),
+    'Espacio: ' + val('cf-space'),
+    'Estilos (3 propuestas): ' + estilos.join(', '),
+    'Presupuesto: ' + val('cf-budget'),
+    hasFile('cf-photo') ? 'Foto: la adjunto en este chat' : 'Foto: pendiente de enviar'
+  ];
+  window.open(waLink(lines.join('\n')), '_blank');
+  document.getElementById('cf-msg').classList.add('ok');
+  var box = document.getElementById('cf-checkout'); box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* formulario proyectos grandes */
+document.getElementById('gf-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var lines = [
+    'Nuevo lead — Proyecto grande (cotización)',
+    'Nombre: ' + val('gf-name'),
+    'WhatsApp: ' + val('gf-phone'),
+    'Ciudad: ' + val('gf-city'),
+    'Tipo de proyecto: ' + val('gf-type'),
+    'Espacios: ' + val('gf-spaces'),
+    'Área aprox.: ' + (val('gf-area') ? val('gf-area') + ' m²' : 'sin dato'),
+    'Etapa: ' + val('gf-stage'),
+    'Presupuesto: ' + (val('gf-budget') || 'sin dato'),
+    'Para cuándo: ' + val('gf-when')
+  ];
+  if(val('gf-desc')) lines.push('Proyecto: ' + val('gf-desc'));
+  window.open(waLink(lines.join('\n')), '_blank');
+  document.getElementById('gf-msg').classList.add('ok');
+});
+
+/* formulario red de profesionales */
+document.getElementById('redForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var lines = [
+    'Nueva solicitud — Red de profesionales AVEJ',
+    'Nombre: ' + val('rf-name'),
+    'Ciudad: ' + val('rf-city'),
+    'Especialidad: ' + val('rf-trade'),
+    'Experiencia: ' + val('rf-exp') + ' años',
+    'WhatsApp: ' + val('rf-phone')
+  ];
+  if(val('rf-portfolio')) lines.push('Portafolio: ' + val('rf-portfolio'));
+  window.open(waLink(lines.join('\n')), '_blank');
+  document.getElementById('rf-msg').classList.add('ok');
+});
+</script>
+
+<script>
+/* ===== Selector de país: define zona de precio e idioma ===== */
+var PAISES = [
+  ['CO','🇨🇴','Colombia','latam','es'],['MX','🇲🇽','México','latam','es'],['VE','🇻🇪','Venezuela','latam','es'],
+  ['PE','🇵🇪','Perú','latam','es'],['CL','🇨🇱','Chile','latam','es'],['AR','🇦🇷','Argentina','latam','es'],
+  ['EC','🇪🇨','Ecuador','latam','es'],['DO','🇩🇴','Rep. Dominicana','latam','es'],['PA','🇵🇦','Panamá','latam','es'],
+  ['CR','🇨🇷','Costa Rica','latam','es'],['GT','🇬🇹','Guatemala','latam','es'],['BR','🇧🇷','Brasil','latam','pt'],
+  ['US','🇺🇸','Estados Unidos','us','en'],['CA','🇨🇦','Canadá','us','en'],['ES','🇪🇸','España','eu','es'],
+  ['FR','🇫🇷','Francia','eu','fr'],['PT','🇵🇹','Portugal','eu','pt'],['EU','🇪🇺','Otro de Europa','eu','en'],
+  ['LA','🌎','Otro de Latinoamérica','latam','es'],['OT','🌐','Otro país','us','en']
+];
+var IDIOMAS_LISTOS = ['es']; /* se agregan 'en','fr','pt' cuando estén sus versiones */
+function paisPorZonaHoraria(){
+  var tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
+  var m={'America/Bogota':'CO','America/Mexico_City':'MX','America/Caracas':'VE','America/Lima':'PE','America/Santiago':'CL',
+    'America/Argentina/Buenos_Aires':'AR','America/Guayaquil':'EC','America/Santo_Domingo':'DO','America/Panama':'PA',
+    'America/Costa_Rica':'CR','America/Guatemala':'GT','America/Sao_Paulo':'BR','Europe/Madrid':'ES','Atlantic/Canary':'ES',
+    'Europe/Paris':'FR','Europe/Lisbon':'PT','America/Toronto':'CA','America/Vancouver':'CA'};
+  if(m[tz]) return m[tz];
+  var r=detectRegion(); return r==='eu'?'EU':(r==='us'?'US':'LA');
+}
+function aplicarPais(code){
+  var p=PAISES.filter(function(x){return x[0]===code;})[0]; if(!p) return;
+  try{ localStorage.setItem('avej-pais', code); }catch(e){}
+  document.getElementById('flag-now').textContent=p[1];
+  setRegion(p[3]);
+}
+(function(){
+  var geo=document.getElementById('geo'), grid=document.getElementById('geo-grid'), sel=null;
+  var guardado=null; try{ guardado=localStorage.getItem('avej-pais'); }catch(e){}
+  var q=new URLSearchParams(location.search).get('r');
+  PAISES.forEach(function(p){
+    var b=document.createElement('button'); b.type='button'; b.setAttribute('data-c',p[0]);
+    b.innerHTML='<span>'+p[1]+'</span>'+p[2];
+    b.addEventListener('click',function(){ sel=p[0]; grid.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed', x===b?'true':'false');}); });
+    grid.appendChild(b);
+  });
+  function abrir(){ sel=guardado||paisPorZonaHoraria(); var b=grid.querySelector('[data-c="'+sel+'"]'); if(b) b.click(); geo.hidden=false; }
+  document.getElementById('geo-ok').addEventListener('click',function(){ if(sel){ aplicarPais(sel); guardado=sel; } geo.hidden=true; });
+  document.getElementById('flag-btn').addEventListener('click',abrir);
+  if(guardado){ aplicarPais(guardado); }
+  else if(q){ /* enlace con zona fija (?r=): no preguntamos */ }
+  else { setTimeout(abrir, 600); }
+})();
+
+/* ===== Pagar primero: cada plan va directo al checkout de Hotmart de la zona ===== */
+document.querySelectorAll('[data-buy]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var plan=b.getAttribute('data-buy'), link=CONFIG.pagos[plan][STATE.region];
+    if(link){ location.href=link; }
+    else { window.open(waLink('Hola, quiero pagar '+PLANES[plan].nombre+' ('+precio(plan)+', '+REGIONES[STATE.region]+')'),'_blank'); }
+  });
+});
+</script>
+<script src="https://link.msgsndr.com/js/form_embed.js"></script>
+</body>
+</html>
