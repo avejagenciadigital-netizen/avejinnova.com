@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<!-- Medición AVEJ: GA4 + Meta Pixel -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NC3F1Z1X26"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NC3F1Z1X26');
+var AVEJ_PIXEL='';
+if(AVEJ_PIXEL){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',AVEJ_PIXEL);fbq('track','PageView');}
+function avejTrack(name,params,fbStd){try{gtag('event',name,params||{});}catch(e){} try{if(window.fbq){fbStd?fbq('track',fbStd,params||{}):fbq('trackCustom',name,params||{});}}catch(e){}}
+</script>
+
 <meta charset="UTF-8">
 <link rel="canonical" href="https://avejinnova.com/fr/">
 <link rel="alternate" hreflang="es" href="https://avejinnova.com/">
@@ -1047,5 +1056,25 @@ document.querySelectorAll('[data-buy]').forEach(function(b){
 });
 </script>
 <script src="https://link.msgsndr.com/js/form_embed.js"></script>
+<script>
+(function(){
+  var lang=document.documentElement.lang||'es';
+  function region(){ try{return STATE.region;}catch(e){return '';} }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a,button'); if(!a) return;
+    var href=a.getAttribute('href')||'';
+    if(a.hasAttribute('data-buy')) avejTrack('begin_checkout',{plan:a.getAttribute('data-buy'),region:region(),lang:lang},'InitiateCheckout');
+    else if(/wa\.me|api\.whatsapp/.test(a.href||'')) avejTrack('contacto_whatsapp',{lang:lang},'Contact');
+    else if(/#diagnostico$/.test(href)) avejTrack('ir_diagnostico',{lang:lang});
+    else if(a.id==='geo-ok'){ var s=document.querySelector('#geo-grid [aria-pressed=true]'); avejTrack('pais_elegido',{pais:s?s.getAttribute('data-c'):'',lang:lang}); }
+    else if(/pay\.hotmart\.com/.test(a.href||'')) avejTrack('begin_checkout',{plan:'guia_o_tour',lang:lang},'InitiateCheckout');
+  },true);
+  var p=document.getElementById('planes');
+  if(p && 'IntersectionObserver' in window){ var o=new IntersectionObserver(function(en){ if(en[0].isIntersecting){ avejTrack('ver_planes',{region:region(),lang:lang},'ViewContent'); o.disconnect(); } }); o.observe(p); }
+  var page=location.pathname;
+  if(/gracias\.html$/.test(page)) avejTrack('generate_lead',{tipo:'diagnostico'},'Lead');
+  if(/pago-recibido\.html$/.test(page)) avejTrack('purchase',{currency:'USD',value:0},'Purchase');
+})();
+</script>
 </body>
 </html>
