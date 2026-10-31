@@ -1078,5 +1078,8 @@ document.querySelectorAll('[data-buy]').forEach(function(b){
   if(/pago-recibido\.html$/.test(page)) avejTrack('purchase',{currency:'USD',value:0},'Purchase');
 })();
 </script>
+<!-- AVEJ: selector de pais en 1 clic (sin boton Continuar) -->
+<style id="avt-geo-1clic">#geo-ok{display:none!important}</style>
+<script>(function(){var g=document.getElementById('geo-grid'),ok=document.getElementById('geo-ok');if(!g||!ok)return;g.addEventListener('click',function(e){if(!e.isTrusted||!e.target.closest('button'))return;setTimeout(function(){ok.click();},150);});})();</script>
 </body>
 </html>
