@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Web, chatbots con IA, automatizaciones, publicidad, redes sociales y Google para tu negocio. Calcula cuánto estás perdiendo en 2 minutos.">
+<meta property="og:title" content="Servicios Turbo + Ventas · AVEJ Innova">
+<meta property="og:description" content="Negocio que no está en internet, no existe. Calcula cuánto estás perdiendo y descubre qué necesita tu negocio.">
+<meta property="og:url" content="https://avejinnova.com/servicios/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://avejinnova.com/img/img-01.webp">
+<meta name="theme-color" content="#17181A">
+<link rel="canonical" href="https://avejinnova.com/servicios/">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Servicios Turbo + Ventas · AVEJ Innova</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Marca AVEJ Innova (avejinnova.com): grafito + cobre, Bebas Neue en títulos, Work Sans en texto, tarjetas de 6px con borde fino. Una sola apariencia oscura, igual que la web. */
+:root{
+  --bg:#17181A; --surface:#212320; --surface-2:#2A2C28; --line:#3A3C37;
+  --ink:#F1EDE6; --ink-muted:#A6A297; --copper:#C9702F; --copper-dim:#8C4E22; --on-copper:#17181A;
+  --honey:#C9702F;
+  --ok:#7BBF6A; --warn:#E3A33B; --mid:#C9702F; --bad:#E2523A;
+  --f-display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
+  --f-body:"Work Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
+.mono{font-family:var(--f-body);font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1,h2{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:.02em;line-height:.95}
+h2{font-size:clamp(2rem,4.4vw,2.6rem)}
+h3{font-family:var(--f-body);font-weight:700;font-size:1.12rem;line-height:1.35}
+p{margin:0}
+section{padding-block:clamp(44px,7vw,80px);border-top:1px solid var(--line)}
+.sec-head{display:grid;gap:10px;max-width:62ch;margin-bottom:28px}
+.sec-head p{color:var(--ink-muted)}
+
+/* abeja */
+.wing{fill:rgba(241,237,230,.28);stroke:var(--copper);stroke-width:1.2;transform-box:fill-box;transform-origin:50% 100%;animation:flap .11s ease-in-out infinite alternate}
+.wing.w2{animation-delay:.05s}
+.bee-body{fill:var(--copper);stroke:#E9A867;stroke-width:1.2}
+.bee-ink{fill:none;stroke:#17181A;stroke-width:3.4;stroke-linecap:round}
+.bee-line{fill:none;stroke:var(--copper);stroke-width:1.4;stroke-linecap:round}
+.bee-head{fill:#8C4E22;stroke:var(--copper);stroke-width:1.2}
+.bee-eye{fill:#F1EDE6}
+@keyframes flap{from{transform:scaleY(1)}to{transform:scaleY(.45)}}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding-block:14px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand svg,.brand img{width:44px;height:32px;object-fit:contain}
+.brand b{font-family:var(--f-display);font-weight:400;font-size:1.45rem;letter-spacing:.03em;line-height:1}
+.brand b span{color:var(--copper)}
+.region{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+.seg button{font:600 .8rem var(--f-body);background:var(--surface);color:var(--ink-muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;transition:border-color .15s,color .15s}
+.seg button:hover{color:var(--ink);border-color:var(--copper-dim)}
+.seg button[aria-pressed="true"]{color:var(--copper);border-color:var(--copper)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,52px);align-items:center;padding-block:36px 60px}
+.hero-copy{display:grid;gap:20px;min-width:0}
+.hero h1{font-size:clamp(3rem,7.2vw,4.6rem);letter-spacing:.02em}
+.hero h1 mark{background:none;color:var(--copper);padding:0}
+.lead{font-size:1.05rem;color:var(--ink-muted);max-width:50ch}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 .98rem var(--f-body);text-decoration:none;padding:12px 18px;border:1px solid var(--copper);border-radius:6px;cursor:pointer;background:transparent;color:var(--copper);transition:background .15s,color .15s,border-color .15s}
+.btn:hover{background:rgba(201,112,47,.12)}
+.btn.primary{background:var(--copper);color:var(--on-copper)}
+.btn.primary:hover{background:#D9803C}
+.facts{display:flex;flex-wrap:wrap;gap:8px 18px}
+
+/* plano */
+figure.plan{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 14px 10px;min-width:0}
+figure.plan figcaption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.plan svg{display:block;width:100%;height:auto;overflow:visible}
+.plan .wall{fill:none;stroke:var(--ink);stroke-width:6}
+.plan .part{fill:none;stroke:var(--ink-muted);stroke-width:2}
+.plan .dim{stroke:var(--ink-muted);stroke-width:1;fill:none}
+.plan .dimt{fill:var(--ink-muted);font:600 11px var(--f-body);letter-spacing:.08em}
+.plan .room rect{fill:var(--surface);transition:fill .35s ease}
+.plan .room .code{fill:var(--copper);font:600 11px var(--f-body);letter-spacing:.1em}
+.plan .room .name{fill:var(--ink);font:400 22px var(--f-display);letter-spacing:.03em}
+.plan .room .hint{fill:var(--ink-muted);font:400 11px var(--f-body)}
+.plan .room:hover rect,.plan .room.visit rect{fill:rgba(201,112,47,.2)}
+.plan .room:focus{outline:none}
+.plan .room:focus-visible rect{stroke:var(--copper);stroke-width:3}
+.plan .door{fill:none;stroke:var(--ink-muted);stroke-width:1.4}
+.plan .gap{stroke:var(--surface);stroke-width:8}
+#bee{pointer-events:none}
+
+/* fichas */
+.sheets{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;min-width:0;scroll-margin-top:24px;transition:border-color .2s}
+.sheet:target,.sheet.pick{border-color:var(--copper)}
+.sheet-top{display:flex;justify-content:space-between;gap:10px;padding:12px 16px 0}
+.sheet-top .mono:first-child{color:var(--copper)}
+.sheet-body{padding:10px 16px 16px;display:grid;gap:10px;align-content:start;flex:1}
+.sheet h3{font-family:var(--f-display);font-weight:400;font-size:1.7rem;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.sheet .problem{color:var(--ink-muted);font-size:.95rem}
+.sheet ul{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:7px}
+.sheet li{display:grid;grid-template-columns:16px 1fr;gap:8px;font-size:.93rem}
+.sheet li::before{content:"";width:9px;height:10px;background:var(--copper);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);margin-top:.45em}
+.sheet-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--line)}
+.price{display:grid;justify-items:end;text-align:right;font-variant-numeric:tabular-nums}
+.price .from{font:600 .68rem var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.price b{font-family:var(--f-display);font-weight:400;font-size:2rem;line-height:1;color:var(--copper);letter-spacing:.02em}
+.price small{font-size:.8rem;color:var(--ink-muted)}
+
+/* embudo */
+.funnel{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:20px;align-items:start}
+.wizard{background:var(--surface);border:1px solid var(--line);border-radius:6px;display:grid;min-width:0}
+.prog{position:relative;padding:16px 18px 10px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.prog-row{display:flex;justify-content:space-between;gap:12px}
+.track{position:relative;height:4px;background:var(--line);border-radius:4px;margin:16px 14px 4px 0}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--copper);border-radius:4px;transition:width .5s ease}
+.rider{position:absolute;top:-26px;width:42px;height:34px;margin-left:-21px;transition:left .5s ease}
+.step{padding:22px 18px;display:grid;gap:22px;align-content:start;min-height:330px}
+.step h3{font-family:var(--f-display);font-weight:400;font-size:2rem;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.step .pain{color:var(--ink-muted);margin-top:-12px}
+.field{display:grid;gap:10px}
+.field > label,.field > .lbl{font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:500 .93rem var(--f-body);border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:10px 14px;cursor:pointer;text-align:left;transition:border-color .15s}
+.opt:hover{border-color:var(--copper-dim)}
+.opt[aria-pressed="true"]{border-color:var(--copper);color:var(--copper);background:rgba(201,112,47,.1)}
+.range-row{display:flex;align-items:center;gap:14px}
+.range-row input{flex:1;min-width:0;accent-color:var(--copper);height:28px}
+.range-row output{font-family:var(--f-display);font-size:1.7rem;min-width:6.5ch;text-align:right;color:var(--copper);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.nav{display:flex;justify-content:space-between;gap:12px;padding:14px 18px;border-top:1px solid var(--line)}
+.nav .btn{padding:10px 16px}
+.nav .btn[disabled]{opacity:.3;pointer-events:none}
+.done-list{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.done-list li{display:flex;gap:10px;align-items:baseline}
+.done-list li b{font-family:var(--f-display);font-weight:400;font-size:1.1rem;color:var(--copper)}
+.done-list a{color:var(--copper)}
+
+.result{background:var(--surface);color:var(--ink);border:1px solid var(--copper-dim);border-radius:6px;padding:22px 20px;display:grid;gap:16px;position:sticky;top:calc(16px + env(safe-area-inset-top,0px));min-width:0}
+.loss{display:grid;gap:4px;text-align:center}
+.loss b{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,6vw,3.4rem);line-height:1;color:var(--copper);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.loss span{color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.bars{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.bars li{display:grid;gap:5px}
+.bars .lab{display:flex;justify-content:space-between;gap:10px;font-size:.92rem;font-variant-numeric:tabular-nums}
+.bars .lab span:last-child{white-space:nowrap}
+.bars .det{font-size:.8rem;color:var(--ink-muted)}
+.bars .bar{height:4px;background:var(--line);border-radius:4px}
+.bars .bar i{display:block;height:100%;background:var(--copper);border-radius:4px;transition:width .4s ease}
+.bars li.top .lab span:first-child::after{content:attr(data-badge);margin-left:8px;font:600 .6rem var(--f-body);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--copper);color:var(--copper);border-radius:999px;padding:2px 7px;vertical-align:2px}
+.priority{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:6px}
+.priority h3{font-family:var(--f-display);font-weight:400;font-size:1.8rem;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.priority a{color:var(--copper);font-size:.9rem}
+.result .btn{background:var(--copper);color:var(--on-copper)}
+.note{font-size:.76rem;color:var(--ink-muted)}
+
+/* proceso y cierre */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+.pstep{padding:18px;display:grid;gap:8px;align-content:start;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.pstep .n{font-family:var(--f-display);font-size:2.4rem;color:var(--copper);line-height:1}
+.pstep p{color:var(--ink-muted);font-size:.93rem}
+.pay{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;align-items:center}
+.chip{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.84rem;background:var(--surface);color:var(--ink-muted)}
+.close{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:28px;align-items:end}
+.close h2{font-size:clamp(2.4rem,5.4vw,3.6rem)}
+.contact{border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:18px;display:grid;gap:12px}
+.num{font-family:var(--f-display);font-size:2rem;letter-spacing:.03em;user-select:all;font-variant-numeric:tabular-nums}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.btn.small{padding:9px 14px;font-size:.9rem}
+.contact a.mono{color:var(--copper);text-decoration:none}
+.foot{padding-block:28px 40px;border-top:1px solid var(--line);display:grid;gap:8px;color:var(--ink-muted);font-size:.85rem}
+
+/* estado del negocio: abeja con ánimo */
+.mood{--s:120;--mc:var(--ok);display:grid;justify-items:center;text-align:center;gap:8px}
+.mood[data-mood="forma"]{--s:120;--mc:var(--ok)}
+.mood[data-mood="alerta"]{--s:150;--mc:var(--warn)}
+.mood[data-mood="fuga"]{--s:180;--mc:var(--mid)}
+.mood[data-mood="emergencia"]{--s:210;--mc:var(--bad)}
+.mood svg{width:calc(var(--s) * 1px);max-width:100%;height:auto;transition:width .45s cubic-bezier(.3,1.4,.5,1);overflow:visible}
+.mood.big svg{width:calc(var(--s) * 1.3px)}
+.mood-name{font-family:var(--f-display);font-size:1.9rem;color:var(--mc);text-transform:uppercase;letter-spacing:.03em;line-height:1}
+.mood.big .mood-name{font-size:2.3rem}
+.mood-line{font-size:.93rem;max-width:34ch;color:var(--ink-muted)}
+.mood .m{display:none}
+.mood[data-mood="forma"] .m-forma,.mood[data-mood="alerta"] .m-alerta,.mood[data-mood="fuga"] .m-fuga,.mood[data-mood="emergencia"] .m-emergencia,
+.mood[data-mood="alerta"] .m-eyes,.mood[data-mood="fuga"] .m-eyes,.mood[data-mood="fuga"] .m-drops,.mood[data-mood="emergencia"] .m-drops{display:inline}
+.mood .disc{fill:color-mix(in srgb,var(--mc) 16%,transparent);stroke:color-mix(in srgb,var(--mc) 45%,transparent);stroke-width:1.5}
+.mood .ring{fill:none;stroke:var(--bad);stroke-width:4;transform-box:fill-box;transform-origin:center;animation:ring 1s ease-out infinite}
+.mood .mb{fill:var(--copper);stroke:#17181A;stroke-width:3}
+.mood .mi{fill:#17181A}
+.mood .ms{fill:none;stroke:#17181A;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mood .mwh{fill:#F1EDE6;stroke:#17181A;stroke-width:2}
+.mood .mdrop{fill:#7CC8FF;stroke:#17181A;stroke-width:1.5}
+.mood .mcheek{fill:#E9A867;opacity:.6}
+.mood .mw{fill:rgba(241,237,230,.3);stroke:var(--copper);stroke-width:2.5;transform-box:fill-box;transform-origin:50% 100%;animation:flap .14s ease-in-out infinite alternate}
+.mood[data-mood="fuga"] .mw{animation-duration:.32s}
+.mood[data-mood="emergencia"] .mw{animation-duration:.07s}
+.mood .siren{fill:var(--bad);stroke:#17181A;stroke-width:2.5;animation:blink .55s steps(2) infinite}
+.mood .rays{stroke:var(--bad);stroke-width:3;stroke-linecap:round;animation:blink .55s steps(2) infinite}
+.mood .all{transform-box:fill-box;transform-origin:50% 60%}
+.mood[data-mood="forma"] .all{animation:bob 2.4s ease-in-out infinite}
+.mood[data-mood="alerta"] .all{animation:sway 1.6s ease-in-out infinite}
+.mood[data-mood="fuga"] .all{animation:tremble .22s linear infinite}
+.mood[data-mood="emergencia"] .all{animation:shake .32s linear infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes sway{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+@keyframes tremble{25%{transform:translateX(-1.5px)}75%{transform:translateX(1.5px)}}
+@keyframes shake{20%{transform:translate(-4px,1px) rotate(-3deg)}40%{transform:translate(4px,-1px) rotate(3deg)}60%{transform:translate(-3px,0) rotate(-2deg)}80%{transform:translate(3px,1px) rotate(2deg)}}
+@keyframes blink{50%{opacity:.25}}
+@keyframes ring{from{transform:scale(.85);opacity:.9}to{transform:scale(1.12);opacity:0}}
+.result-step{display:grid;gap:18px}
+.result-step .mood{border-bottom:1px solid var(--line);padding-bottom:18px}
+
+@media (max-width:860px){
+  .hero,.funnel,.close{grid-template-columns:minmax(0,1fr)}
+  .result{position:static}
+  .step{min-height:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bee-sym" viewBox="-30 -32 62 50">
+    <ellipse class="wing" cx="-3" cy="-15" rx="8" ry="13"/>
+    <ellipse class="wing w2" cx="7" cy="-14" rx="7" ry="11"/>
+    <path class="bee-line" d="M-16 1 L-23 2.5 L-16 4"/>
+    <ellipse class="bee-body" cx="0" cy="1" rx="16" ry="10"/>
+    <path class="bee-ink" d="M-5 -7.5 Q-7 1 -5 9.5 M3 -8.2 Q1 1 3 10"/>
+    <circle class="bee-head" cx="17" cy="-1" r="7"/>
+    <circle class="bee-eye" cx="20" cy="-3" r="1.7"/>
+    <path class="bee-line" d="M19 -7 Q22 -14 26 -15 M16 -7.5 Q17 -15 20 -18"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><a href="/" aria-label="AVEJ Innova"><img src="/img/img-01.webp" alt="AVEJ"></a><b>AVEJ <span>INNOVA</span></b><span class="mono" data-i18n="brand_sub"></span></div>
+    <div class="ctrls">
+      <div class="seg" role="group" aria-label="Idioma / Language">
+        <button type="button" id="l-es" data-lang="es" aria-pressed="false">ES</button>
+        <button type="button" id="l-en" data-lang="en" aria-pressed="false">EN</button>
+        <button type="button" id="l-fr" data-lang="fr" aria-pressed="false">FR</button>
+        <button type="button" id="l-pt" data-lang="pt" aria-pressed="false">PT</button>
+      </div>
+      <div class="region">
+        <span class="mono" id="region-label" data-i18n="price_for"></span>
+        <div class="seg" role="group" aria-labelledby="region-label">
+          <button type="button" id="r-latam" data-region="latam" aria-pressed="true" data-i18n="r_latam"></button>
+          <button type="button" id="r-eu" data-region="eu" aria-pressed="false" data-i18n="r_eu"></button>
+          <button type="button" id="r-us" data-region="us" aria-pressed="false" data-i18n="r_us"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="mono" data-i18n="hero_eyebrow"></span>
+      <h1 data-i18n-html="hero_h1"></h1>
+      <p class="lead" data-i18n="hero_lead"></p>
+      <div class="btns">
+        <a class="btn primary" href="#diagnostico" data-i18n="cta_calc"></a>
+        <a class="btn" href="#servicios" data-i18n="cta_services"></a>
+      </div>
+      <div class="facts">
+        <span class="mono" data-i18n="f1"></span>
+        <span class="mono" data-i18n="f2"></span>
+        <span class="mono" data-i18n="f3"></span>
+      </div>
+    </div>
+
+    <figure class="plan">
+      <figcaption><span class="mono" data-i18n="plan_cap"></span><span class="mono" data-i18n="plan_tap"></span></figcaption>
+      <svg viewBox="0 0 640 470" role="img" aria-label="AVEJ Innova">
+        <path class="dim" d="M40 14 V24 M600 14 V24 M40 18 H600"/>
+        <text class="dimt" x="320" y="12" text-anchor="middle">14,00 m</text>
+        <path class="dim" d="M16 30 H26 M16 420 H26 M20 30 V420"/>
+        <text class="dimt" x="12" y="225" text-anchor="middle" transform="rotate(-90 12 225)">9,75 m</text>
+
+        <a href="#svc-web" class="room" data-room="web"><rect x="40" y="30" width="250" height="180"/>
+          <text class="code" x="54" y="52">A-01</text><text class="name" x="165" y="135" text-anchor="middle" data-i18n="rm_web"></text><text class="hint" x="165" y="155" text-anchor="middle" data-i18n="rh_web"></text></a>
+        <a href="#svc-chatbot" class="room" data-room="chatbot"><rect x="290" y="30" width="150" height="180"/>
+          <text class="code" x="304" y="52">A-02</text><text class="name" x="365" y="135" text-anchor="middle" data-i18n="rm_chatbot"></text><text class="hint" x="365" y="155" text-anchor="middle" data-i18n="rh_chatbot"></text></a>
+        <a href="#svc-auto" class="room" data-room="auto"><rect x="440" y="30" width="160" height="260"/>
+          <text class="code" x="454" y="52">A-03</text><text class="name" x="520" y="175" text-anchor="middle" data-i18n="rm_auto"></text><text class="hint" x="520" y="195" text-anchor="middle" data-i18n="rh_auto"></text></a>
+        <a href="#svc-marketing" class="room" data-room="marketing"><rect x="40" y="210" width="200" height="210"/>
+          <text class="code" x="54" y="232">A-04</text><text class="name" x="140" y="325" text-anchor="middle" data-i18n="rm_marketing"></text><text class="hint" x="140" y="345" text-anchor="middle" data-i18n="rh_marketing"></text></a>
+        <a href="#svc-redes" class="room" data-room="redes"><rect x="240" y="210" width="200" height="210"/>
+          <text class="code" x="254" y="232">A-05</text><text class="name" x="340" y="315" text-anchor="middle" data-i18n="rm_redes"></text><text class="hint" x="340" y="335" text-anchor="middle" data-i18n="rh_redes"></text></a>
+        <a href="#svc-google" class="room" data-room="google"><rect x="440" y="290" width="160" height="130"/>
+          <text class="code" x="454" y="312">A-06</text><text class="name" x="520" y="375" text-anchor="middle" data-i18n="rm_google"></text><text class="hint" x="520" y="395" text-anchor="middle" data-i18n="rh_google"></text></a>
+
+        <path class="part" d="M290 30 V210 M440 30 V420 M40 210 H440 M240 210 V420 M440 290 H600" pointer-events="none"/>
+        <rect class="wall" x="40" y="30" width="560" height="390" pointer-events="none"/>
+        <path class="gap" d="M290 420 H350" pointer-events="none"/>
+        <path class="door" d="M290 420 V362 M290 362 A58 58 0 0 1 348 420" pointer-events="none"/>
+        <text class="dimt" x="320" y="446" text-anchor="middle" data-i18n="entry"></text>
+        <text class="dimt" x="40" y="462">ESC 1:100</text>
+
+        <g id="bee" transform="translate(165 92)"><g id="bee-flip"><use href="#bee-sym" x="-28" y="-24" width="56" height="45"/></g></g>
+      </svg>
+    </figure>
+  </div>
+
+  <section id="diagnostico">
+    <div class="sec-head">
+      <span class="mono" data-i18n="diag_eyebrow"></span>
+      <h2 data-i18n="diag_h2"></h2>
+      <p data-i18n="diag_p"></p>
+    </div>
+    <div class="funnel">
+      <div class="wizard">
+        <div class="prog">
+          <div class="prog-row"><span class="mono" id="step-label"></span><span class="mono" id="step-name"></span></div>
+          <div class="track" aria-hidden="true"><div class="fill" id="fill"></div><svg class="rider" id="rider"><use href="#bee-sym"/></svg></div>
+        </div>
+        <div class="step" id="step" aria-live="polite"></div>
+        <div class="nav">
+          <button type="button" class="btn" id="back" data-i18n="back"></button>
+          <button type="button" class="btn primary" id="next"></button>
+        </div>
+      </div>
+
+      <aside class="result" aria-live="polite">
+        <div class="mood" id="mood-panel" data-mood="forma"></div>
+        <div class="loss">
+          <span class="mono" data-i18n="loss_label"></span>
+          <b id="loss-month">—</b>
+          <span id="loss-year"></span>
+        </div>
+        <ul class="bars" id="bars"></ul>
+        <div class="priority" id="priority"></div>
+        <a class="btn" id="wa-cta" href="https://wa.me/573138287521" target="_blank" rel="noopener" data-i18n="cta_recover"></a>
+        <p class="note" id="note"></p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="servicios">
+    <div class="sec-head">
+      <span class="mono" data-i18n="srv_eyebrow"></span>
+      <h2 data-i18n="srv_h2"></h2>
+      <p data-i18n="srv_p"></p>
+    </div>
+    <div class="sheets" id="sheets"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="mono" data-i18n="how_eyebrow"></span>
+      <h2 data-i18n="how_h2"></h2>
+    </div>
+    <div class="steps">
+      <div class="pstep"><span class="n">1</span><h3 data-i18n="p1t"></h3><p data-i18n="p1d"></p></div>
+      <div class="pstep"><span class="n">2</span><h3 data-i18n="p2t"></h3><p data-i18n="p2d"></p></div>
+      <div class="pstep"><span class="n">3</span><h3 data-i18n="p3t"></h3><p data-i18n="p3d"></p></div>
+      <div class="pstep"><span class="n">4</span><h3 data-i18n="p4t"></h3><p data-i18n="p4d"></p></div>
+    </div>
+    <div class="pay">
+      <span class="mono" data-i18n="pay_label"></span>
+      <span class="chip">Hotmart</span><span class="chip">PayPal</span><span class="chip" data-i18n="pay1"></span><span class="chip" data-i18n="pay2"></span><span class="chip">Binance (Venezuela)</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="close">
+      <div class="sec-head" style="margin:0">
+        <span class="mono" data-i18n="close_eyebrow"></span>
+        <h2 data-i18n="close_h2"></h2>
+        <p data-i18n="close_p"></p>
+      </div>
+      <div class="contact">
+        <span class="mono" data-i18n="wa_label"></span>
+        <span class="num" id="num">+57 313 828 7521</span>
+        <div class="row">
+          <a class="btn primary small" id="wa-generic" href="https://wa.me/573138287521" target="_blank" rel="noopener" data-i18n="open_wa"></a>
+          <button type="button" class="btn small" id="copy" data-i18n="copy"></button>
+        </div>
+        <a class="mono" href="https://avejinnova.com" target="_blank" rel="noopener">avejinnova.com →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p data-i18n="foot1"></p>
+    <p class="mono" data-i18n="foot2"></p>
+  </footer>
+</div>
+
+<script>
+const PHONE = "573138287521";
+const LANGS = ["es","en","fr","pt"];
+const LOC = {es:"es-CO", en:"en-US", fr:"fr-FR", pt:"pt-BR"};
+const REGION_BY_LANG = {es:"latam", en:"us", fr:"eu", pt:"latam"};
+const REGIONS = {
+  latam:{eur:false, ticket:25, hour:5},
+  eu:{eur:true, ticket:40, hour:12},
+  us:{eur:false, ticket:50, hour:15}
+};
+const IDX = {latam:0, eu:1, us:2};
+// Precios: LatAm base; Europa +30% (EUR); USA y Canadá +70% (USD)
+const P = n => [n, Math.round(n*1.3), Math.round(n*1.7)];
+const SVC = {
+  web:{code:"A-01", price:P(100), unit:"once"},
+  chatbot:{code:"A-02", price:P(150), unit:"chatbot"},
+  auto:{code:"A-03", price:P(140), unit:"once"},
+  marketing:{code:"A-04", price:P(120), unit:"mkt"},
+  redes:{code:"A-05", price:P(140), unit:"month"},
+  google:{code:"A-06", price:P(100), unit:"once"}
+};
+
+/* ---------- TEXTOS ---------- */
+const L = {
+es:{
+ ui:{brand_sub:"Servicios digitales", price_for:"Precios para", r_latam:"LatAm", r_eu:"Europa", r_us:"USA y Canadá",
+  hero_eyebrow:"Web · Chatbots IA · Automatización · Publicidad · Redes · Google",
+  hero_h1:"Negocio que no está en internet, <mark>no existe</mark>.",
+  hero_lead:"Hoy tus clientes te buscan en Google, te escriben por WhatsApp y te conocen por Instagram antes de comprarte. En AVEJ Innova construimos esa presencia completa para que tu negocio aparezca, responda y venda todos los días.",
+  cta_calc:"¿Cuánto estás perdiendo? Calcúlalo", cta_services:"Ver los 6 servicios", f1:"100% remoto", f2:"Cualquier ciudad", f3:"Atención por WhatsApp",
+  plan_cap:"Planta digital de tu negocio", plan_tap:"Toca un espacio", entry:"ENTRADA · TU CLIENTE",
+  rm_web:"Página web", rh_web:"la vitrina", rm_chatbot:"Chatbot IA", rh_chatbot:"la recepción", rm_auto:"Automatización", rh_auto:"la bodega", rm_marketing:"Publicidad", rh_marketing:"la fachada", rm_redes:"Redes sociales", rh_redes:"el escenario", rm_google:"Google", rh_google:"el letrero",
+  diag_eyebrow:"Diagnóstico de 2 minutos", diag_h2:"¿Cuánto dinero está dejando ir tu negocio cada mes?", diag_p:"Responde 7 preguntas rápidas. Calculamos lo que podrías estar perdiendo por cada problema y te decimos cuál resolver primero.",
+  loss_label:"Tu negocio podría estar dejando de ganar", cta_recover:"Quiero recuperar ese dinero",
+  srv_eyebrow:"Fichas técnicas de servicio", srv_h2:"Seis espacios para que tu negocio exista, responda y venda en internet", srv_p:"Cada servicio se contrata por separado o en conjunto. Los precios cambian según tu región; elige la tuya arriba.",
+  how_eyebrow:"Cómo trabajamos", how_h2:"De la conversación a los resultados",
+  p1t:"Diagnóstico", p1d:"Hablamos por WhatsApp o videollamada y revisamos qué necesita tu negocio.", p2t:"Propuesta", p2d:"Te enviamos por escrito el alcance, los tiempos y el precio final.", p3t:"Implementación", p3d:"Construimos, lo probamos contigo y ajustamos antes de publicar.", p4t:"Acompañamiento", p4d:"Medimos resultados y te mostramos qué mejorar mes a mes.",
+  pay_label:"Medios de pago", pay1:"Transferencia bancaria (Europa y USA)", pay2:"Nequi y Bre-B (Colombia)",
+  close_eyebrow:"Hablemos", close_h2:"Pon tu negocio en el mapa digital", close_p:"Escríbenos al WhatsApp de atención directa. Un asesor de AVEJ Innova revisa tu caso y te envía la propuesta.",
+  wa_label:"WhatsApp de atención", open_wa:"Abrir WhatsApp", copy:"Copiar número", copied:"Número copiado", selected:"Número seleccionado",
+  foot1:"Precios de referencia «desde», sin impuestos. El presupuesto de pauta publicitaria (Meta o Google) no está incluido y lo define cada cliente. El precio final depende del alcance y se confirma en la propuesta. Las pérdidas del diagnóstico son estimaciones con supuestos conservadores, no una garantía de resultados.",
+  foot2:"AVEJ Innova · Diseño de espacios y servicios digitales",
+  back:"Atrás", next:"Siguiente", see_result:"Ver mi resultado", step_of:"Paso {a} de {b}", deliver:"Entrega", from:"desde",
+  result_title:"Tu diagnóstico está listo", result_intro:"Estos son los problemas de tu negocio, del que más dinero te cuesta al que menos:", result_cta:"Escríbenos con este resumen y te armamos la ruta empezando por tu prioridad #1.", result_ok:"Tu negocio va bien encaminado en lo digital. Escríbenos si quieres llevarlo al siguiente nivel.",
+  priority_label:"Lo que tu negocio necesita primero", see_includes:"Ver qué incluye →", ok_title:"Tu negocio va bien encaminado", per_month:"al mes", per_year:"≈ {x} al año", top_badge:"Prioridad #1",
+  note:"Estimación conservadora para {r}: 1 de cada 10 mensajes sin responder habría terminado en venta, con tu venta promedio de {t} y la hora de trabajo valorada en {h}. Ajusta las respuestas a tu negocio.",
+  wa_generic:"Hola AVEJ Innova, vi el folleto de servicios digitales y quiero más información.",
+  wa_intro:"Hola AVEJ Innova, hice el diagnóstico del folleto digital.", wa_business:"Negocio", wa_loss:"Pérdida estimada", wa_status:"Estado", wa_prio:"Prioridad #1", wa_also:"También quiero revisar", wa_region:"Región", wa_ask:"¿Me ayudan a recuperarlo?",
+  u_once:"pago único", u_chatbot:"instalación · mantenimiento según volumen", u_mkt:"por mes · pauta aparte", u_month:"por mes"},
+ svc:{
+  web:["La vitrina","Página web operativa","Tu negocio no tiene web, o la que tiene no te trae contactos.",["Landing o sitio de hasta 5 secciones","Diseño pensado primero para celular","Botón directo a WhatsApp y formulario de contacto","Configuración de dominio y publicación"],"10 a 15 días"],
+  chatbot:["La recepción","Chatbots con IA","Se te acumulan los mensajes de WhatsApp, Instagram o TikTok y pierdes ventas por responder tarde.",["Agente de IA que responde 24/7 con la información de tu negocio","Preguntas frecuentes, precios y agenda de citas","Paso a un asesor humano cuando hace falta","Ajustes según las conversaciones reales"],"7 a 12 días"],
+  auto:["La bodega","Sistemas y automatizaciones","Pierdes horas agendando, cotizando y haciendo seguimiento a mano.",["CRM sencillo para ordenar clientes y leads","Agenda, recordatorios y seguimientos automáticos","Cotizaciones y facturas con plantillas","Conexión entre las herramientas que ya usas"],"10 a 20 días"],
+  marketing:["La fachada","Publicidad digital","Inviertes en publicidad sin saber qué funciona, o no inviertes por miedo a perder dinero.",["Estrategia según tu cliente ideal y tu zona","Campañas en Instagram y Facebook (Meta Ads)","Ajuste semanal de anuncios y presupuesto","Informe mensual con resultados claros"],"Arranque en 7 días"],
+  redes:["El escenario","Gestión de redes sociales","Publicas cuando puedes y tus redes no muestran la calidad real de tu negocio.",["Calendario mensual de contenido","12 publicaciones al mes entre posts, carruseles y reels","Textos y hashtags pensados para tu público","Optimización del perfil y de la bio"],"Arranque en 5 días"],
+  google:["El letrero","Google para negocios","Cuando alguien busca tu tipo de negocio cerca, aparece tu competencia.",["Creación u optimización del Perfil de Empresa en Google","Fotos, horarios, categorías y servicios bien cargados","SEO local para aparecer en búsquedas y en Maps","Estrategia para conseguir reseñas"],"5 a 10 días"]},
+ tipos:["Restaurante o café","Tienda","Belleza y estética","Servicios profesionales","Otro"],
+ steps:[
+  {n:"Tu negocio", t:"Empecemos por tu negocio", f:{tipo:"¿Qué tipo de negocio tienes?", ticket:"¿Cuánto vale una venta promedio?"}},
+  {n:"Mensajes", t:"Los mensajes que llegan", p:"Cada mensaje que respondes tarde es un cliente que le compra a otro.", f:{msgs:"¿Cuántos mensajes te llegan al día entre WhatsApp, Instagram y TikTok?", late:"¿Cuántos respondes tarde o se quedan sin respuesta?"}, o:{late:["Casi ninguno","Algunos","Muchos"]}, s:{msgs:" al día"}},
+  {n:"Google", t:"Cuando te buscan cerca", p:"Si no apareces en Google o en Maps, ese cliente entra donde tu competencia.", f:{google:"Cuando alguien busca tu tipo de negocio cerca, ¿apareces en Google o en Maps?"}, o:{google:["No aparezco","Aparezco, pero sin fotos ni reseñas","Sí, y bien posicionado"]}},
+  {n:"Página web", t:"Tu vitrina en internet", p:"El cliente que no encuentra información clara sobre ti no pregunta: se va.", f:{web:"¿Tienes página web?"}, o:{web:["No tengo","Tengo, pero no me trae contactos","Sí, y me trae clientes"]}},
+  {n:"Tareas manuales", t:"El tiempo que se te va", p:"Cada hora agendando o cotizando a mano es una hora que no dedicas a vender.", f:{hours:"¿Cuántas horas a la semana se te van agendando, cotizando y haciendo seguimiento a mano?"}, s:{hours:" h/semana"}},
+  {n:"Publicidad", t:"Tu publicidad", p:"Sin publicidad bien hecha, tus clientes potenciales ven primero a la competencia.", f:{ads:"¿Inviertes en publicidad en redes o en Google?"}, o:{ads:["No invierto","Invierto, pero no sé si funciona","Sí, y mido los resultados"]}},
+  {n:"Redes sociales", t:"Tus redes sociales", p:"Unas redes abandonadas le dicen al cliente que tu negocio también lo está.", f:{social:"¿Con qué frecuencia publicas en tus redes?"}, o:{social:["Casi nunca publico","Publico, pero sin un plan","Publico constante y con estrategia"]}},
+  {n:"Resultado"}],
+ pains:{chatbot:["Mensajes sin responder a tiempo","≈ {n} ventas al mes que se enfrían"], google:["No te encuentran en Google","≈ {n} clientes al mes que entran donde otro"], web:["Sin una web que convenza","≈ {n} clientes al mes que se van sin preguntar"], auto:["Horas en tareas manuales","≈ {n} horas al mes de trabajo repetitivo"], marketing:["Publicidad que no llega","≈ {n} clientes al mes que capta tu competencia"], redes:["Redes sin constancia","≈ {n} clientes al mes que no confían en tu perfil"]},
+ moods:{forma:["Negocio en forma","Tu presencia digital trabaja a tu favor. Afinemos los detalles para crecer más."], alerta:["Alerta amarilla","Se te están escapando ventas cada semana. Todavía estás a tiempo de taparlo."], fuga:["Fuga de clientes","Tu negocio está regalando clientes a la competencia todos los meses."], emergencia:["Emergencia digital","Para internet tu negocio casi no existe. Cada día sin actuar te cuesta dinero."]}
+},
+en:{
+ ui:{brand_sub:"Digital services", price_for:"Prices for", r_latam:"LatAm", r_eu:"Europe", r_us:"USA & Canada",
+  hero_eyebrow:"Web · AI chatbots · Automation · Ads · Social media · Google",
+  hero_h1:"If your business isn't online, <mark>it doesn't exist</mark>.",
+  hero_lead:"Today your customers look you up on Google, message you on WhatsApp and discover you on Instagram before they buy. At AVEJ Innova we build that complete presence so your business shows up, answers and sells every day.",
+  cta_calc:"How much are you losing? Find out", cta_services:"See the 6 services", f1:"100% remote", f2:"Any city", f3:"WhatsApp support",
+  plan_cap:"Your business's digital floor plan", plan_tap:"Tap a space", entry:"ENTRANCE · YOUR CUSTOMER",
+  rm_web:"Website", rh_web:"the shop window", rm_chatbot:"AI Chatbot", rh_chatbot:"the front desk", rm_auto:"Automation", rh_auto:"the stockroom", rm_marketing:"Advertising", rh_marketing:"the storefront", rm_redes:"Social media", rh_redes:"the stage", rm_google:"Google", rh_google:"the sign",
+  diag_eyebrow:"2-minute diagnosis", diag_h2:"How much money is your business letting slip away every month?", diag_p:"Answer 7 quick questions. We estimate what each problem could be costing you and tell you which one to fix first.",
+  loss_label:"Your business could be missing out on", cta_recover:"I want that money back",
+  srv_eyebrow:"Service spec sheets", srv_h2:"Six spaces so your business exists, answers and sells online", srv_p:"Hire each service on its own or together. Prices change by region; pick yours at the top.",
+  how_eyebrow:"How we work", how_h2:"From conversation to results",
+  p1t:"Diagnosis", p1d:"We talk on WhatsApp or a video call and review what your business needs.", p2t:"Proposal", p2d:"We send you the scope, timeline and final price in writing.", p3t:"Build", p3d:"We build it, test it with you and adjust before going live.", p4t:"Follow-up", p4d:"We measure results and show you what to improve month by month.",
+  pay_label:"Payment methods", pay1:"Bank transfer (Europe & USA)", pay2:"Nequi & Bre-B (Colombia)",
+  close_eyebrow:"Let's talk", close_h2:"Put your business on the digital map", close_p:"Message our direct WhatsApp line. An AVEJ Innova advisor will review your case and send you a proposal.",
+  wa_label:"WhatsApp line", open_wa:"Open WhatsApp", copy:"Copy number", copied:"Number copied", selected:"Number selected",
+  foot1:"Reference prices (\"from\"), taxes not included. Ad spend (Meta or Google) is not included and is set by each client. The final price depends on scope and is confirmed in the proposal. Diagnosis losses are conservative estimates, not a guarantee of results.",
+  foot2:"AVEJ Innova · Space design and digital services",
+  back:"Back", next:"Next", see_result:"See my result", step_of:"Step {a} of {b}", deliver:"Delivery", from:"from",
+  result_title:"Your diagnosis is ready", result_intro:"These are your business's problems, from the one costing you the most to the least:", result_cta:"Message us with this summary and we'll build your plan starting with priority #1.", result_ok:"Your business is on the right track online. Message us if you want to take it to the next level.",
+  priority_label:"What your business needs first", see_includes:"See what's included →", ok_title:"Your business is on the right track", per_month:"per month", per_year:"≈ {x} per year", top_badge:"Priority #1",
+  note:"Conservative estimate for {r}: 1 in 10 unanswered messages would have become a sale, with your average sale of {t} and an hour of work valued at {h}. Adjust the answers to your business.",
+  wa_generic:"Hi AVEJ Innova, I saw the digital services brochure and I'd like more information.",
+  wa_intro:"Hi AVEJ Innova, I did the diagnosis in the digital brochure.", wa_business:"Business", wa_loss:"Estimated loss", wa_status:"Status", wa_prio:"Priority #1", wa_also:"I'd also like to review", wa_region:"Region", wa_ask:"Can you help me get it back?",
+  u_once:"one-time payment", u_chatbot:"setup · maintenance based on volume", u_mkt:"per month · ad spend separate", u_month:"per month"},
+ svc:{
+  web:["The shop window","Working website","Your business has no website, or the one it has doesn't bring in leads.",["Landing page or site with up to 5 sections","Mobile-first design","Direct WhatsApp button and contact form","Domain setup and launch"],"10 to 15 days"],
+  chatbot:["The front desk","AI chatbots","Messages pile up on WhatsApp, Instagram or TikTok and you lose sales by replying late.",["AI agent that answers 24/7 with your business information","FAQs, prices and appointment booking","Hands over to a human advisor when needed","Adjustments based on real conversations"],"7 to 12 days"],
+  auto:["The stockroom","Systems & automation","You lose hours booking, quoting and following up by hand.",["Simple CRM to organize customers and leads","Automatic scheduling, reminders and follow-ups","Quotes and invoices from templates","Connections between the tools you already use"],"10 to 20 days"],
+  marketing:["The storefront","Digital advertising","You spend on ads without knowing what works, or you don't spend for fear of losing money.",["Strategy based on your ideal customer and area","Instagram and Facebook campaigns (Meta Ads)","Weekly ad and budget adjustments","Monthly report with clear results"],"Kick-off in 7 days"],
+  redes:["The stage","Social media management","You post when you can and your profiles don't show the real quality of your business.",["Monthly content calendar","12 posts a month across posts, carousels and reels","Captions and hashtags written for your audience","Profile and bio optimization"],"Kick-off in 5 days"],
+  google:["The sign","Google for business","When someone searches for your type of business nearby, your competitors show up.",["Google Business Profile setup or optimization","Photos, hours, categories and services properly loaded","Local SEO to appear in search and on Maps","Strategy to get reviews"],"5 to 10 days"]},
+ tipos:["Restaurant or café","Shop","Beauty & wellness","Professional services","Other"],
+ steps:[
+  {n:"Your business", t:"Let's start with your business", f:{tipo:"What type of business do you have?", ticket:"What is your average sale worth?"}},
+  {n:"Messages", t:"The messages you receive", p:"Every message you answer late is a customer who buys from someone else.", f:{msgs:"How many messages do you get a day across WhatsApp, Instagram and TikTok?", late:"How many do you answer late or never answer?"}, o:{late:["Hardly any","Some","Many"]}, s:{msgs:" a day"}},
+  {n:"Google", t:"When people search nearby", p:"If you don't show up on Google or Maps, that customer walks into your competitor's.", f:{google:"When someone searches for your type of business nearby, do you show up on Google or Maps?"}, o:{google:["I don't show up","I show up, but with no photos or reviews","Yes, and I rank well"]}},
+  {n:"Website", t:"Your online shop window", p:"A customer who can't find clear information about you doesn't ask: they leave.", f:{web:"Do you have a website?"}, o:{web:["I don't have one","I have one, but it doesn't bring in leads","Yes, and it brings me customers"]}},
+  {n:"Manual tasks", t:"The time you lose", p:"Every hour spent booking or quoting by hand is an hour you're not selling.", f:{hours:"How many hours a week go into booking, quoting and following up by hand?"}, s:{hours:" h/week"}},
+  {n:"Advertising", t:"Your advertising", p:"Without well-run ads, your potential customers see your competitors first.", f:{ads:"Do you advertise on social media or Google?"}, o:{ads:["I don't advertise","I do, but I don't know if it works","Yes, and I measure the results"]}},
+  {n:"Social media", t:"Your social media", p:"Abandoned profiles tell customers your business is abandoned too.", f:{social:"How often do you post on social media?"}, o:{social:["I hardly ever post","I post, but without a plan","I post consistently with a strategy"]}},
+  {n:"Result"}],
+ pains:{chatbot:["Messages not answered in time","≈ {n} sales a month going cold"], google:["Customers can't find you on Google","≈ {n} customers a month going elsewhere"], web:["No website that convinces","≈ {n} customers a month who leave without asking"], auto:["Hours on manual tasks","≈ {n} hours a month of repetitive work"], marketing:["Ads that don't reach anyone","≈ {n} customers a month your competitors win"], redes:["Inconsistent social media","≈ {n} customers a month who don't trust your profile"]},
+ moods:{forma:["Business in shape","Your online presence works for you. Let's fine-tune the details to grow more."], alerta:["Yellow alert","Sales are slipping away every week. There's still time to plug the leak."], fuga:["Customer leak","Your business is handing customers to the competition every month."], emergencia:["Digital emergency","Online, your business barely exists. Every day without acting costs you money."]}
+},
+fr:{
+ ui:{brand_sub:"Services numériques", price_for:"Tarifs pour", r_latam:"Amérique latine", r_eu:"Europe", r_us:"États-Unis et Canada",
+  hero_eyebrow:"Web · Chatbots IA · Automatisation · Publicité · Réseaux sociaux · Google",
+  hero_h1:"Une entreprise absente d'internet <mark>n'existe pas</mark>.",
+  hero_lead:"Aujourd'hui, vos clients vous cherchent sur Google, vous écrivent sur WhatsApp et vous découvrent sur Instagram avant d'acheter. Chez AVEJ Innova, nous construisons cette présence complète pour que votre entreprise apparaisse, réponde et vende chaque jour.",
+  cta_calc:"Combien perdez-vous ? Calculez-le", cta_services:"Voir les 6 services", f1:"100 % à distance", f2:"Dans toutes les villes", f3:"Service client sur WhatsApp",
+  plan_cap:"Plan numérique de votre entreprise", plan_tap:"Touchez un espace", entry:"ENTRÉE · VOTRE CLIENT",
+  rm_web:"Site web", rh_web:"la vitrine", rm_chatbot:"Chatbot IA", rh_chatbot:"l'accueil", rm_auto:"Automatisation", rh_auto:"la réserve", rm_marketing:"Publicité", rh_marketing:"la façade", rm_redes:"Réseaux sociaux", rh_redes:"la scène", rm_google:"Google", rh_google:"l'enseigne",
+  diag_eyebrow:"Diagnostic en 2 minutes", diag_h2:"Combien d'argent votre entreprise laisse-t-elle filer chaque mois ?", diag_p:"Répondez à 7 questions rapides. Nous estimons ce que chaque problème pourrait vous coûter et vous indiquons lequel régler en premier.",
+  loss_label:"Votre entreprise pourrait passer à côté de", cta_recover:"Je veux récupérer cet argent",
+  srv_eyebrow:"Fiches techniques des services", srv_h2:"Six espaces pour que votre entreprise existe, réponde et vende sur internet", srv_p:"Chaque service se prend seul ou en combinaison. Les prix varient selon votre région ; choisissez la vôtre en haut.",
+  how_eyebrow:"Notre méthode", how_h2:"De la conversation aux résultats",
+  p1t:"Diagnostic", p1d:"Nous échangeons sur WhatsApp ou en visio et analysons les besoins de votre entreprise.", p2t:"Proposition", p2d:"Nous vous envoyons par écrit le périmètre, les délais et le prix final.", p3t:"Mise en place", p3d:"Nous construisons, testons avec vous et ajustons avant la mise en ligne.", p4t:"Suivi", p4d:"Nous mesurons les résultats et vous montrons quoi améliorer chaque mois.",
+  pay_label:"Moyens de paiement", pay1:"Virement bancaire (Europe et États-Unis)", pay2:"Nequi et Bre-B (Colombie)",
+  close_eyebrow:"Parlons-en", close_h2:"Placez votre entreprise sur la carte numérique", close_p:"Écrivez-nous sur notre ligne WhatsApp directe. Un conseiller AVEJ Innova étudie votre cas et vous envoie une proposition.",
+  wa_label:"Ligne WhatsApp", open_wa:"Ouvrir WhatsApp", copy:"Copier le numéro", copied:"Numéro copié", selected:"Numéro sélectionné",
+  foot1:"Prix de référence « à partir de », hors taxes. Le budget publicitaire (Meta ou Google) n'est pas inclus et est fixé par chaque client. Le prix final dépend du périmètre et est confirmé dans la proposition. Les pertes du diagnostic sont des estimations prudentes, pas une garantie de résultats.",
+  foot2:"AVEJ Innova · Design d'espaces et services numériques",
+  back:"Retour", next:"Suivant", see_result:"Voir mon résultat", step_of:"Étape {a} sur {b}", deliver:"Livraison", from:"à partir de",
+  result_title:"Votre diagnostic est prêt", result_intro:"Voici les problèmes de votre entreprise, du plus coûteux au moins coûteux :", result_cta:"Écrivez-nous avec ce résumé et nous construirons votre plan en commençant par la priorité n° 1.", result_ok:"Votre entreprise est sur la bonne voie en ligne. Écrivez-nous si vous voulez passer au niveau supérieur.",
+  priority_label:"Ce dont votre entreprise a besoin en premier", see_includes:"Voir ce qui est inclus →", ok_title:"Votre entreprise est sur la bonne voie", per_month:"par mois", per_year:"≈ {x} par an", top_badge:"Priorité n° 1",
+  note:"Estimation prudente pour {r} : 1 message sans réponse sur 10 se serait transformé en vente, avec votre vente moyenne de {t} et une heure de travail valorisée à {h}. Ajustez les réponses à votre entreprise.",
+  wa_generic:"Bonjour AVEJ Innova, j'ai vu la brochure des services numériques et je souhaite plus d'informations.",
+  wa_intro:"Bonjour AVEJ Innova, j'ai fait le diagnostic de la brochure numérique.", wa_business:"Entreprise", wa_loss:"Perte estimée", wa_status:"État", wa_prio:"Priorité n° 1", wa_also:"Je voudrais aussi voir", wa_region:"Région", wa_ask:"Pouvez-vous m'aider à le récupérer ?",
+  u_once:"paiement unique", u_chatbot:"installation · maintenance selon le volume", u_mkt:"par mois · budget pub en plus", u_month:"par mois"},
+ svc:{
+  web:["La vitrine","Site web opérationnel","Votre entreprise n'a pas de site, ou celui qu'elle a ne génère pas de contacts.",["Landing page ou site jusqu'à 5 sections","Design pensé d'abord pour le mobile","Bouton WhatsApp direct et formulaire de contact","Configuration du domaine et mise en ligne"],"10 à 15 jours"],
+  chatbot:["L'accueil","Chatbots IA","Les messages s'accumulent sur WhatsApp, Instagram ou TikTok et vous perdez des ventes en répondant tard.",["Agent IA qui répond 24 h/24 et 7 j/7 avec les informations de votre entreprise","Questions fréquentes, prix et prise de rendez-vous","Transfert vers un conseiller humain si besoin","Ajustements selon les conversations réelles"],"7 à 12 jours"],
+  auto:["La réserve","Systèmes et automatisations","Vous perdez des heures à planifier, faire des devis et relancer à la main.",["CRM simple pour organiser clients et prospects","Agenda, rappels et relances automatiques","Devis et factures à partir de modèles","Connexion entre les outils que vous utilisez déjà"],"10 à 20 jours"],
+  marketing:["La façade","Publicité numérique","Vous investissez en publicité sans savoir ce qui marche, ou vous n'investissez pas par peur de perdre de l'argent.",["Stratégie selon votre client idéal et votre zone","Campagnes Instagram et Facebook (Meta Ads)","Ajustement hebdomadaire des annonces et du budget","Rapport mensuel aux résultats clairs"],"Démarrage en 7 jours"],
+  redes:["La scène","Gestion des réseaux sociaux","Vous publiez quand vous pouvez et vos réseaux ne montrent pas la vraie qualité de votre entreprise.",["Calendrier éditorial mensuel","12 publications par mois entre posts, carrousels et reels","Textes et hashtags pensés pour votre public","Optimisation du profil et de la bio"],"Démarrage en 5 jours"],
+  google:["L'enseigne","Google pour les entreprises","Quand quelqu'un cherche votre type d'activité à proximité, c'est votre concurrent qui apparaît.",["Création ou optimisation de la fiche Google Business Profile","Photos, horaires, catégories et services bien renseignés","SEO local pour apparaître dans la recherche et sur Maps","Stratégie pour obtenir des avis"],"5 à 10 jours"]},
+ tipos:["Restaurant ou café","Boutique","Beauté et bien-être","Services professionnels","Autre"],
+ steps:[
+  {n:"Votre entreprise", t:"Commençons par votre entreprise", f:{tipo:"Quel type d'entreprise avez-vous ?", ticket:"Combien vaut une vente moyenne ?"}},
+  {n:"Messages", t:"Les messages que vous recevez", p:"Chaque message traité en retard, c'est un client qui achète ailleurs.", f:{msgs:"Combien de messages recevez-vous par jour entre WhatsApp, Instagram et TikTok ?", late:"Combien restent sans réponse ou reçoivent une réponse tardive ?"}, o:{late:["Presque aucun","Quelques-uns","Beaucoup"]}, s:{msgs:" par jour"}},
+  {n:"Google", t:"Quand on vous cherche à proximité", p:"Si vous n'apparaissez pas sur Google ou Maps, ce client entre chez votre concurrent.", f:{google:"Quand quelqu'un cherche votre type d'activité à proximité, apparaissez-vous sur Google ou Maps ?"}, o:{google:["Je n'apparais pas","J'apparais, mais sans photos ni avis","Oui, et bien positionné"]}},
+  {n:"Site web", t:"Votre vitrine sur internet", p:"Un client qui ne trouve pas d'informations claires sur vous ne demande pas : il part.", f:{web:"Avez-vous un site web ?"}, o:{web:["Je n'en ai pas","J'en ai un, mais il n'apporte pas de contacts","Oui, et il m'apporte des clients"]}},
+  {n:"Tâches manuelles", t:"Le temps qui vous échappe", p:"Chaque heure passée à planifier ou à faire des devis à la main est une heure que vous ne consacrez pas à vendre.", f:{hours:"Combien d'heures par semaine passez-vous à planifier, faire des devis et relancer à la main ?"}, s:{hours:" h/semaine"}},
+  {n:"Publicité", t:"Votre publicité", p:"Sans publicité bien faite, vos clients potentiels voient d'abord vos concurrents.", f:{ads:"Faites-vous de la publicité sur les réseaux ou sur Google ?"}, o:{ads:["Je n'en fais pas","Oui, mais je ne sais pas si ça marche","Oui, et je mesure les résultats"]}},
+  {n:"Réseaux sociaux", t:"Vos réseaux sociaux", p:"Des réseaux à l'abandon disent au client que votre entreprise l'est aussi.", f:{social:"À quelle fréquence publiez-vous sur vos réseaux ?"}, o:{social:["Je ne publie presque jamais","Je publie, mais sans plan","Je publie régulièrement avec une stratégie"]}},
+  {n:"Résultat"}],
+ pains:{chatbot:["Messages sans réponse à temps","≈ {n} ventes par mois qui refroidissent"], google:["Introuvable sur Google","≈ {n} clients par mois qui vont ailleurs"], web:["Pas de site convaincant","≈ {n} clients par mois qui partent sans demander"], auto:["Heures de tâches manuelles","≈ {n} heures par mois de travail répétitif"], marketing:["Publicité qui ne touche personne","≈ {n} clients par mois captés par vos concurrents"], redes:["Réseaux sociaux irréguliers","≈ {n} clients par mois qui ne font pas confiance à votre profil"]},
+ moods:{forma:["Entreprise en forme","Votre présence numérique travaille pour vous. Peaufinons les détails pour grandir."], alerta:["Alerte jaune","Des ventes vous échappent chaque semaine. Il est encore temps de colmater la fuite."], fuga:["Fuite de clients","Votre entreprise offre des clients à la concurrence chaque mois."], emergencia:["Urgence numérique","Sur internet, votre entreprise existe à peine. Chaque jour sans agir vous coûte de l'argent."]}
+},
+pt:{
+ ui:{brand_sub:"Serviços digitais", price_for:"Preços para", r_latam:"América Latina", r_eu:"Europa", r_us:"EUA e Canadá",
+  hero_eyebrow:"Site · Chatbots com IA · Automação · Anúncios · Redes sociais · Google",
+  hero_h1:"Negócio que não está na internet <mark>não existe</mark>.",
+  hero_lead:"Hoje seus clientes procuram você no Google, mandam mensagem no WhatsApp e conhecem você pelo Instagram antes de comprar. Na AVEJ Innova construímos essa presença completa para que seu negócio apareça, responda e venda todos os dias.",
+  cta_calc:"Quanto você está perdendo? Calcule", cta_services:"Ver os 6 serviços", f1:"100% remoto", f2:"Qualquer cidade", f3:"Atendimento pelo WhatsApp",
+  plan_cap:"Planta digital do seu negócio", plan_tap:"Toque em um espaço", entry:"ENTRADA · SEU CLIENTE",
+  rm_web:"Site", rh_web:"a vitrine", rm_chatbot:"Chatbot IA", rh_chatbot:"a recepção", rm_auto:"Automação", rh_auto:"o estoque", rm_marketing:"Anúncios", rh_marketing:"a fachada", rm_redes:"Redes sociais", rh_redes:"o palco", rm_google:"Google", rh_google:"o letreiro",
+  diag_eyebrow:"Diagnóstico de 2 minutos", diag_h2:"Quanto dinheiro seu negócio está deixando escapar todo mês?", diag_p:"Responda 7 perguntas rápidas. Calculamos quanto cada problema pode estar custando e dizemos qual resolver primeiro.",
+  loss_label:"Seu negócio pode estar deixando de ganhar", cta_recover:"Quero recuperar esse dinheiro",
+  srv_eyebrow:"Fichas técnicas dos serviços", srv_h2:"Seis espaços para seu negócio existir, responder e vender na internet", srv_p:"Cada serviço pode ser contratado separado ou em conjunto. Os preços mudam conforme sua região; escolha a sua no topo.",
+  how_eyebrow:"Como trabalhamos", how_h2:"Da conversa aos resultados",
+  p1t:"Diagnóstico", p1d:"Conversamos pelo WhatsApp ou por videochamada e analisamos o que seu negócio precisa.", p2t:"Proposta", p2d:"Enviamos por escrito o escopo, os prazos e o preço final.", p3t:"Implementação", p3d:"Construímos, testamos com você e ajustamos antes de publicar.", p4t:"Acompanhamento", p4d:"Medimos os resultados e mostramos o que melhorar mês a mês.",
+  pay_label:"Formas de pagamento", pay1:"Transferência bancária (Europa e EUA)", pay2:"Nequi e Bre-B (Colômbia)",
+  close_eyebrow:"Vamos conversar", close_h2:"Coloque seu negócio no mapa digital", close_p:"Mande mensagem para o nosso WhatsApp de atendimento direto. Um consultor da AVEJ Innova analisa seu caso e envia a proposta.",
+  wa_label:"WhatsApp de atendimento", open_wa:"Abrir WhatsApp", copy:"Copiar número", copied:"Número copiado", selected:"Número selecionado",
+  foot1:"Preços de referência «a partir de», sem impostos. O orçamento de mídia paga (Meta ou Google) não está incluído e é definido por cada cliente. O preço final depende do escopo e é confirmado na proposta. As perdas do diagnóstico são estimativas conservadoras, não uma garantia de resultados.",
+  foot2:"AVEJ Innova · Design de espaços e serviços digitais",
+  back:"Voltar", next:"Próximo", see_result:"Ver meu resultado", step_of:"Passo {a} de {b}", deliver:"Entrega", from:"a partir de",
+  result_title:"Seu diagnóstico está pronto", result_intro:"Estes são os problemas do seu negócio, do que mais custa ao que menos custa:", result_cta:"Mande mensagem com este resumo e montamos seu plano começando pela prioridade nº 1.", result_ok:"Seu negócio está no caminho certo no digital. Fale com a gente se quiser levá-lo ao próximo nível.",
+  priority_label:"O que seu negócio precisa primeiro", see_includes:"Ver o que inclui →", ok_title:"Seu negócio está no caminho certo", per_month:"por mês", per_year:"≈ {x} por ano", top_badge:"Prioridade nº 1",
+  note:"Estimativa conservadora para {r}: 1 em cada 10 mensagens sem resposta teria virado venda, com sua venda média de {t} e a hora de trabalho valorizada em {h}. Ajuste as respostas ao seu negócio.",
+  wa_generic:"Olá AVEJ Innova, vi o folheto de serviços digitais e quero mais informações.",
+  wa_intro:"Olá AVEJ Innova, fiz o diagnóstico do folheto digital.", wa_business:"Negócio", wa_loss:"Perda estimada", wa_status:"Situação", wa_prio:"Prioridade nº 1", wa_also:"Também quero revisar", wa_region:"Região", wa_ask:"Vocês podem me ajudar a recuperar isso?",
+  u_once:"pagamento único", u_chatbot:"instalação · manutenção conforme o volume", u_mkt:"por mês · mídia paga à parte", u_month:"por mês"},
+ svc:{
+  web:["A vitrine","Site profissional","Seu negócio não tem site, ou o que tem não traz contatos.",["Landing page ou site com até 5 seções","Design pensado primeiro para o celular","Botão direto para o WhatsApp e formulário de contato","Configuração de domínio e publicação"],"10 a 15 dias"],
+  chatbot:["A recepção","Chatbots com IA","As mensagens se acumulam no WhatsApp, Instagram ou TikTok e você perde vendas por responder tarde.",["Agente de IA que responde 24/7 com as informações do seu negócio","Perguntas frequentes, preços e agendamento","Transferência para um atendente humano quando necessário","Ajustes com base nas conversas reais"],"7 a 12 dias"],
+  auto:["O estoque","Sistemas e automações","Você perde horas agendando, fazendo orçamentos e acompanhando clientes à mão.",["CRM simples para organizar clientes e leads","Agenda, lembretes e follow-ups automáticos","Orçamentos e faturas com modelos","Integração entre as ferramentas que você já usa"],"10 a 20 dias"],
+  marketing:["A fachada","Anúncios digitais","Você investe em anúncios sem saber o que funciona, ou não investe por medo de perder dinheiro.",["Estratégia de acordo com seu cliente ideal e sua região","Campanhas no Instagram e no Facebook (Meta Ads)","Ajuste semanal de anúncios e orçamento","Relatório mensal com resultados claros"],"Início em 7 dias"],
+  redes:["O palco","Gestão de redes sociais","Você posta quando dá e suas redes não mostram a qualidade real do seu negócio.",["Calendário mensal de conteúdo","12 publicações por mês entre posts, carrosséis e reels","Textos e hashtags pensados para o seu público","Otimização do perfil e da bio"],"Início em 5 dias"],
+  google:["O letreiro","Google para negócios","Quando alguém procura seu tipo de negócio por perto, aparece a concorrência.",["Criação ou otimização do Perfil da Empresa no Google","Fotos, horários, categorias e serviços bem cadastrados","SEO local para aparecer nas buscas e no Maps","Estratégia para conseguir avaliações"],"5 a 10 dias"]},
+ tipos:["Restaurante ou café","Loja","Beleza e estética","Serviços profissionais","Outro"],
+ steps:[
+  {n:"Seu negócio", t:"Vamos começar pelo seu negócio", f:{tipo:"Que tipo de negócio você tem?", ticket:"Quanto vale uma venda média?"}},
+  {n:"Mensagens", t:"As mensagens que chegam", p:"Cada mensagem respondida tarde é um cliente que compra de outro.", f:{msgs:"Quantas mensagens chegam por dia entre WhatsApp, Instagram e TikTok?", late:"Quantas você responde tarde ou ficam sem resposta?"}, o:{late:["Quase nenhuma","Algumas","Muitas"]}, s:{msgs:" por dia"}},
+  {n:"Google", t:"Quando procuram por perto", p:"Se você não aparece no Google ou no Maps, esse cliente entra no concorrente.", f:{google:"Quando alguém procura seu tipo de negócio por perto, você aparece no Google ou no Maps?"}, o:{google:["Não apareço","Apareço, mas sem fotos nem avaliações","Sim, e bem posicionado"]}},
+  {n:"Site", t:"Sua vitrine na internet", p:"O cliente que não encontra informações claras sobre você não pergunta: vai embora.", f:{web:"Você tem site?"}, o:{web:["Não tenho","Tenho, mas não traz contatos","Sim, e me traz clientes"]}},
+  {n:"Tarefas manuais", t:"O tempo que você perde", p:"Cada hora agendando ou fazendo orçamento à mão é uma hora que você não dedica a vender.", f:{hours:"Quantas horas por semana você gasta agendando, fazendo orçamentos e acompanhando clientes à mão?"}, s:{hours:" h/semana"}},
+  {n:"Anúncios", t:"Seus anúncios", p:"Sem anúncios bem feitos, seus clientes em potencial veem a concorrência primeiro.", f:{ads:"Você investe em anúncios nas redes ou no Google?"}, o:{ads:["Não invisto","Invisto, mas não sei se funciona","Sim, e meço os resultados"]}},
+  {n:"Redes sociais", t:"Suas redes sociais", p:"Redes abandonadas dizem ao cliente que seu negócio também está.", f:{social:"Com que frequência você posta nas redes?"}, o:{social:["Quase nunca posto","Posto, mas sem um plano","Posto com constância e estratégia"]}},
+  {n:"Resultado"}],
+ pains:{chatbot:["Mensagens sem resposta a tempo","≈ {n} vendas por mês que esfriam"], google:["Não te encontram no Google","≈ {n} clientes por mês que vão para outro lugar"], web:["Sem um site que convença","≈ {n} clientes por mês que vão embora sem perguntar"], auto:["Horas em tarefas manuais","≈ {n} horas por mês de trabalho repetitivo"], marketing:["Anúncios que não chegam a ninguém","≈ {n} clientes por mês que a concorrência conquista"], redes:["Redes sem constância","≈ {n} clientes por mês que não confiam no seu perfil"]},
+ moods:{forma:["Negócio em forma","Sua presença digital trabalha a seu favor. Vamos ajustar os detalhes para crescer mais."], alerta:["Alerta amarelo","Vendas estão escapando toda semana. Ainda dá tempo de tapar o vazamento."], fuga:["Vazamento de clientes","Seu negócio está entregando clientes para a concorrência todo mês."], emergencia:["Emergência digital","Para a internet, seu negócio quase não existe. Cada dia sem agir custa dinheiro."]}
+}
+};
+
+/* ---------- ESTADO ---------- */
+function store(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e) { return null; } }
+let lang = (()=>{
+  try { const q = new URLSearchParams(location.search).get("lang"); if (q && LANGS.includes(q)) return q; } catch(e) {}
+  const s = store("avej-lang"); if (s && LANGS.includes(s)) return s;
+  const n = (navigator.language||"es").slice(0,2).toLowerCase();
+  return LANGS.includes(n) ? n : "es";
+})();
+let regionChosen = !!(store("avej-region") && REGIONS[store("avej-region")]);
+let region = regionChosen ? store("avej-region") : REGION_BY_LANG[lang];
+
+const S = {tipo:1, ticket:REGIONS[region].ticket, msgs:20, late:0.3, google:2, web:2, hours:6, ads:3, social:2};
+let touchedTicket = false;
+
+const T = () => L[lang];
+const t = (k, vars) => { let s = (T().ui[k] ?? L.es.ui[k] ?? ""); if (vars) for (const [a,b] of Object.entries(vars)) s = s.replace("{"+a+"}", b); return s; };
+const rLabel = () => t("r_"+region);
+const fmt = n => {
+  const s = Math.round(n).toLocaleString(LOC[lang]);
+  if (REGIONS[region].eur) return lang === "en" ? `€${s}` : `${s} €`;
+  return lang === "pt" ? `US$ ${s}` : `$${s} USD`;
+};
+
+const CFG = [
+  {fields:[{key:"tipo", type:"choice", vals:[0,1,2,3,4]}, {key:"ticket", type:"range", min:5, max:500, step:5, money:true}]},
+  {svc:"chatbot", fields:[{key:"msgs", type:"range", min:0, max:150, step:1}, {key:"late", type:"choice", vals:[0.1,0.3,0.5]}]},
+  {svc:"google", fields:[{key:"google", type:"choice", vals:[5,2,0]}]},
+  {svc:"web", fields:[{key:"web", type:"choice", vals:[4,2,0]}]},
+  {svc:"auto", fields:[{key:"hours", type:"range", min:0, max:40, step:1}]},
+  {svc:"marketing", fields:[{key:"ads", type:"choice", vals:[4,3,0]}]},
+  {svc:"redes", fields:[{key:"social", type:"choice", vals:[3,2,0]}]},
+  {result:true}
+];
+const PAINS = [
+  {svc:"chatbot", calc:()=>S.msgs*30*S.late*0.10*S.ticket, n:()=>Math.round(S.msgs*30*S.late*0.10)},
+  {svc:"google", calc:()=>S.google*S.ticket, n:()=>S.google},
+  {svc:"web", calc:()=>S.web*S.ticket, n:()=>S.web},
+  {svc:"auto", calc:()=>S.hours*4.3*REGIONS[region].hour, n:()=>Math.round(S.hours*4.3)},
+  {svc:"marketing", calc:()=>S.ads*S.ticket, n:()=>S.ads},
+  {svc:"redes", calc:()=>S.social*S.ticket, n:()=>S.social}
+];
+const svcName = id => T().svc[id][1];
+let cur = 0;
+
+/* ---------- RENDER ---------- */
+function applyStatic(){
+  document.documentElement.lang = lang === "pt" ? "pt-BR" : lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-html]").forEach(el => el.innerHTML = t(el.dataset.i18nHtml));
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  document.querySelectorAll(".room").forEach(r => r.setAttribute("aria-label", t("rm_"+r.dataset.room)));
+  document.getElementById("wa-generic").href = `https://wa.me/${PHONE}?text=${encodeURIComponent(t("wa_generic"))}`;
+}
+
+function fieldHTML(f, st){
+  const label = st.f[f.key];
+  if (f.type === "choice"){
+    const texts = f.key === "tipo" ? T().tipos : st.o[f.key];
+    return `<div class="field"><span class="lbl" id="lb-${f.key}">${label}</span><div class="opts" role="group" aria-labelledby="lb-${f.key}">${
+      f.vals.map((v,i)=>`<button type="button" class="opt" id="o-${f.key}-${i}" data-key="${f.key}" data-val="${v}" aria-pressed="${S[f.key]===v}">${texts[i]}</button>`).join("")}</div></div>`;
+  }
+  const suf = (st.s && st.s[f.key]) || "";
+  const out = f.money ? fmt(S[f.key]) : `${S[f.key]}${suf}`;
+  return `<div class="field"><label for="i-${f.key}">${label}</label><div class="range-row"><input type="range" id="i-${f.key}" data-key="${f.key}" min="${f.min}" max="${f.max}" step="${f.step}" value="${S[f.key]}"><output id="out-${f.key}">${out}</output></div></div>`;
+}
+
+function renderStep(){
+  const cfg = CFG[cur], st = T().steps[cur], el = document.getElementById("step");
+  if (cfg.result){
+    const ranked = ranking().filter(p=>p.v>0);
+    el.innerHTML = `<div class="result-step"><div class="mood big" id="mood-step" data-mood="forma"></div><h3>${t("result_title")}</h3>${ranked.length ? `<p class="pain">${t("result_intro")}</p>
+      <ol class="done-list">${ranked.map((p,i)=>`<li><b>${String(i+1).padStart(2,"0")}</b><span>${T().pains[p.svc][0]} → <a href="#svc-${p.svc}">${svcName(p.svc)}</a></span></li>`).join("")}</ol>
+      <p>${t("result_cta")}</p>` : `<p>${t("result_ok")}</p>`}</div>`;
+    updateMood();
+  } else {
+    el.innerHTML = `<h3>${st.t}</h3>${st.p?`<p class="pain">${st.p}</p>`:""}${cfg.fields.map(f=>fieldHTML(f, st)).join("")}`;
+  }
+  const pct = cur/(CFG.length-1)*100;
+  document.getElementById("fill").style.width = pct+"%";
+  document.getElementById("rider").style.left = pct+"%";
+  document.getElementById("step-label").textContent = t("step_of", {a:cur+1, b:CFG.length});
+  document.getElementById("step-name").textContent = st.n;
+  document.getElementById("back").disabled = cur===0;
+  const nx = document.getElementById("next");
+  nx.textContent = cur===CFG.length-2 ? t("see_result") : t("next");
+  nx.hidden = !!cfg.result;
+}
+
+function ranking(){ return PAINS.map(p=>({...p, v:p.calc()})).sort((a,b)=>b.v-a.v); }
+
+function renderResult(){
+  const r = ranking(), total = r.reduce((a,p)=>a+p.v,0), max = Math.max(1, r[0].v);
+  document.getElementById("loss-month").textContent = total ? `${fmt(total)} ${t("per_month")}` : fmt(0);
+  document.getElementById("loss-year").textContent = total ? t("per_year", {x:fmt(total*12)}) : "";
+  document.getElementById("bars").innerHTML = r.filter(p=>p.v>0).map((p,i)=>`
+    <li class="${i===0?"top":""}" data-badge="${t("top_badge")}"><div class="lab"><span>${T().pains[p.svc][0]}</span><span>${fmt(p.v)}</span></div>
+    <div class="bar"><i style="width:${(p.v/max*100).toFixed(1)}%"></i></div><span class="det">${T().pains[p.svc][1].replace("{n}", p.n())}</span></li>`).join("");
+  const top = r[0];
+  document.querySelectorAll(".sheet").forEach(s=>s.classList.toggle("pick", total>0 && s.id==="svc-"+top.svc));
+  document.getElementById("priority").innerHTML = total>0
+    ? `<span class="mono">${t("priority_label")}</span><h3>${svcName(top.svc)}</h3><a href="#svc-${top.svc}">${t("see_includes")}</a>`
+    : `<h3>${t("ok_title")}</h3>`;
+  document.getElementById("note").textContent = t("note", {r:rLabel(), t:fmt(S.ticket), h:fmt(REGIONS[region].hour)});
+  const others = r.slice(1).filter(p=>p.v>0).map(p=>svcName(p.svc));
+  const mk = moodKey();
+  const lines = [t("wa_intro"), `${t("wa_business")}: ${T().tipos[S.tipo]}.`, `${t("wa_loss")}: ${fmt(total)} ${t("per_month")}.`, `${t("wa_status")}: ${T().moods[mk][0]}.`, `${t("wa_prio")}: ${svcName(top.svc)}.`];
+  if (others.length) lines.push(`${t("wa_also")}: ${others.join(", ")}.`);
+  lines.push(`${t("wa_region")}: ${rLabel()}. ${t("wa_ask")}`);
+  document.getElementById("wa-cta").href = `https://wa.me/${PHONE}?text=${encodeURIComponent(lines.join("\n"))}`;
+  updateMood();
+}
+
+function renderSheets(){
+  document.getElementById("sheets").innerHTML = Object.entries(SVC).map(([id,s]) => {
+    const [tag,name,problem,includes,time] = T().svc[id];
+    return `<article class="sheet" id="svc-${id}">
+      <div class="sheet-top"><span class="mono">${s.code}</span><span class="mono">${tag}</span></div>
+      <div class="sheet-body"><h3>${name}</h3><p class="problem">${problem}</p><ul>${includes.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+      <div class="sheet-foot"><div><span class="mono">${t("deliver")}</span><br><span>${time}</span></div>
+        <div class="price"><span class="from">${t("from")}</span><b>${fmt(s.price[IDX[region]])}</b><small>${t("u_"+s.unit)}</small></div></div>
+    </article>`;}).join("");
+}
+
+/* ---------- ESTADO DEL NEGOCIO (abeja) ---------- */
+const LEVELS = ["forma","alerta","fuga","emergencia"];
+function moodKey(){
+  const r = PAINS.map(p=>p.calc()), total = r.reduce((a,b)=>a+b,0);
+  const lost = S.ticket ? total/S.ticket : 0, problems = r.filter(v=>v>0).length;
+  let lvl = lost < 5 ? 0 : lost < 15 ? 1 : lost < 30 ? 2 : 3;
+  if (problems >= 4) lvl = Math.max(lvl, 2);
+  if (problems >= 6 && lost >= 15) lvl = 3;
+  return LEVELS[lvl];
+}
+const MOOD_SVG = `<svg viewBox="0 0 220 210" aria-hidden="true">
+  <circle class="disc" cx="110" cy="112" r="96"/>
+  <circle class="ring m m-emergencia" cx="110" cy="112" r="96"/>
+  <g class="all">
+    <g transform="rotate(-28 64 96)"><ellipse class="mw" cx="64" cy="96" rx="34" ry="22"/></g>
+    <g transform="rotate(28 156 96)"><ellipse class="mw" cx="156" cy="96" rx="34" ry="22"/></g>
+    <path class="mi" d="M103 176 L110 194 L117 176 Z"/>
+    <clipPath id="CLIP"><ellipse cx="110" cy="134" rx="44" ry="46"/></clipPath>
+    <ellipse class="mb" cx="110" cy="134" rx="44" ry="46"/>
+    <g clip-path="url(#CLIP)"><rect class="mi" x="60" y="122" width="100" height="13"/><rect class="mi" x="60" y="149" width="100" height="13"/></g>
+    <ellipse cx="110" cy="134" rx="44" ry="46" fill="none" stroke="#18171A" stroke-width="3"/>
+    <path class="ms" d="M97 44 Q88 22 77 17 M123 44 Q132 22 143 17"/>
+    <circle class="mi" cx="77" cy="17" r="5"/><circle class="mi" cx="143" cy="17" r="5"/>
+    <circle class="mb" cx="110" cy="74" r="38"/>
+    <circle class="mcheek" cx="84" cy="90" r="7"/><circle class="mcheek" cx="136" cy="90" r="7"/>
+    <g class="m m-eyes"><circle class="mwh" cx="96" cy="70" r="9"/><circle class="mwh" cx="124" cy="70" r="9"/><circle class="mi" cx="97" cy="72" r="4.2"/><circle class="mi" cx="123" cy="72" r="4.2"/></g>
+    <g class="m m-forma">
+      <rect class="mi" x="79" y="61" width="27" height="17" rx="6"/><rect class="mi" x="114" y="61" width="27" height="17" rx="6"/>
+      <path class="ms" d="M106 67 H114 M79 66 L72 63 M141 66 L148 63"/>
+      <path d="M84 65 l6 0 M119 65 l6 0" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      <path class="ms" d="M93 90 Q110 106 127 90"/>
+    </g>
+    <g class="m m-alerta">
+      <rect class="mwh" x="95" y="88" width="30" height="12" rx="3"/>
+      <path d="M102.5 88 V100 M110 88 V100 M117.5 88 V100" stroke="#18171A" stroke-width="1.5"/>
+      <path class="mdrop" d="M146 48 q8 12 0 17 q-8 -5 0 -17 Z"/>
+    </g>
+    <g class="m m-fuga">
+      <path class="ms" d="M85 59 L104 53 M135 59 L116 53"/>
+      <path class="ms" d="M96 99 Q110 88 124 99"/>
+    </g>
+    <g class="m m-drops">
+      <path class="mdrop" d="M148 46 q8 12 0 17 q-8 -5 0 -17 Z"/>
+      <path class="mdrop" d="M70 58 q7 10 0 15 q-7 -5 0 -15 Z"/>
+    </g>
+    <g class="m m-emergencia">
+      <path class="ms" d="M84 54 L104 61 M136 54 L116 61"/>
+      <circle class="mwh" cx="96" cy="72" r="11"/><circle class="mwh" cx="124" cy="72" r="11"/>
+      <circle class="mi" cx="96" cy="72" r="2.6"/><circle class="mi" cx="124" cy="72" r="2.6"/>
+      <ellipse class="mi" cx="110" cy="96" rx="9" ry="8"/>
+      <rect class="mi" x="97" y="30" width="26" height="8" rx="2"/>
+      <path class="siren" d="M100 30 A10 13 0 0 1 120 30 Z"/>
+      <path class="rays" d="M90 14 L96 22 M110 4 V14 M130 14 L124 22 M84 30 H93 M127 30 H136"/>
+    </g>
+  </g>
+</svg><div class="mood-txt"><div class="mood-name"></div><div class="mood-line"></div></div>`;
+function updateMood(){
+  const k = moodKey();
+  ["mood-panel","mood-step"].forEach(id=>{
+    const el = document.getElementById(id); if (!el) return;
+    if (!el.firstChild) el.innerHTML = MOOD_SVG.replace(/CLIP/g, "clip-"+id);
+    el.dataset.mood = k;
+    el.querySelector(".mood-name").textContent = T().moods[k][0];
+    el.querySelector(".mood-line").textContent = T().moods[k][1];
+  });
+}
+
+/* ---------- EVENTOS ---------- */
+const stepEl = document.getElementById("step");
+stepEl.addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if (!b) return;
+  S[b.dataset.key] = Number(b.dataset.val);
+  b.parentElement.querySelectorAll(".opt").forEach(o=>o.setAttribute("aria-pressed", String(o===b)));
+  renderResult();
+});
+stepEl.addEventListener("input", e => {
+  const i = e.target; if (!i.dataset || !i.dataset.key) return;
+  const k = i.dataset.key; S[k] = Number(i.value);
+  if (k==="ticket") touchedTicket = true;
+  const f = CFG[cur].fields.find(x=>x.key===k), st = T().steps[cur];
+  document.getElementById("out-"+k).textContent = f.money ? fmt(S[k]) : `${S[k]}${(st.s && st.s[k])||""}`;
+  renderResult();
+});
+document.getElementById("next").addEventListener("click", ()=>{ if (cur<CFG.length-1){ cur++; renderStep(); }});
+document.getElementById("back").addEventListener("click", ()=>{ if (cur>0){ cur--; renderStep(); }});
+
+function renderAll(){
+  if (!touchedTicket) S.ticket = REGIONS[region].ticket;
+  document.querySelectorAll("[data-region]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.region === region)));
+  applyStatic(); renderSheets(); renderStep(); renderResult();
+}
+document.querySelectorAll("[data-region]").forEach(b => b.addEventListener("click", () => {
+  region = b.dataset.region; regionChosen = true; store("avej-region", region); renderAll();
+}));
+document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => {
+  lang = b.dataset.lang; store("avej-lang", lang);
+  if (!regionChosen) region = REGION_BY_LANG[lang];
+  renderAll();
+}));
+
+document.getElementById("copy").addEventListener("click", e => {
+  const btn = e.currentTarget;
+  const reset = () => setTimeout(()=>btn.textContent=t("copy"),1800);
+  const fallback = () => { const rg = document.createRange(); rg.selectNodeContents(document.getElementById("num")); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); btn.textContent = t("selected"); reset(); };
+  try { navigator.clipboard.writeText("+573138287521").then(()=>{ btn.textContent = t("copied"); reset(); }, fallback); } catch(err) { fallback(); }
+});
+
+/* abeja que recorre el plano */
+(function(){
+  const bee = document.getElementById("bee"), flip = document.getElementById("bee-flip");
+  const SPOTS = {web:[165,92], chatbot:[365,92], auto:[520,132], marketing:[140,282], redes:[340,272], google:[520,338]};
+  const rooms = [...document.querySelectorAll(".room")];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const visit = id => rooms.forEach(r=>r.classList.toggle("visit", r.dataset.room===id));
+  if (reduce){ visit("web"); return; }
+  const order = Object.keys(SPOTS);
+  let pos = {x:320, y:470}, target = "web", landed = false, timer = null, dir = 1;
+  const go = id => { target = id; landed = false; visit(null); clearTimeout(timer); };
+  const nextRoom = () => { const opts = order.filter(o=>o!==target); go(opts[Math.floor(Math.random()*opts.length)]); };
+  rooms.forEach(r => { r.addEventListener("mouseenter", ()=>go(r.dataset.room)); r.addEventListener("focus", ()=>go(r.dataset.room)); });
+  function tick(tm){
+    const [tx,ty] = SPOTS[target], dx = tx-pos.x, dy = ty-pos.y, dist = Math.hypot(dx,dy);
+    if (dist > 1.2){ pos.x += dx*0.04; pos.y += dy*0.04; if (Math.abs(dx)>2) dir = dx<0?-1:1; }
+    else if (!landed){ landed = true; visit(target); timer = setTimeout(nextRoom, 2200); }
+    const wob = landed ? Math.sin(tm/320)*1.5 : Math.sin(tm/85)*4;
+    bee.setAttribute("transform", `translate(${pos.x.toFixed(1)} ${(pos.y+wob).toFixed(1)})`);
+    flip.setAttribute("transform", `scale(${dir} 1)`);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+renderAll();
+</script>
+
+</body>
+</html>
