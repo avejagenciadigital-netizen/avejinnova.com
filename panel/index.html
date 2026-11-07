@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#17181A">
+<title>Colmena AVEJ · Panel de gestión</title>
+<link rel="icon" href="/img/img-01.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#17181A; --bg2:#141517; --surface:#212320; --surface2:#262824; --line:#3A3C37;
+  --ink:#F1EDE6; --muted:#A6A297; --copper:#C9702F; --copper-dim:#8C4E22; --copper-soft:rgba(201,112,47,.14);
+  --ok:#5FA36B; --warn:#D9A441; --bad:#D0533F; --r:14px;
+  --fd:'Bebas Neue',ui-sans-serif,sans-serif; --fb:'Work Sans',ui-sans-serif,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--fb)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--copper)}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hx{width:34px;height:34px;flex:none}
+.hx polygon{fill:var(--copper-soft);stroke:var(--copper);stroke-width:1.2}
+.hx path{fill:none;stroke:var(--copper);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.hx.ok polygon{fill:rgba(95,163,107,.15);stroke:var(--ok)} .hx.ok path{stroke:var(--ok)}
+.hx.warn polygon{fill:rgba(217,164,65,.15);stroke:var(--warn)} .hx.warn path{stroke:var(--warn)}
+.hx.bad polygon{fill:rgba(208,83,63,.18);stroke:var(--bad)} .hx.bad path{stroke:var(--bad)}
+.hx.mute polygon{fill:transparent;stroke:var(--line)} .hx.mute path{stroke:var(--muted)}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.nav{background:var(--bg2);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.brand img{width:52px;height:auto}
+.brand b{font:28px/0.9 var(--fd);letter-spacing:1px;display:block}
+.brand small{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.nav button{display:flex;align-items:center;gap:12px;background:none;border:0;padding:10px 12px;border-radius:10px;color:var(--muted);cursor:pointer;text-align:left;width:100%}
+.nav button:hover{background:var(--surface);color:var(--ink)}
+.nav button.on{background:var(--copper-soft);color:var(--ink)}
+.nav button.on svg{color:var(--copper)}
+.nav .cnt{margin-left:auto;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;font-weight:700}
+.nav .sp{flex:1}
+.nav .foot{font-size:12px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+main{min-width:0}
+.top{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(23,24,26,.92);backdrop-filter:blur(8px);z-index:20}
+.top h1{font:30px/1 var(--fd);letter-spacing:1px;margin:0}
+.top .sp{flex:1}
+.now{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:99px;padding:5px 12px 5px 6px;font-size:13px;color:var(--muted);white-space:nowrap}
+.now b{color:var(--ink);font-weight:600}
+.iconbtn{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.iconbtn .dot{position:absolute;top:-5px;right:-5px;background:var(--bad);color:#fff;border-radius:99px;font-size:10px;font-weight:700;padding:1px 6px}
+.who{display:flex;align-items:center;gap:8px;font-size:13px}
+.who select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+#view{padding:22px 24px 120px;max-width:1400px}
+
+/* ---------- componentes ---------- */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.card h2,.sec{font:22px/1 var(--fd);letter-spacing:.8px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.sec{margin:26px 0 12px}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.kpi b{font:34px/1 var(--fd);display:block}
+.kpi span{font-size:12px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--copper);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;font-size:14px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.danger{background:transparent;border:1px solid var(--bad);color:var(--bad)}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:2px 9px;font-size:11.5px;font-weight:600;border:1px solid var(--line);white-space:nowrap}
+.chip i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.code{font:600 12px/1 ui-monospace,Menlo,monospace;color:var(--copper);background:var(--copper-soft);padding:3px 6px;border-radius:6px;white-space:nowrap}
+.st{font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.st.ok{background:rgba(95,163,107,.16);color:var(--ok)} .st.warn{background:rgba(217,164,65,.16);color:var(--warn)}
+.st.bad{background:rgba(208,83,63,.18);color:#F07A66} .st.mute{background:var(--surface2);color:var(--muted)}
+.bar{position:relative;height:8px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);overflow:visible}
+.bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--copper)}
+.bar>i.ok{background:var(--ok)} .bar>i.warn{background:var(--warn)} .bar>i.bad{background:var(--bad)}
+.bar>b{position:absolute;top:-4px;width:2px;height:14px;background:var(--ink);opacity:.75;border-radius:2px}
+.row{display:flex;align-items:center;gap:10px}
+.wrap{flex-wrap:wrap}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 4px;border-top:1px solid var(--line)}
+.task:first-child{border-top:0}
+.task .t{min-width:0}
+.task .t b{font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis}
+.task .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px;font-size:12px;color:var(--muted)}
+.chk{width:24px;height:24px;border-radius:7px;border:1.5px solid var(--line);background:transparent;cursor:pointer;display:grid;place-items:center;color:transparent}
+.chk.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.chk svg{width:15px;height:15px}
+.who-b{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+.who-b.claude{color:var(--copper)}
+.dots{letter-spacing:2px;color:var(--copper);font-size:11px}
+.link{background:none;border:0;padding:0;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px}
+.link:hover{color:var(--copper)}
+.link svg{width:15px;height:15px}
+.empty{color:var(--muted);font-size:13px;padding:14px 4px;text-align:center}
+.alarm{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);margin-top:8px;cursor:pointer}
+.alarm.bad{border-color:rgba(208,83,63,.6);background:rgba(208,83,63,.07)}
+.alarm.warn{border-color:rgba(217,164,65,.5)}
+.alarm .t{flex:1;min-width:0}
+.banner{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:12px;background:rgba(208,83,63,.12);border:1px solid rgba(208,83,63,.55);margin-bottom:16px}
+.banner b{color:#F07A66}
+
+/* segmentos del día */
+.timeline{display:grid;gap:12px}
+.seg{display:grid;grid-template-columns:86px 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.seg.fijo{background:var(--bg2)}
+.seg.ahora{border-color:var(--copper);box-shadow:0 0 0 1px var(--copper) inset}
+.seg .hora{font:22px/1 var(--fd);letter-spacing:.5px}
+.seg .hora small{display:block;font:12px var(--fb);color:var(--muted);margin-top:4px}
+.seg h3{margin:0;font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin:8px 0 2px}
+.cap .bar{flex:1;max-width:220px}
+.tag-now{background:var(--copper);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+
+/* matriz */
+.mx{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-height:200px}
+.q h3{margin:0;font:22px/1 var(--fd);letter-spacing:.6px;display:flex;gap:8px;align-items:center}
+.q p{margin:4px 0 8px;font-size:12.5px;color:var(--muted)}
+.q.q1{border-color:rgba(208,83,63,.6)} .q.q2{border-color:var(--copper-dim)} .q.q3{border-color:rgba(217,164,65,.45)}
+.axis{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+
+/* proyectos */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;display:flex;flex-direction:column;gap:10px}
+.pcard:hover{border-color:var(--copper-dim)}
+.pcard.bad{border-color:rgba(208,83,63,.65)} .pcard.warn{border-color:rgba(217,164,65,.5)}
+.pcard h3{margin:0;font-size:16px;font-weight:600}
+.pcard .nums{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
+.filters select,.filters input{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13.5px}
+.filters input{min-width:200px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl td,.tbl th{padding:10px 8px;border-top:1px solid var(--line);text-align:left;vertical-align:middle;font-size:13.5px}
+.tbl th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-top:0;font-weight:600}
+.tbl select{background:var(--bg2);border:1px solid var(--line);border-radius:7px;padding:4px 6px;font-size:12.5px}
+
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding:40px 14px;z-index:50;overflow:auto}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:18px;width:100%;max-width:640px;padding:20px}
+.modal h2{font:28px/1 var(--fd);letter-spacing:.8px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.form label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:600}
+.form label.full{grid-column:1/-1}
+.form input,.form select,.form textarea{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:14px;color:var(--ink);font-weight:400}
+.form textarea{min-height:80px;resize:vertical}
+.form input:disabled,.form select:disabled{opacity:.5}
+.form .cb{flex-direction:row;align-items:center;gap:8px}
+.mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.mfoot .sp{flex:1}
+pre.brief{white-space:pre-wrap;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;font:12.5px/1.5 ui-monospace,Menlo,monospace;color:var(--ink)}
+textarea.rep{width:100%;min-height:110px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px;font:13px ui-monospace,Menlo,monospace}
+.fab{position:fixed;right:22px;bottom:24px;width:58px;height:58px;border:0;cursor:pointer;background:none;z-index:30;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+.fab svg{width:58px;height:58px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:60;font-size:14px}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .card{width:100%;max-width:380px;text-align:center;padding:28px}
+.login img{width:110px}
+.login h1{font:42px/1 var(--fd);letter-spacing:1px;margin:10px 0 2px}
+.login input{width:100%;margin-top:10px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px}
+.demo-note{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hexbg{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98' viewBox='0 0 56 98'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34L28 66zm0 32V66' fill='none' stroke='%233A3C37' stroke-opacity='.35'/%3E%3C/svg%3E")}
+
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.g3{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .nav{position:fixed;bottom:0;top:auto;left:0;right:0;height:auto;flex-direction:row;padding:6px;z-index:40;border-right:0;border-top:1px solid var(--line);overflow-x:auto;gap:2px}
+  .nav .brand,.nav .sp,.nav .foot{display:none}
+  .nav button{flex-direction:column;gap:3px;font-size:10.5px;padding:6px 8px;min-width:64px;align-items:center;text-align:center}
+  .nav .cnt{position:absolute;margin:0;transform:translate(14px,-4px);font-size:9px}
+  .nav button{position:relative}
+  .top{padding:10px 14px;flex-wrap:wrap}
+  .top h1{font-size:24px}
+  .now{order:5;width:100%;justify-content:flex-start}
+  #view{padding:16px 14px 130px}
+  .g2,.g3,.mx{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .seg{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .fab{bottom:86px;right:14px}
+  .tbl .hm{display:none}
+}
+</style>
+</head>
+<body class="hexbg">
+<div id="root"></div>
+
+<!-- ===================== CONFIGURACIÓN =====================
+  Deja vacío para usar el MODO DEMO (datos de ejemplo guardados en este navegador).
+  Para el modo real multiusuario pega aquí la URL y la "anon public key" de tu proyecto Supabase.
+=========================================================== -->
+<script>
+window.AVEJ_CONFIG = {
+  supabaseUrl: "https://sunagidktgpcdjvdnfnl.supabase.co",
+  supabaseAnonKey: "PEGA_AQUI_LA_ANON_KEY"
+};
+</script>
+
+<script type="module">
+/* =====================================================================
+   COLMENA AVEJ · Panel de control de gestión
+   ===================================================================== */
+const LOGO = "/img/img-01.webp";
+const CFG = window.AVEJ_CONFIG || {};
+const MODO_REAL = !!(CFG.supabaseUrl && CFG.supabaseAnonKey && !CFG.supabaseAnonKey.startsWith("PEGA_"));
+
+/* ---------- catálogos (edítalos a tu gusto) ---------- */
+const MARCAS = {
+  "AVEJ Innova":"#C9702F", "Smell Parfum":"#B07AA1", "San Cayetano":"#D9A441",
+  "Fábrica de Millonarios":"#6FA3A0", "Trading":"#5FA36B", "Empanadas":"#E08E45",
+  "Personal":"#8FA6C9", "I+D":"#A6A297"
+};
+const TIPOS_PROY = ["Cliente","Contenido","Interno","I+D","Personal"];
+const ESTADOS_T = ["pendiente","en curso","en revisión","hecha","bloqueada"];
+const ESTADOS_P = ["activo","pausado","entregado","cancelado"];
+const ESTADOS_C = ["nuevo","en curso","recurrente","cerrado","perdido"];
+const CANALES = ["Instagram","WhatsApp","TikTok","Web","HighLevel","Referido","Otro"];
+const IMPORTANCIA = {1:"Normal",2:"Importante",3:"Crítica"};
+const RESP_TIPO = {humano:"Persona", claude:"Claude", externo:"Externo / proveedor"};
+/* Marca que toca en el bloque de contenido según el día (1=lunes … 6=sábado) */
+const MARCA_DIA = {1:"AVEJ Innova",2:"Smell Parfum",3:"San Cayetano",4:"AVEJ Innova",5:"Smell Parfum",6:"San Cayetano"};
+/* Segmentos del día. fijo:true = bloque protegido (no se le asignan tareas) */
+const SEG_BASE = [
+  {id:"arranque",   nombre:"Arranque: revisar la Colmena", ini:"07:00", fin:"07:30", ic:"sol"},
+  {id:"trading",    nombre:"Trading",                       ini:"07:30", fin:"10:30", ic:"velas", fijo:true},
+  {id:"mensajes1",  nombre:"Mensajes · ronda 1",            ini:"10:30", fin:"11:00", ic:"chat"},
+  {id:"entregables",nombre:"Entregables de clientes",       ini:"11:00", fin:"13:00", ic:"plano"},
+  {id:"familia",    nombre:"Almuerzo en familia",           ini:"13:00", fin:"14:00", ic:"casa", fijo:true},
+  {id:"contenido",  nombre:"Contenido",                     ini:"14:00", fin:"15:30", ic:"camara"},
+  {id:"mensajes2",  nombre:"Mensajes · ronda 2 + diagnósticos", ini:"15:30", fin:"16:15", ic:"chat"},
+  {id:"empanadas",  nombre:"Empanadas",                     ini:"16:30", fin:"20:30", ic:"empanada", fijo:true},
+  {id:"cierre",     nombre:"Cierre: aprobar, enviar y planear", ini:"21:00", fin:"21:30", ic:"luna"}
+];
+const SEG_EXTRA = [{id:"investigacion", nombre:"Investigación y proyectos nuevos", ini:"09:00", fin:"10:30", ic:"lupa"},
+                   {id:"flex", nombre:"Sin bloque fijo", ini:"", fin:"", ic:"tareas"}];
+const SEG_ALL = [...SEG_BASE, ...SEG_EXTRA];
+function segmentosDelDia(d){
+  const w = d.getDay();
+  if (w === 0) return [{id:"familia", nombre:"Domingo en familia", ini:"00:00", fin:"23:59", ic:"casa", fijo:true}];
+  if (w === 6) return SEG_BASE.map(s => s.id === "trading" ? {...SEG_EXTRA[0]} : s);
+  return SEG_BASE;
+}
+
+/* ---------- iconos AVEJ (trazo sobre hexágono, como la abeja) ---------- */
+const G = {
+  colmena:"M7 3.5l3 1.7v3.6L7 10.5 4 8.8V5.2z M17 3.5l3 1.7v3.6l-3 1.7-3-1.7V5.2z M12 12l3 1.7v3.6L12 19l-3-1.7v-3.6z",
+  hoy:"M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z M12 7v5l3.2 2",
+  matriz:"M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z",
+  plano:"M3 5.5l6-2 6 2 6-2v15l-6 2-6-2-6 2z M9 3.5v15 M15 5.5v15",
+  tareas:"M10 6h10 M10 12h10 M10 18h10 M3.5 6l1.5 1.5L7.5 5 M3.5 12l1.5 1.5 2.5-2.5 M3.5 18l1.5 1.5 2.5-2.5",
+  local:"M3 9l1.5-5h15L21 9 M4 9v11h16V9 M3 9h18 M9 20v-6h6v6",
+  claude:"M12 3v4.5 M12 16.5V21 M3 12h4.5 M16.5 12H21 M5.6 5.6l3.2 3.2 M15.2 15.2l3.2 3.2 M5.6 18.4l3.2-3.2 M15.2 8.8l3.2-3.2",
+  equipo:"M8.5 11a3 3 0 1 0 0-6a3 3 0 1 0 0 6z M2.5 20c0-3.3 2.7-6 6-6s6 2.7 6 6 M16 11a2.6 2.6 0 1 0 0-5.2 M16.5 14c2.8.3 5 2.6 5 6",
+  campana:"M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z M10 21h4",
+  velas:"M7 3v18 M5 7.5h4v8H5z M17 3v15 M15 6h4v7h-4z",
+  chat:"M4 5h16v11H9.5L5 20v-4H4z M8 9.5h8 M8 12.5h5",
+  casa:"M3 11l9-7 9 7 M5.5 9.5V20h13V9.5 M12 17.5s-3-1.9-3-3.9a1.5 1.5 0 0 1 3-.4a1.5 1.5 0 0 1 3 .4c0 2-3 3.9-3 3.9z",
+  camara:"M3 7h12.5v10H3z M15.5 10.5L21 7.5v9l-5.5-3",
+  empanada:"M2.5 16a9.5 9.5 0 0 1 19 0z M5 16l.9-1.8 M8.3 16l.5-2.2 M12 16v-2.4 M15.7 16l-.5-2.2 M19 16l-.9-1.8",
+  luna:"M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z",
+  sol:"M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8z M12 2.5v2 M12 19.5v2 M2.5 12h2 M19.5 12h2 M5.3 5.3l1.4 1.4 M17.3 17.3l1.4 1.4 M5.3 18.7l1.4-1.4 M17.3 6.7l1.4-1.4",
+  lupa:"M10.5 4a6.5 6.5 0 1 0 0 13a6.5 6.5 0 1 0 0-13z M15.5 15.5L20.5 20.5",
+  mas:"M12 5v14 M5 12h14",
+  persona:"M12 11a4 4 0 1 0 0-8a4 4 0 1 0 0 8z M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5",
+  link:"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
+  copiar:"M9 9h11v11H9z M5 15H4V4h11v1",
+  check:"M5 12.5l4.2 4.2L19 7",
+  candado:"M6 11h12v9.5H6z M8.5 11V8a3.5 3.5 0 0 1 7 0v3",
+  salir:"M15 4h4.5v16H15 M10 8l-4 4 4 4 M6 12h10",
+  entrada:"M3 13.5L6 5h12l3 8.5V19H3z M3 13.5h5l1.2 2h5.6l1.2-2h5",
+  alerta:"M12 3.5L21.5 20h-19z M12 10v4.5 M12 17.3v.2",
+  editar:"M4 20h4L19 9l-4-4L4 16z M13.5 6.5l4 4",
+  reloj:"M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16z M12 8v4h3",
+  pausa:"M8 5v14 M16 5v14",
+  recarga:"M20 11a8 8 0 1 0-2.3 5.7 M20 4v7h-7"
+};
+const ic = (n, cls="") => `<svg class="i ${cls}" viewBox="0 0 24 24"><path d="${G[n]||G.tareas}"/></svg>`;
+const HEX = "12,1.6 21.4,7 21.4,17 12,22.4 2.6,17 2.6,7";
+const hx = (n, tone="", size=34) => `<svg class="hx ${tone}" style="width:${size}px;height:${size}px" viewBox="0 0 24 24"><polygon points="${HEX}"/><g transform="translate(6.1 6.1) scale(.49)"><path d="${G[n]||G.tareas}"/></g></svg>`;
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = (n, l=4) => String(n).padStart(l, "0");
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const norm = s => String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").trim();
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now() + Math.random().toString(16).slice(2));
+const hoy0 = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const isoL = d => `${d.getFullYear()}-${pad(d.getMonth()+1,2)}-${pad(d.getDate(),2)}`;
+const addDays = n => { const d = hoy0(); d.setDate(d.getDate()+n); return isoL(d); };
+const parseD = s => { if (!s) return null; const [y,m,d] = String(s).slice(0,10).split("-").map(Number); return new Date(y, m-1, d); };
+const diasHasta = s => { const d = parseD(s); return d ? Math.round((d - hoy0()) / 864e5) : null; };
+const fmtD = s => { const d = parseD(s); return d ? d.toLocaleDateString("es-CO",{day:"numeric",month:"short"}) : "Sin fecha"; };
+const hm = s => { const [h,m] = s.split(":").map(Number); return h*60+m; };
+const minsAhora = () => { const d = new Date(); return d.getHours()*60 + d.getMinutes(); };
+function toast(msg){ const t = document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 2600); }
+function copiar(txt){ (navigator.clipboard?.writeText(txt) || Promise.reject()).then(()=>toast("Copiado")).catch(()=>{ const a=document.createElement("textarea"); a.value=txt; document.body.appendChild(a); a.select(); try{document.execCommand("copy"); toast("Copiado");}catch{} a.remove(); }); }
+
+/* =====================================================================
+   ALMACENES DE DATOS: demo local  |  Supabase (real, multiusuario)
+   ===================================================================== */
+const LS_KEY = "colmena-avej-demo-v1";
+function seed(){
+  const u1 = "u-jhonattan", u2 = "u-colab";
+  const now = new Date().toISOString();
+  const c = (id, nombre, negocio, ciudad, pais, canal, estado) => ({id, nombre, negocio, ciudad, pais, canal, contacto:"", estado, notas:"", created_at:now});
+  const p = (id, codigo, cliente_id, nombre, marca, tipo, ini, ent, imp, resp, extra={}) =>
+    ({id, codigo, cliente_id, nombre, marca, tipo, inicio:addDays(ini), entrega: ent===null?null:addDays(ent), avance:0, estado:"activo", importancia:imp, responsable_id:resp, privado:false, notas:"", created_at:now, ...extra});
+  const t = (codigo, proyecto_id, titulo, tipo, resp, seg, f, imp, est, av, min, extra={}) =>
+    ({id:uid(), codigo, proyecto_id, titulo, responsable_tipo:tipo, responsable_id:resp, chat_claude:"", chat_url:"", segmento:seg,
+      fecha_limite: f===null?null:addDays(f), importancia:imp, estimado_min:min, estado:est, avance:av, privada:false, notas:"", created_at:now, ...extra});
+  const db = {
+    seq:{p:8, t:4},
+    profiles:[
+      {id:u1, email:"jhonattan@avejinnova.com", nombre:"Jhonattan", rol:"admin", area:"Dirección", activo:true},
+      {id:u2, email:"colaborador@avejinnova.com", nombre:"Colaborador demo", rol:"colaborador", area:"Contenido", activo:true}
+    ],
+    clientes:[
+      c("c1","Xuixo","Restaurante nuevo","Céret","Francia","Instagram","en curso"),
+      c("c2","San Cayetano","Panadería","Florencio Varela","Argentina","Instagram","recurrente"),
+      c("c3","Smell Parfum","Perfumes e insumos","Santo Domingo","Rep. Dominicana","WhatsApp","recurrente"),
+      c("c4","Pedro","Cafetería","Tenerife","España","Instagram","en curso")
+    ],
+    proyectos:[
+      p("p1","AV-0001","c1","Xuixo · Interiorismo 3 espacios (Fase 1)","AVEJ Innova","Cliente",-6,8,3,u1),
+      p("p2","AV-0002","c2","San Cayetano · Google + redes (fase 1)","San Cayetano","Cliente",-10,4,3,u1),
+      p("p3","AV-0003","c3","Smell Parfum · Contenido de la semana","Smell Parfum","Contenido",-2,5,2,u2),
+      p("p4","AV-0004","c4","Pedro · Tenerife · Kit Local Pro","AVEJ Innova","Cliente",-3,0,3,u1),
+      p("p5","AV-0005",null,"Retargeting de todos los DMs de Instagram","AVEJ Innova","Interno",0,10,2,u1),
+      p("p6","AV-0006",null,"Diagnósticos automáticos por WhatsApp (HighLevel)","AVEJ Innova","Interno",-1,7,3,u1),
+      p("p7","AV-0007",null,"SaaS notas médicas · validación","I+D","I+D",0,30,1,u1),
+      p("p8","AV-0008",null,"Proyecto Polen · definir la idea","I+D","I+D",0,null,1,u1)
+    ],
+    tareas:[
+      t("AV-0001.1","p1","Planta y distribución de los 3 espacios","claude",u1,"entregables",-2,3,"hecha",100,120,{chat_claude:"AV-0001.1 · Xuixo Céret · Distribución"}),
+      t("AV-0001.2","p1","Láminas de propuesta Fase 1","claude",u1,"entregables",5,3,"en curso",40,180,{chat_claude:"AV-0001.2 · Xuixo Céret · Láminas Fase 1"}),
+      t("AV-0001.3","p1","Revisar y enviar Fase 1 al cliente","humano",u1,"cierre",8,3,"pendiente",0,45),
+      t("AV-0002.1","p2","Perfil de Google para negocios optimizado","claude",u1,"entregables",1,3,"en curso",50,90,{chat_claude:"AV-0002.1 · San Cayetano · Google"}),
+      t("AV-0002.2","p2","Parrilla de contenido de 2 semanas","humano",u2,"contenido",1,2,"en curso",20,120),
+      t("AV-0002.3","p2","Guiones para que el dueño grabe","claude",u1,"contenido",2,2,"pendiente",0,60,{chat_claude:"AV-0002.3 · San Cayetano · Guiones"}),
+      t("AV-0003.1","p3","Carrusel frascos 30 ml (marca propia)","humano",u2,"contenido",1,2,"en curso",60,90),
+      t("AV-0003.2","p3","3 reels para revendedores","claude",u2,"contenido",3,2,"pendiente",0,120,{chat_claude:"AV-0003.2 · Smell Parfum · Reels revendedores"}),
+      t("AV-0003.3","p3","Historias diarias de la semana","humano",u2,"contenido",0,1,"pendiente",0,45),
+      t("AV-0004.1","p4","Informe de propuestas (3 estilos)","claude",u1,"entregables",0,3,"en revisión",80,120,{chat_claude:"AV-0004.1 · Pedro Tenerife · Informe"}),
+      t("AV-0004.2","p4","Enviar informe por WhatsApp y correo","humano",u1,"mensajes2",0,3,"pendiente",0,15),
+      t("AV-0005.1","p5","Crear público: personas que escribieron por IG (365 días)","humano",u1,"mensajes2",2,2,"pendiente",0,30),
+      t("AV-0005.2","p5","Creativo antes/después + copy del anuncio","claude",u1,"contenido",4,2,"pendiente",0,60,{chat_claude:"AV-0005.2 · Retargeting IG · Creativo"}),
+      t("AV-0006.1","p6","Conectar WhatsApp a HighLevel y probar envío","humano",u1,"entregables",3,3,"pendiente",0,90),
+      t("AV-0007.1","p7","Entrevista de validación con el médico","humano",u1,"investigacion",12,1,"pendiente",0,60),
+      t("AV-0008.1","p8","Escribir la idea de Polen en una página","humano",u1,"investigacion",null,1,"pendiente",0,45),
+      t("TS-0001",null,"Responder DMs y WhatsApp de clientes","humano",u1,"mensajes1",0,2,"pendiente",0,30),
+      t("TS-0002",null,"Enviar los diagnósticos aprobados por WhatsApp","humano",u1,"mensajes2",0,3,"pendiente",0,30),
+      t("TS-0003",null,"Diario de trading de la semana","humano",u1,"cierre",1,2,"pendiente",0,30,{}),
+      t("TS-0004",null,"Pagar servicios del hogar","humano",u1,"flex",1,2,"pendiente",0,15,{privada:true})
+    ],
+    bitacora:[
+      {id:2, codigo:"AV-0004.1", texto:"Claude: informe listo para revisión (80%)", autor:"Claude", created_at:now},
+      {id:1, codigo:"AV-0001.1", texto:"Distribución aprobada · tarea hecha", autor:"Jhonattan", created_at:now}
+    ],
+    entradas:[
+      {id:"e1", nombre:"Marta Ruiz", contacto:"+34 6xx xxx xxx", canal:"Instagram", mensaje:"Cafetería en Valencia, quiere renovar la barra", procesada:false, created_at:now},
+      {id:"e2", nombre:"Nails Studio", contacto:"+57 3xx xxx xxxx", canal:"HighLevel", mensaje:"Spa de uñas en Bogotá · pidió diagnóstico", procesada:false, created_at:now}
+    ]
+  };
+  db.proyectos.forEach(pr => recalcLocal(db, pr.id));
+  return db;
+}
+function recalcLocal(db, pid){
+  const pr = db.proyectos.find(x => x.id === pid); if (!pr) return;
+  const ts = db.tareas.filter(t => t.proyecto_id === pid); if (!ts.length) return;
+  let s = 0, w = 0; ts.forEach(t => { const m = Math.max(+t.estimado_min||1,1); s += (t.estado==="hecha"?100:(+t.avance||0))*m; w += m; });
+  pr.avance = Math.round(s / w);
+}
+
+class LocalStore {
+  async init(){ try { this.db = JSON.parse(localStorage.getItem(LS_KEY)); } catch { this.db = null; } if (!this.db) this.db = seed(); this.save(); }
+  save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(this.db)); } catch {} }
+  async me(rol){ return this.db.profiles.find(p => p.rol === rol) || this.db.profiles[0]; }
+  async loadAll(){ return JSON.parse(JSON.stringify(this.db)); }
+  async insert(t, row){
+    row = {...row, id: uid(), created_at: new Date().toISOString()};
+    if (t === "proyectos" && !row.codigo){ this.db.seq.p++; row.codigo = "AV-" + pad(this.db.seq.p); }
+    if (t === "tareas" && !row.codigo){
+      if (row.proyecto_id){ const pr = this.db.proyectos.find(x => x.id === row.proyecto_id);
+        let n = this.db.tareas.filter(x => x.proyecto_id === row.proyecto_id).length + 1;
+        while (this.db.tareas.some(x => x.codigo === pr.codigo + "." + n)) n++;
+        row.codigo = pr.codigo + "." + n;
+      } else { this.db.seq.t++; row.codigo = "TS-" + pad(this.db.seq.t); }
+    }
+    this.db[t].push(row); if (t === "tareas") recalcLocal(this.db, row.proyecto_id); this.save(); return row;
+  }
+  async update(t, id, patch){
+    const r = this.db[t].find(x => x.id === id); if (!r) throw new Error("No encontrado");
+    const old = r.proyecto_id; Object.assign(r, patch, {updated_at: new Date().toISOString()});
+    if (t === "tareas"){ recalcLocal(this.db, r.proyecto_id); if (old !== r.proyecto_id) recalcLocal(this.db, old); }
+    this.save(); return r;
+  }
+  async remove(t, id){
+    const r = this.db[t].find(x => x.id === id);
+    this.db[t] = this.db[t].filter(x => x.id !== id);
+    if (t === "proyectos") this.db.tareas = this.db.tareas.filter(x => x.proyecto_id !== id);
+    if (t === "tareas" && r) recalcLocal(this.db, r.proyecto_id);
+    this.save();
+  }
+  async log(codigo, texto, autor){ this.db.bitacora.unshift({id: Date.now(), codigo, texto, autor, created_at: new Date().toISOString()}); this.db.bitacora = this.db.bitacora.slice(0,150); this.save(); }
+  reset(){ this.db = seed(); this.save(); }
+}
+
+class SupaStore {
+  async init(){
+    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    this.c = createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+    const { data } = await this.c.auth.getSession(); this.session = data.session;
+  }
+  async login(email, password){ const { data, error } = await this.c.auth.signInWithPassword({email, password}); if (error) throw error; this.session = data.session; }
+  async reset(email){ const { error } = await this.c.auth.resetPasswordForEmail(email, {redirectTo: location.href}); if (error) throw error; }
+  async logout(){ await this.c.auth.signOut(); this.session = null; }
+  async me(){ const { data, error } = await this.c.from("profiles").select("*").eq("id", this.session.user.id).single(); if (error) throw error; return data; }
+  async loadAll(isAdmin){
+    const q = (t, f) => (f ? f(this.c.from(t).select("*")) : this.c.from(t).select("*")).then(r => { if (r.error) throw r.error; return r.data; });
+    const [profiles, clientes, proyectos, tareas, bitacora, entradas] = await Promise.all([
+      q("profiles"), q("clientes"), q("proyectos"), q("tareas"),
+      q("bitacora", x => x.order("created_at", {ascending:false}).limit(150)),
+      isAdmin ? q("entradas", x => x.eq("procesada", false).order("created_at", {ascending:false})) : Promise.resolve([])
+    ]);
+    return {profiles, clientes, proyectos, tareas, bitacora, entradas};
+  }
+  async insert(t, row){ const { data, error } = await this.c.from(t).insert(row).select().single(); if (error) throw error; return data; }
+  async update(t, id, patch){ const { data, error } = await this.c.from(t).update(patch).eq("id", id).select().single(); if (error) throw error; return data; }
+  async remove(t, id){ const { error } = await this.c.from(t).delete().eq("id", id); if (error) throw error; }
+  async log(codigo, texto, autor){ await this.c.from("bitacora").insert({codigo, texto, autor}); }
+  live(cb){ try { this.c.channel("colmena").on("postgres_changes", {event:"*", schema:"public"}, () => cb()).subscribe(); } catch {} }
+}
+
+/* =====================================================================
+   ESTADO Y REGLAS DE NEGOCIO
+   ===================================================================== */
+const S = { store:null, me:null, data:null, view:"colmena", f:{}, demoRol:"admin", proyAbierto:null };
+const isAdmin = () => S.me?.rol === "admin";
+const byId = (arr, id) => arr.find(x => x.id === id);
+
+/* Lo que cada usuario puede ver (en modo real lo garantiza además la seguridad de la base de datos) */
+function V(){
+  const D = S.data; if (isAdmin()) return D;
+  const tareas = D.tareas.filter(t => t.responsable_id === S.me.id && !t.privada);
+  const pids = new Set(tareas.map(t => t.proyecto_id));
+  const proyectos = D.proyectos.filter(p => !p.privado && (p.responsable_id === S.me.id || pids.has(p.id)));
+  const cids = new Set(proyectos.map(p => p.cliente_id));
+  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
+}
+const proyDe = t => t.proyecto_id ? byId(S.data.proyectos, t.proyecto_id) : null;
+const cliDe = p => p?.cliente_id ? byId(S.data.clientes, p.cliente_id) : null;
+const marcaDe = t => (proyDe(t)?.marca) || (t.privada ? "Personal" : "AVEJ Innova");
+const nombrePersona = id => byId(S.data.profiles, id)?.nombre || "Sin asignar";
+
+/* Salud del proyecto: compara el avance real con el que debería llevar según el tiempo transcurrido */
+function salud(p){
+  const av = +p.avance || 0;
+  if (p.estado !== "activo") return {nivel:"mute", txt: p.estado === "entregado" ? "Entregado" : p.estado[0].toUpperCase()+p.estado.slice(1), esperado:null, av, dias:null};
+  if (!p.entrega) return {nivel:"mute", txt:"Sin fecha", esperado:null, av, dias:null};
+  const ini = parseD(p.inicio) || parseD(p.created_at) || hoy0(), fin = parseD(p.entrega);
+  const dur = Math.max(1, (fin - ini) / 864e5), trans = (hoy0() - ini) / 864e5 + 0.5;
+  const tFrac = clamp(trans / dur, 0, 1), esperado = Math.round(tFrac * 100), gap = esperado - av, dias = diasHasta(p.entrega);
+  let nivel = "ok", txt = "En ruta";
+  if (av >= 100) { nivel = "ok"; txt = "Listo"; }
+  else if (dias < 0) { nivel = "bad"; txt = "Vencido"; }
+  else if ((tFrac >= 0.6 && gap >= 15) || (dias <= 2 && av < 80)) { nivel = "bad"; txt = "Alarma"; }
+  else if (gap >= 8 || (dias <= 5 && av < 60)) { nivel = "warn"; txt = "Atención"; }
+  return {nivel, txt, esperado, av, dias, gap};
+}
+const NIVEL_ORD = {bad:0, warn:1, ok:2, mute:3};
+
+/* Prioridad = importancia + urgencia (+ empuje si el proyecto está en alarma) */
+function urg(t){ const d = diasHasta(t.fecha_limite); if (d === null) return 0; if (d < 0) return 5; if (d === 0) return 4; if (d <= 1) return 3; if (d <= 3) return 2; if (d <= 7) return 1; return 0; }
+function prio(t){ const p = proyDe(t); const s = p ? salud(p).nivel : "ok"; return (+t.importancia||1)*20 + urg(t)*12 + (s==="bad"?15:s==="warn"?6:0) + (t.estado==="en curso"?4:0); }
+const esUrgente = t => urg(t) >= 2 || (proyDe(t) && salud(proyDe(t)).nivel === "bad");
+const esImportante = t => (+t.importancia||1) >= 2;
+const abiertas = ts => ts.filter(t => t.estado !== "hecha");
+const ordenar = ts => [...ts].sort((a,b) => prio(b) - prio(a));
+
+function alarmas(D = V()){
+  const out = [];
+  D.proyectos.forEach(p => { const s = salud(p); if (s.nivel === "bad" || s.nivel === "warn")
+    out.push({nivel:s.nivel, tipo:"proyecto", id:p.id, codigo:p.codigo, titulo:p.nombre,
+      det: s.txt === "Vencido" ? `Venció hace ${-s.dias} día(s) y va en ${s.av}%` : `Debería ir en ${s.esperado}% y va en ${s.av}% · ${s.dias === 0 ? "vence hoy" : "faltan " + s.dias + " día(s)"}`}); });
+  abiertas(D.tareas).forEach(t => { const d = diasHasta(t.fecha_limite); if (d !== null && d < 0)
+    out.push({nivel:"bad", tipo:"tarea", id:t.id, codigo:t.codigo, titulo:t.titulo, det:`Tarea vencida hace ${-d} día(s) · ${quien(t, true)}`}); });
+  return out.sort((a,b) => NIVEL_ORD[a.nivel] - NIVEL_ORD[b.nivel]);
+}
+function segActual(d = new Date()){ const m = minsAhora(); return segmentosDelDia(d).find(s => s.ini && hm(s.ini) <= m && m < hm(s.fin)); }
+
+/* ---------- piezas de interfaz ---------- */
+const chipMarca = m => `<span class="chip"><i style="background:${MARCAS[m]||"#A6A297"}"></i>${esc(m)}</span>`;
+const stChip = (nivel, txt) => `<span class="st ${nivel}">${esc(txt)}</span>`;
+const estadoNivel = e => ({"hecha":"ok","en revisión":"warn","bloqueada":"bad","en curso":"ok"}[e] || "mute");
+function quien(t, plain){
+  const persona = nombrePersona(t.responsable_id);
+  if (t.responsable_tipo === "claude") return plain ? `Claude (revisa ${persona})` : `<span class="who-b claude">${ic("claude")}Claude</span><span class="muted">· revisa ${esc(persona)}</span>`;
+  if (t.responsable_tipo === "externo") return plain ? `Externo (${persona})` : `<span class="who-b">${ic("equipo")}Externo</span><span class="muted">· ${esc(persona)}</span>`;
+  return plain ? persona : `<span class="who-b">${ic("persona")}${esc(persona)}</span>`;
+}
+function fechaTxt(t){ const d = diasHasta(t.fecha_limite); if (d === null) return `<span class="muted">Sin fecha</span>`;
+  const n = d < 0 ? "bad" : d === 0 ? "warn" : d <= 2 ? "warn" : "mute"; const txt = d < 0 ? `Vencida ${-d}d` : d === 0 ? "Hoy" : d === 1 ? "Mañana" : fmtD(t.fecha_limite); return stChip(n, txt); }
+function barra(av, esperado, nivel){ return `<div class="bar"><i class="${nivel}" style="width:${clamp(av,0,100)}%"></i>${esperado!=null?`<b style="left:calc(${clamp(esperado,0,100)}% - 1px)" title="Debería ir en ${esperado}%"></b>`:""}</div>`; }
+function filaTarea(t, opts={}){
+  const p = proyDe(t);
+  return `<div class="task">
+    <button class="chk ${t.estado==="hecha"?"on":""}" data-act="toggle" data-id="${t.id}" title="Marcar como hecha">${ic("check")}</button>
+    <div class="t">
+      <b data-act="editT" data-id="${t.id}" style="cursor:pointer">${esc(t.titulo)}</b>
+      <div class="meta"><span class="code">${esc(t.codigo||"—")}</span>${opts.noProy||!p?"":`<span>${esc(p.nombre)}</span>`}${quien(t)}${fechaTxt(t)}
+        <span class="dots" title="${IMPORTANCIA[t.importancia]}">${"⬢".repeat(+t.importancia||1)}</span>
+        ${t.estado!=="pendiente"&&t.estado!=="hecha"?stChip(estadoNivel(t.estado), t.estado):""}
+        ${t.privada?`<span class="muted" title="Privada">${ic("candado")}</span>`:""}
+        ${t.chat_claude?(t.chat_url?`<a class="link" href="${esc(t.chat_url)}" target="_blank" rel="noopener" title="Abrir chat: ${esc(t.chat_claude)}">${ic("link")}${esc(t.chat_claude.length>38?t.chat_claude.slice(0,38)+"…":t.chat_claude)}</a>`:`<button class="link" data-act="chat" data-id="${t.id}" title="Copiar título: ${esc(t.chat_claude)}">${ic("claude")}${esc(t.chat_claude.length>38?t.chat_claude.slice(0,38)+"…":t.chat_claude)}</button>`):""}
+      </div>
+    </div>
+    <div class="row">${t.responsable_tipo==="claude"?`<button class="link" data-act="brief" data-id="${t.id}" title="Brief para Claude">${ic("copiar")}</button>`:""}<span class="small muted">${t.estimado_min?t.estimado_min+"′":""}</span></div>
+  </div>`;
+}
+const lista = (ts, opts) => ts.length ? ts.map(t => filaTarea(t, opts)).join("") : `<div class="empty">${opts?.vacio || "Nada por aquí"}</div>`;
+
+/* =====================================================================
+   VISTAS
+   ===================================================================== */
+const VISTAS = [
+  {id:"colmena",   nombre:"Colmena",     ic:"colmena"},
+  {id:"hoy",       nombre:"Mi día",      ic:"hoy"},
+  {id:"matriz",    nombre:"Prioridades", ic:"matriz"},
+  {id:"proyectos", nombre:"Proyectos",   ic:"plano"},
+  {id:"tareas",    nombre:"Tareas",      ic:"tareas"},
+  {id:"clientes",  nombre:"Clientes",    ic:"local",  admin:true},
+  {id:"claude",    nombre:"Claude",      ic:"claude"},
+  {id:"equipo",    nombre:"Equipo",      ic:"equipo", admin:true}
+];
+
+function vColmena(){
+  const D = V(), al = alarmas(D), ab = abiertas(D.tareas);
+  const hoyTs = ab.filter(t => { const d = diasHasta(t.fecha_limite); return d !== null && d <= 0; });
+  const venc = ab.filter(t => diasHasta(t.fecha_limite) < 0);
+  const activos = D.proyectos.filter(p => p.estado === "activo");
+  const conClaude = ab.filter(t => t.responsable_tipo === "claude");
+  const seg = segActual(); const w = new Date().getDay();
+  const kpi = (n, v, l, ic_, tone, go) => `<div class="kpi" data-act="go" data-v="${go}">${hx(ic_, tone, 40)}<div><b>${v}</b><span>${l}</span></div></div>`;
+  const rojos = al.filter(a => a.nivel === "bad").length;
+  return `
+  ${rojos ? `<div class="banner">${hx("alerta","bad",36)}<div><b>${rojos} alarma(s) activa(s).</b> <span class="muted">Hay proyectos o tareas que no van a llegar a tiempo con el ritmo actual.</span></div></div>` : ""}
+  <div class="kpis">
+    ${kpi(1, activos.length, "Proyectos activos", "plano", "", "proyectos")}
+    ${kpi(2, al.filter(a=>a.tipo==="proyecto").length, "Proyectos en riesgo", "alerta", al.length?"bad":"ok", "proyectos")}
+    ${kpi(3, hoyTs.length, "Tareas para hoy", "hoy", "", "hoy")}
+    ${kpi(4, venc.length, "Tareas vencidas", "reloj", venc.length?"bad":"ok", "tareas")}
+    ${kpi(5, conClaude.length, "En manos de Claude", "claude", "", "claude")}
+    ${isAdmin() ? kpi(6, D.entradas.length, "Clientes nuevos", "entrada", D.entradas.length?"warn":"", "clientes") : kpi(6, ab.length, "Mis tareas abiertas", "tareas", "", "tareas")}
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h2>${hx("campana", al.length?"bad":"ok", 28)} Alarmas de tiempo</h2>
+      ${al.length ? al.slice(0,8).map(a => `<div class="alarm ${a.nivel}" data-act="${a.tipo==="proyecto"?"openP":"editT"}" data-id="${a.id}">${hx(a.tipo==="proyecto"?"plano":"tareas", a.nivel, 30)}<div class="t"><div class="row"><span class="code">${esc(a.codigo)}</span><b style="font-weight:600">${esc(a.titulo)}</b></div><div class="small muted">${esc(a.det)}</div></div></div>`).join("")
+        : `<div class="empty">Todo en ruta. Ningún proyecto está por debajo del ritmo que necesita.</div>`}
+      <div class="row" style="margin-top:12px"><button class="btn ghost sm" data-act="notif">${ic("campana")}Activar avisos en este dispositivo</button></div>
+    </div>
+    <div class="card">
+      <h2>${hx(seg?seg.ic:"luna","",28)} Ahora: ${esc(seg ? seg.nombre : (w===0?"Domingo en familia":"Fuera de bloque"))}</h2>
+      ${seg?.id==="contenido" ? `<p class="muted small" style="margin-top:-6px">Hoy toca: ${chipMarca(MARCA_DIA[w]||"AVEJ Innova")}</p>`:""}
+      ${seg?.fijo ? `<div class="empty">${ic("candado")} Bloque protegido. Las tareas esperan.</div>` :
+        lista(ordenar(ab.filter(t => seg ? t.segmento === seg.id : false)).slice(0,5), {vacio:"Sin tareas asignadas a este bloque."})}
+      <h2 style="margin-top:18px">${hx("matriz","",28)} Top 5 de prioridad</h2>
+      ${lista(ordenar(ab).slice(0,5))}
+    </div>
+  </div>
+  ${isAdmin() ? `<div class="sec">${hx("reloj","mute",26)} Actividad reciente</div>
+  <div class="card">${D.bitacora.slice(0,8).map(b => `<div class="task" style="grid-template-columns:auto 1fr auto"><span class="code">${esc(b.codigo||"—")}</span><span>${esc(b.texto)}</span><span class="small muted">${esc(b.autor||"")} · ${new Date(b.created_at).toLocaleString("es-CO",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</span></div>`).join("") || `<div class="empty">Sin actividad todavía</div>`}</div>` : ""}`;
+}
+
+function vHoy(){
+  const D = V(), hoy = new Date(), w = hoy.getDay(), segs = segmentosDelDia(hoy), m = minsAhora();
+  const ab = abiertas(D.tareas);
+  const delDia = ab.filter(t => { const d = diasHasta(t.fecha_limite); return (d !== null && d <= 0) || t.estado === "en curso"; });
+  const ids = new Set(segs.map(s => s.id));
+  const sinBloque = delDia.filter(t => !ids.has(t.segmento) || segs.find(s=>s.id===t.segmento)?.fijo);
+  const prox = ab.filter(t => { const d = diasHasta(t.fecha_limite); return d !== null && d >= 1 && d <= 3; });
+  const html = segs.map(s => {
+    const ts = ordenar(delDia.filter(t => t.segmento === s.id && !s.fijo));
+    const cap = s.ini ? hm(s.fin) - hm(s.ini) : 0, carga = ts.reduce((a,t) => a + (+t.estimado_min||0), 0);
+    const ahora = s.ini && hm(s.ini) <= m && m < hm(s.fin), pasado = s.fin && hm(s.fin) <= m;
+    const nivel = carga > cap ? "bad" : carga > cap*0.8 ? "warn" : "ok";
+    return `<div class="seg ${s.fijo?"fijo":""} ${ahora?"ahora":""}" style="${pasado&&!ahora?"opacity:.6":""}">
+      <div class="hora">${s.ini}<small>a ${s.fin}</small></div>
+      <div>
+        <h3>${hx(s.ic, s.fijo?"mute":"", 26)} ${esc(s.nombre)} ${s.id==="contenido"?chipMarca(MARCA_DIA[w]||"AVEJ Innova"):""} ${ahora?`<span class="tag-now">AHORA</span>`:""}</h3>
+        ${s.fijo ? `<div class="small muted" style="margin-top:6px">${ic("candado")} Bloque protegido</div>` : `
+        <div class="cap"><span>Carga ${carga}′ de ${cap}′</span>${barra(Math.round(carga/cap*100), null, nivel)}${carga>cap?`<span class="st bad">Sobrecargado: mueve o delega</span>`:""}</div>
+        ${lista(ts, {vacio:"Libre. Puedes adelantar algo de los próximos días."})}`}
+      </div></div>`;
+  }).join("");
+  return `
+  <div class="row wrap" style="justify-content:space-between;margin-bottom:14px">
+    <div class="muted">${hoy.toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"})} · aparecen las tareas que vencen hoy, las vencidas y las que están en curso, cada una en su bloque.</div>
+  </div>
+  <div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr);align-items:start" id="hoygrid">
+    <div class="timeline">${html}</div>
+    <div class="grid">
+      <div class="card"><h2>${hx("alerta", sinBloque.length?"warn":"ok", 26)} Sin bloque asignado</h2>${lista(ordenar(sinBloque), {vacio:"Todo tiene su bloque."})}</div>
+      <div class="card"><h2>${hx("reloj","",26)} Próximos 3 días</h2>${lista(ordenar(prox), {vacio:"Nada programado."})}</div>
+    </div>
+  </div>`;
+}
+
+function vMatriz(){
+  const ab = abiertas(V().tareas);
+  const q = (fn) => ordenar(ab.filter(fn));
+  const Q = [
+    {c:"q1", t:"Hacer ya", ic:"alerta", p:"Urgente e importante. Va en tu bloque de hoy, antes que cualquier otra cosa.", ts:q(t => esUrgente(t) && esImportante(t))},
+    {c:"q2", t:"Agendar", ic:"reloj", p:"Importante, no urgente. Aquí se construye el negocio: ponle fecha y bloque.", ts:q(t => !esUrgente(t) && esImportante(t))},
+    {c:"q3", t:"Delegar", ic:"claude", p:"Urgente, poco importante. Pásalo a Claude o al equipo y tú solo revisas.", ts:q(t => esUrgente(t) && !esImportante(t))},
+    {c:"q4", t:"Aparcar", ic:"pausa", p:"Ni urgente ni importante. Al bloque de investigación del sábado o se elimina.", ts:q(t => !esUrgente(t) && !esImportante(t))}
+  ];
+  return `<div class="axis"><span>← Urgente</span><span>No urgente →</span></div>
+  <div class="mx">${[Q[0],Q[1],Q[2],Q[3]].map(x => `<div class="q ${x.c}"><h3>${hx(x.ic, x.c==="q1"?"bad":x.c==="q3"?"warn":"", 28)} ${x.t} <span class="muted small" style="font-family:var(--fb)">${x.ts.length}</span></h3><p>${x.p}</p>${lista(x.ts, {vacio:"Vacío"})}</div>`).join("")}</div>
+  <p class="small muted" style="margin-top:12px">Urgente = vence en 3 días o menos, ya venció, o su proyecto está en alarma. Importante = importancia «Importante» o «Crítica».</p>`;
+}
+
+function vProyectos(){
+  const D = V(); const f = S.f;
+  let ps = D.proyectos.filter(p => (!f.pm || p.marca === f.pm) && (!f.pe || p.estado === f.pe) && (!f.pq || norm(p.nombre+p.codigo).includes(norm(f.pq))));
+  if (!f.pe) ps = ps.filter(p => p.estado === "activo" || p.estado === "pausado");
+  ps.sort((a,b) => NIVEL_ORD[salud(a).nivel] - NIVEL_ORD[salud(b).nivel] || (diasHasta(a.entrega) ?? 999) - (diasHasta(b.entrega) ?? 999));
+  const sel = (k, opts, ph) => `<select data-chg="f" data-k="${k}"><option value="">${ph}</option>${opts.map(o => `<option ${S.f[k]===o?"selected":""}>${esc(o)}</option>`).join("")}</select>`;
+  return `<div class="filters">
+    <input placeholder="Buscar por nombre o código…" data-inp="f" data-k="pq" value="${esc(f.pq||"")}">
+    ${sel("pm", Object.keys(MARCAS), "Todas las marcas")}${sel("pe", ESTADOS_P, "Activos y pausados")}
+    ${isAdmin()?`<button class="btn sm" data-act="newP">${ic("mas")}Proyecto</button>`:""}
+  </div>
+  <div class="pgrid">${ps.map(p => { const s = salud(p), c = cliDe(p), ts = D.tareas.filter(t => t.proyecto_id === p.id), ab = abiertas(ts);
+    return `<div class="pcard ${s.nivel}" data-act="openP" data-id="${p.id}">
+      <div class="row" style="justify-content:space-between"><span class="code">${esc(p.codigo)}</span>${stChip(s.nivel, s.txt)}</div>
+      <h3>${esc(p.nombre)}</h3>
+      <div class="row wrap">${chipMarca(p.marca)}<span class="chip">${esc(p.tipo)}</span>${p.privado?`<span class="chip">${ic("candado")}Privado</span>`:""}</div>
+      ${barra(s.av, s.esperado, s.nivel)}
+      <div class="nums"><span>Avance <b style="color:var(--ink)">${s.av}%</b>${s.esperado!=null?` · debería ${s.esperado}%`:""}</span><span>${p.entrega?(s.dias<0?`Venció ${fmtD(p.entrega)}`:`Entrega ${fmtD(p.entrega)}`):"Sin fecha"}</span></div>
+      <div class="nums"><span>${c?esc(c.nombre+(c.ciudad?" · "+c.ciudad:"")):"Interno"}</span><span>${ab.length} abiertas / ${ts.length} tareas · ${esc(nombrePersona(p.responsable_id))}</span></div>
+    </div>`; }).join("") || `<div class="empty">No hay proyectos con estos filtros.</div>`}</div>`;
+}
+
+function vTareas(){
+  const D = V(), f = S.f;
+  let ts = D.tareas.filter(t =>
+    (!f.tr || (f.tr === "claude" ? t.responsable_tipo === "claude" : f.tr === "yo" ? t.responsable_id === S.me.id && t.responsable_tipo !== "claude" : t.responsable_id === f.tr)) &&
+    (!f.tm || marcaDe(t) === f.tm) && (!f.ts || t.segmento === f.ts) &&
+    (f.te ? t.estado === f.te : t.estado !== "hecha") &&
+    (!f.tq || norm(t.titulo + t.codigo + (t.chat_claude||"")).includes(norm(f.tq))));
+  ts = ordenar(ts);
+  const opt = (k, pairs, ph) => `<select data-chg="f" data-k="${k}"><option value="">${ph}</option>${pairs.map(([v,l]) => `<option value="${esc(v)}" ${S.f[k]===v?"selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  return `<div class="filters">
+    <input placeholder="Buscar tarea, código o chat…" data-inp="f" data-k="tq" value="${esc(f.tq||"")}">
+    ${opt("tr", [["yo","Mis tareas"],["claude","Hechas por Claude"], ...(isAdmin()?S.data.profiles.map(p=>[p.id,p.nombre]):[])], "Todos los responsables")}
+    ${opt("tm", Object.keys(MARCAS).map(m=>[m,m]), "Todas las marcas")}
+    ${opt("ts", SEG_ALL.filter(s=>!s.fijo).map(s=>[s.id,s.nombre]), "Todos los bloques")}
+    ${opt("te", ESTADOS_T.map(e=>[e,e]), "Abiertas")}
+    ${isAdmin()?`<button class="btn sm" data-act="newT">${ic("mas")}Tarea</button>`:""}
+  </div>
+  <div class="card" style="padding:4px 12px"><table class="tbl"><thead><tr><th></th><th>Tarea</th><th class="hm">Responsable</th><th class="hm">Bloque</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>
+  ${ts.map(t => { const p = proyDe(t); return `<tr>
+    <td><button class="chk ${t.estado==="hecha"?"on":""}" data-act="toggle" data-id="${t.id}">${ic("check")}</button></td>
+    <td><div class="row wrap" style="gap:6px"><span class="code">${esc(t.codigo)}</span><b style="font-weight:600;cursor:pointer" data-act="editT" data-id="${t.id}">${esc(t.titulo)}</b></div>
+      <div class="small muted" style="margin-top:3px">${p?esc(p.nombre):"Tarea suelta"} · ${esc(marcaDe(t))}${t.chat_claude?` · <span style="color:var(--copper)">${esc(t.chat_claude)}</span>`:""}</div></td>
+    <td class="hm">${quien(t)}</td>
+    <td class="hm small muted">${esc(SEG_ALL.find(s=>s.id===t.segmento)?.nombre||"—")}</td>
+    <td>${fechaTxt(t)}</td>
+    <td><select data-chg="estado" data-id="${t.id}">${ESTADOS_T.map(e => `<option ${t.estado===e?"selected":""}>${e}</option>`).join("")}</select></td></tr>`; }).join("") || `<tr><td colspan="6"><div class="empty">Sin tareas con estos filtros.</div></td></tr>`}
+  </tbody></table></div>`;
+}
+
+function vClientes(){
+  const D = V();
+  const ent = D.entradas.filter(e => !e.procesada);
+  return `
+  <div class="card"><h2>${hx("entrada", ent.length?"warn":"", 28)} Clientes nuevos por atender <span class="muted small" style="font-family:var(--fb)">${ent.length}</span></h2>
+    <p class="small muted" style="margin-top:-6px">Llegan solos desde HighLevel (formularios y Jisabella) o los agregas a mano. Conviértelos en cliente y crea su proyecto.</p>
+    ${ent.map(e => `<div class="task"><span>${hx("local","warn",30)}</span><div class="t"><b>${esc(e.nombre||"Sin nombre")}</b><div class="meta"><span class="chip">${esc(e.canal||"—")}</span><span>${esc(e.contacto||"")}</span><span>${esc(e.mensaje||"")}</span></div></div>
+      <div class="row"><button class="btn sm" data-act="convertir" data-id="${e.id}">Convertir</button><button class="btn ghost sm" data-act="descartar" data-id="${e.id}">Descartar</button></div></div>`).join("") || `<div class="empty">No hay entradas nuevas.</div>`}
+  </div>
+  <div class="sec">${hx("local","",26)} Cartera de clientes <button class="btn sm" data-act="newC" style="margin-left:auto">${ic("mas")}Cliente</button></div>
+  <div class="card" style="padding:4px 12px"><table class="tbl"><thead><tr><th>Cliente</th><th class="hm">Ubicación</th><th class="hm">Canal</th><th>Estado</th><th>Proyectos</th><th></th></tr></thead><tbody>
+  ${D.clientes.sort((a,b)=>ESTADOS_C.indexOf(a.estado)-ESTADOS_C.indexOf(b.estado)).map(c => { const ps = D.proyectos.filter(p => p.cliente_id === c.id);
+    const peor = ps.map(salud).sort((a,b)=>NIVEL_ORD[a.nivel]-NIVEL_ORD[b.nivel])[0];
+    return `<tr><td><b style="font-weight:600;cursor:pointer" data-act="editC" data-id="${c.id}">${esc(c.nombre)}</b><div class="small muted">${esc(c.negocio||"")}</div></td>
+    <td class="hm small">${esc([c.ciudad,c.pais].filter(Boolean).join(", "))}</td><td class="hm small">${esc(c.canal||"")}</td>
+    <td>${stChip(c.estado==="nuevo"?"warn":c.estado==="perdido"?"bad":c.estado==="cerrado"?"mute":"ok", c.estado)}</td>
+    <td>${ps.map(p=>`<span class="code" data-act="openP" data-id="${p.id}" style="cursor:pointer;margin-right:4px">${esc(p.codigo)}</span>`).join("")} ${peor&&peor.nivel!=="ok"&&peor.nivel!=="mute"?stChip(peor.nivel,peor.txt):""}</td>
+    <td><button class="btn ghost sm" data-act="newP" data-cliente="${c.id}">${ic("mas")}Proyecto</button></td></tr>`; }).join("") || `<tr><td colspan="6"><div class="empty">Aún no hay clientes.</div></td></tr>`}
+  </tbody></table></div>`;
+}
+
+function vClaude(){
+  const ab = abiertas(V().tareas).filter(t => t.responsable_tipo === "claude");
+  const grupos = ["en curso","pendiente","en revisión","bloqueada"];
+  return `<div class="grid g2" style="align-items:start">
+    <div class="card"><h2>${hx("claude","",28)} Cómo se conecta cada tarea con su chat</h2>
+      <ol class="small" style="padding-left:18px;margin:0;line-height:1.7">
+        <li>Crea la tarea con responsable <b>Claude</b>. La Colmena le da un código (ej. <span class="code">AV-0004.1</span>) y propone el título del chat.</li>
+        <li>Toca ${ic("copiar")} <b>Brief</b> y pégalo como primer mensaje de un chat nuevo. Ponle al chat el título exacto: <i>AV-0004.1 · Pedro Tenerife · Informe</i>.</li>
+        <li>Pega aquí el enlace del chat (en la tarea, campo «Enlace del chat») para abrirlo con un toque.</li>
+        <li>Claude cierra cada sesión con una línea de reporte. La pegas abajo y la tarea se actualiza sola.</li>
+      </ol>
+      <p class="small muted">Así, buscando el código en tus chats de Claude, siempre encuentras dónde se hizo cada cosa.</p>
+    </div>
+    <div class="card"><h2>${hx("recarga","",28)} Pegar reporte de Claude</h2>
+      <textarea class="rep" id="rep" placeholder="#AV-0004.1 | estado: en revisión | avance: 80 | nota: informe listo para revisar"></textarea>
+      <div class="row" style="margin-top:10px;justify-content:flex-end"><button class="btn" data-act="reporte">${ic("check")}Aplicar reporte</button></div>
+    </div>
+  </div>
+  ${grupos.map(g => { const ts = ordenar(ab.filter(t => t.estado === g)); return ts.length ? `<div class="sec">${hx(g==="en revisión"?"lupa":g==="bloqueada"?"alerta":"claude", g==="bloqueada"?"bad":g==="en revisión"?"warn":"", 26)} ${g[0].toUpperCase()+g.slice(1)} <span class="muted small" style="font-family:var(--fb)">${ts.length}</span></div><div class="card">${lista(ts)}</div>` : ""; }).join("") || `<div class="empty" style="margin-top:20px">Claude no tiene tareas abiertas.</div>`}`;
+}
+
+function vEquipo(){
+  const D = S.data;
+  return `<div class="card"><h2>${hx("equipo","",28)} Personas y roles</h2>
+    <p class="small muted" style="margin-top:-6px">${MODO_REAL ? "Para agregar a alguien: Supabase → Authentication → Add user (correo y contraseña). Aparecerá aquí como colaborador; tú le asignas área y rol." : "En modo demo puedes ver el panel como colaborador con el selector de arriba."} El <b>admin</b> ve todo, incluidas tus tareas personales. El <b>colaborador</b> solo ve sus tareas, los proyectos donde participa y nunca lo privado.</p>
+    <table class="tbl"><thead><tr><th>Nombre</th><th class="hm">Correo</th><th>Rol</th><th>Área</th><th>Carga</th></tr></thead><tbody>
+    ${D.profiles.map(p => { const ab = abiertas(D.tareas.filter(t => t.responsable_id === p.id && t.responsable_tipo !== "claude")); const v = ab.filter(t => diasHasta(t.fecha_limite) < 0).length;
+      return `<tr><td><b style="font-weight:600">${esc(p.nombre)}</b></td><td class="hm small muted">${esc(p.email||"")}</td>
+      <td><select data-chg="rol" data-id="${p.id}" ${p.id===S.me.id?"disabled":""}><option ${p.rol==="admin"?"selected":""}>admin</option><option ${p.rol==="colaborador"?"selected":""}>colaborador</option></select></td>
+      <td><input value="${esc(p.area||"")}" data-chg="area" data-id="${p.id}" style="background:var(--bg2);border:1px solid var(--line);border-radius:7px;padding:5px 8px;width:130px"></td>
+      <td class="small">${ab.length} abiertas ${v?stChip("bad", v+" vencidas"):""}</td></tr>`; }).join("")}
+    </tbody></table></div>
+    ${!MODO_REAL ? `<div class="card" style="margin-top:16px"><h2>${hx("recarga","mute",28)} Datos de ejemplo</h2><p class="small muted">Estás en modo demo: los datos viven solo en este navegador. Para usarlo de verdad con tu equipo, sigue el LEEME para conectar Supabase.</p><button class="btn danger sm" data-act="resetDemo">Restaurar datos de ejemplo</button></div>` : ""}`;
+}
+
+/* ---------- detalle de proyecto ---------- */
+function modalProyecto(id){
+  const p = byId(S.data.proyectos, id); if (!p) return;
+  const s = salud(p), c = cliDe(p), ts = ordenar(V().tareas.filter(t => t.proyecto_id === id));
+  const hechas = V().tareas.filter(t => t.proyecto_id === id && t.estado === "hecha");
+  modal(`<h2>${hx("plano", s.nivel, 34)} ${esc(p.nombre)}</h2>
+    <div class="row wrap" style="margin:8px 0 14px"><span class="code">${esc(p.codigo)}</span>${chipMarca(p.marca)}${stChip(s.nivel, s.txt)}<span class="small muted">${c?esc(c.nombre+" · "+[c.ciudad,c.pais].filter(Boolean).join(", ")):"Proyecto interno"}</span></div>
+    ${barra(s.av, s.esperado, s.nivel)}
+    <div class="row small muted" style="justify-content:space-between;margin:8px 0 4px"><span>Avance ${s.av}%${s.esperado!=null?` · debería ir en ${s.esperado}%`:""}</span><span>${p.inicio?fmtD(p.inicio):""} → ${p.entrega?fmtD(p.entrega):"sin fecha"}</span></div>
+    ${p.notas?`<p class="small">${esc(p.notas)}</p>`:""}
+    <div class="sec" style="margin-top:18px">${hx("tareas","",24)} Tareas abiertas ${isAdmin()?`<button class="btn sm" style="margin-left:auto" data-act="newT" data-proy="${p.id}">${ic("mas")}Tarea</button>`:""}</div>
+    ${lista(ts.filter(t=>t.estado!=="hecha"), {noProy:true, vacio:"Sin tareas abiertas"})}
+    ${hechas.length?`<details style="margin-top:10px"><summary class="small muted" style="cursor:pointer">${hechas.length} tarea(s) hechas</summary>${lista(hechas,{noProy:true})}</details>`:""}
+    <div class="mfoot">${isAdmin()?`<button class="btn ghost" data-act="editP" data-id="${p.id}">${ic("editar")}Editar proyecto</button>`:""}<button class="btn" data-act="close">Cerrar</button></div>`);
+}
+
+/* =====================================================================
+   FORMULARIOS
+   ===================================================================== */
+function modal(html){ closeModal(); const o = document.createElement("div"); o.className = "ov"; o.id = "ov"; o.innerHTML = `<div class="modal">${html}</div>`; o.addEventListener("mousedown", e => { if (e.target === o) closeModal(); }); document.body.appendChild(o); }
+function confirmar(msg, fn){ S._ok = fn; modal(`<h2>${hx("alerta","bad",34)} Confirmar</h2><p>${esc(msg)}</p><div class="mfoot"><button class="btn ghost" data-act="close">Cancelar</button><button class="btn danger" data-act="ok">Sí, continuar</button></div>`); }
+function closeModal(){ $("#ov")?.remove(); }
+const opts = (pairs, val) => pairs.map(([v,l]) => `<option value="${esc(v)}" ${String(val??"")===String(v)?"selected":""}>${esc(l)}</option>`).join("");
+
+function formTarea(t = {}, proyId){
+  const nuevo = !t.id, adm = isAdmin(), dis = adm ? "" : "disabled";
+  t = {responsable_tipo:"humano", responsable_id:S.me.id, segmento:"entregables", importancia:2, estado:"pendiente", avance:0, estimado_min:30, proyecto_id: proyId||null, ...t};
+  const ps = V().proyectos.filter(p => p.estado === "activo" || p.id === t.proyecto_id);
+  modal(`<h2>${hx(t.responsable_tipo==="claude"?"claude":"tareas","",34)} ${nuevo?"Nueva tarea":esc(t.codigo)}</h2>
+   <form class="form" id="fT">
+    <label class="full">Tarea<input name="titulo" required value="${esc(t.titulo||"")}" ${dis} placeholder="Ej: Informe de propuestas"></label>
+    <label class="full">Proyecto<select name="proyecto_id" ${dis}><option value="">— Tarea suelta / personal —</option>${opts(ps.map(p=>[p.id, p.codigo+" · "+p.nombre]), t.proyecto_id)}</select></label>
+    <label>¿Quién la ejecuta?<select name="responsable_tipo" ${dis}>${opts(Object.entries(RESP_TIPO), t.responsable_tipo)}</select></label>
+    <label>Persona a cargo / revisa<select name="responsable_id" ${dis}>${opts(S.data.profiles.map(p=>[p.id,p.nombre+" ("+p.area+")"]), t.responsable_id)}</select></label>
+    <label>Título del chat de Claude<input name="chat_claude" value="${esc(t.chat_claude||"")}" placeholder="Se propone solo al guardar"></label>
+    <label>Enlace del chat<input name="chat_url" type="url" value="${esc(t.chat_url||"")}" placeholder="https://claude.ai/chat/…"></label>
+    <label>Bloque del día<select name="segmento" ${dis}>${opts(SEG_ALL.filter(s=>!s.fijo).map(s=>[s.id,s.nombre]), t.segmento)}</select></label>
+    <label>Fecha límite<input name="fecha_limite" type="date" value="${esc(t.fecha_limite||"")}" ${dis}></label>
+    <label>Importancia<select name="importancia" ${dis}>${opts(Object.entries(IMPORTANCIA), t.importancia)}</select></label>
+    <label>Tiempo estimado (min)<input name="estimado_min" type="number" min="5" step="5" value="${esc(t.estimado_min)}" ${dis}></label>
+    <label>Estado<select name="estado">${opts(ESTADOS_T.map(e=>[e,e]), t.estado)}</select></label>
+    <label>Avance: <output id="avO">${+t.avance||0}%</output><input name="avance" type="range" min="0" max="100" step="5" value="${+t.avance||0}" oninput="avO.value=this.value+'%'"></label>
+    <label class="full">Notas<textarea name="notas">${esc(t.notas||"")}</textarea></label>
+    ${adm?`<label class="cb full"><input type="checkbox" name="privada" ${t.privada?"checked":""}> Privada (personal: solo la ves tú)</label>`:""}
+   </form>
+   <div class="mfoot">${!nuevo&&adm?`<button class="btn danger" data-act="delT" data-id="${t.id}">Eliminar</button>`:""}${!nuevo&&t.responsable_tipo==="claude"?`<button class="btn ghost" data-act="brief" data-id="${t.id}">${ic("copiar")}Brief</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveT" data-id="${t.id||""}">Guardar</button></div>`);
+}
+
+function formProyecto(p = {}, clienteId){
+  const nuevo = !p.id;
+  p = {marca:"AVEJ Innova", tipo:"Cliente", inicio:addDays(0), importancia:2, estado:"activo", avance:0, responsable_id:S.me.id, cliente_id:clienteId||null, ...p};
+  const tieneTareas = !nuevo && S.data.tareas.some(t => t.proyecto_id === p.id);
+  modal(`<h2>${hx("plano","",34)} ${nuevo?"Nuevo proyecto":esc(p.codigo)}</h2>
+   <form class="form" id="fP">
+    <label class="full">Nombre<input name="nombre" required value="${esc(p.nombre||"")}" placeholder="Ej: Pedro · Tenerife · Kit Local Pro"></label>
+    <label>Cliente<select name="cliente_id"><option value="">— Interno / sin cliente —</option>${opts(S.data.clientes.map(c=>[c.id,c.nombre+(c.ciudad?" · "+c.ciudad:"")]), p.cliente_id)}</select></label>
+    <label>Marca<select name="marca">${opts(Object.keys(MARCAS).map(m=>[m,m]), p.marca)}</select></label>
+    <label>Tipo<select name="tipo">${opts(TIPOS_PROY.map(m=>[m,m]), p.tipo)}</select></label>
+    <label>Responsable<select name="responsable_id">${opts(S.data.profiles.map(x=>[x.id,x.nombre]), p.responsable_id)}</select></label>
+    <label>Inicio<input type="date" name="inicio" value="${esc(p.inicio||"")}"></label>
+    <label>Entrega<input type="date" name="entrega" value="${esc(p.entrega||"")}"></label>
+    <label>Importancia<select name="importancia">${opts(Object.entries(IMPORTANCIA), p.importancia)}</select></label>
+    <label>Estado<select name="estado">${opts(ESTADOS_P.map(e=>[e,e]), p.estado)}</select></label>
+    <label class="full">Avance manual: <output id="avP">${+p.avance||0}%</output>${tieneTareas?` <span class="muted">(se calcula solo con las tareas)</span>`:""}<input type="range" name="avance" min="0" max="100" step="5" value="${+p.avance||0}" ${tieneTareas?"disabled":""} oninput="avP.value=this.value+'%'"></label>
+    <label class="full">Notas<textarea name="notas">${esc(p.notas||"")}</textarea></label>
+    <label class="cb full"><input type="checkbox" name="privado" ${p.privado?"checked":""}> Privado (solo admin)</label>
+   </form>
+   <div class="mfoot">${!nuevo?`<button class="btn danger" data-act="delP" data-id="${p.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveP" data-id="${p.id||""}">Guardar</button></div>`);
+}
+
+function formCliente(c = {}, entradaId){
+  const nuevo = !c.id; c = {canal:"Instagram", estado:"nuevo", ...c};
+  modal(`<h2>${hx("local","",34)} ${nuevo?"Nuevo cliente":esc(c.nombre)}</h2>
+   <form class="form" id="fC">
+    <label>Nombre<input name="nombre" required value="${esc(c.nombre||"")}"></label>
+    <label>Negocio<input name="negocio" value="${esc(c.negocio||"")}" placeholder="Cafetería, panadería…"></label>
+    <label>Ciudad<input name="ciudad" value="${esc(c.ciudad||"")}"></label>
+    <label>País<input name="pais" value="${esc(c.pais||"")}"></label>
+    <label>Canal<select name="canal">${opts(CANALES.map(x=>[x,x]), c.canal)}</select></label>
+    <label>Estado<select name="estado">${opts(ESTADOS_C.map(x=>[x,x]), c.estado)}</select></label>
+    <label class="full">Contacto<input name="contacto" value="${esc(c.contacto||"")}" placeholder="WhatsApp, correo, @usuario"></label>
+    <label class="full">Notas<textarea name="notas">${esc(c.notas||"")}</textarea></label>
+    ${nuevo?`<label class="cb full"><input type="checkbox" name="_crearP" checked> Crear su proyecto a continuación</label>`:""}
+   </form>
+   <div class="mfoot">${!nuevo?`<button class="btn danger" data-act="delC" data-id="${c.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveC" data-id="${c.id||""}" data-entrada="${entradaId||""}">Guardar</button></div>`);
+}
+
+function leer(formId){
+  const f = $(formId), o = {};
+  f.querySelectorAll("input,select,textarea").forEach(el => {
+    if (!el.name || el.disabled) return;
+    if (el.type === "checkbox") o[el.name] = el.checked;
+    else if (el.type === "number" || el.type === "range" || el.name === "importancia") o[el.name] = el.value === "" ? null : Number(el.value);
+    else o[el.name] = el.value.trim() === "" ? null : el.value.trim();
+  });
+  return o;
+}
+function tituloChat(t){
+  const p = proyDe(t), c = cliDe(p);
+  const quienEs = c ? [c.nombre, c.ciudad].filter(Boolean).join(" ") : (p ? p.nombre.split("·")[0].trim() : "Tarea");
+  return `${t.codigo} · ${quienEs} · ${t.titulo}`;
+}
+function brief(t){
+  const p = proyDe(t), c = cliDe(p);
+  return [
+    `TÍTULO DE ESTE CHAT: ${t.chat_claude || tituloChat(t)}`, "",
+    `Tarea ${t.codigo}: ${t.titulo}`,
+    p ? `Proyecto ${p.codigo}: ${p.nombre} · marca ${p.marca} · entrega ${p.entrega ? fmtD(p.entrega) : "sin fecha"}` : "Tarea suelta",
+    c ? `Cliente: ${c.nombre}${c.negocio ? " (" + c.negocio + ")" : ""} · ${[c.ciudad, c.pais].filter(Boolean).join(", ")}` : "",
+    `Fecha límite de esta tarea: ${t.fecha_limite ? fmtD(t.fecha_limite) : "sin fecha"} · importancia ${IMPORTANCIA[t.importancia]}`,
+    t.notas ? `Notas: ${t.notas}` : "", "",
+    "Desarrolla esta tarea de principio a fin. Yo reviso y envío.",
+    "Al terminar cada sesión, cierra con UNA línea exactamente así para actualizar la Colmena AVEJ:",
+    `#${t.codigo} | estado: en revisión | avance: 80 | nota: <resumen en una frase>`
+  ].filter((l, i, a) => l !== "" || a[i-1] !== "").join("\n");
+}
+
+/* =====================================================================
+   ACCIONES
+   ===================================================================== */
+async function recargar(){ S.data = await S.store.loadAll(isAdmin()); render(); }
+async function guardar(fn, okMsg){ try { await fn(); await recargar(); if (okMsg) toast(okMsg); return true; } catch (e) { console.error(e); toast("Error: " + (e.message || e)); return false; } }
+const log = (codigo, texto) => S.store.log(codigo, texto, S.me.nombre);
+
+const ACT = {
+  go: el => { S.view = el.dataset.v; render(); scrollTo(0,0); },
+  close: () => closeModal(),
+  toggle: async el => { const t = byId(S.data.tareas, el.dataset.id); const hecha = t.estado !== "hecha";
+    await guardar(async () => { await S.store.update("tareas", t.id, hecha ? {estado:"hecha", avance:100} : {estado:"en curso"}); await log(t.codigo, hecha ? "Tarea hecha" : "Tarea reabierta"); }, hecha ? "¡Hecha! " + t.codigo : null); },
+  editT: el => formTarea(byId(S.data.tareas, el.dataset.id)),
+  newT: el => formTarea({}, el.dataset.proy),
+  saveT: async el => { const f = $("#fT"); if (!f.reportValidity()) return; const o = leer("#fT"); const id = el.dataset.id;
+    if (o.estado === "hecha") o.avance = 100;
+    if (o.responsable_tipo === "claude" && !o.chat_claude) o.chat_claude = null;
+    const ok = await guardar(async () => {
+      let t = id ? await S.store.update("tareas", id, o) : await S.store.insert("tareas", o);
+      if (!id) await log(t.codigo, "Tarea creada: " + t.titulo);
+      else if (o.estado) await log(t.codigo, `Actualizada · ${o.estado} · ${o.avance ?? t.avance}%`);
+      if ((o.responsable_tipo || t.responsable_tipo) === "claude" && !t.chat_claude){ S.data = await S.store.loadAll(isAdmin()); const tt = byId(S.data.tareas, t.id); await S.store.update("tareas", t.id, {chat_claude: tituloChat(tt)}); }
+    }, "Guardado"); if (ok) closeModal(); },
+  delT: el => { const t = byId(S.data.tareas, el.dataset.id); confirmar("¿Eliminar la tarea " + t.codigo + "?", () => guardar(async () => { await S.store.remove("tareas", t.id); await log(t.codigo, "Tarea eliminada"); }, "Eliminada")); },
+  openP: el => modalProyecto(el.dataset.id),
+  editP: el => formProyecto(byId(S.data.proyectos, el.dataset.id)),
+  newP: el => formProyecto({}, el.dataset.cliente),
+  saveP: async el => { const f = $("#fP"); if (!f.reportValidity()) return; const o = leer("#fP"); const id = el.dataset.id;
+    if (await guardar(async () => { const p = id ? await S.store.update("proyectos", id, o) : await S.store.insert("proyectos", o); await log(p.codigo, id ? "Proyecto actualizado" : "Proyecto creado: " + p.nombre); }, "Guardado")) closeModal(); },
+  delP: el => { const p = byId(S.data.proyectos, el.dataset.id); confirmar("¿Eliminar " + p.codigo + " y todas sus tareas?", () => guardar(async () => { await S.store.remove("proyectos", p.id); await log(p.codigo, "Proyecto eliminado"); }, "Eliminado")); },
+  newC: () => formCliente(),
+  editC: el => formCliente(byId(S.data.clientes, el.dataset.id)),
+  saveC: async el => { const f = $("#fC"); if (!f.reportValidity()) return; const o = leer("#fC"); const crearP = o._crearP; delete o._crearP; const id = el.dataset.id, ent = el.dataset.entrada; let nuevo;
+    const ok = await guardar(async () => { nuevo = id ? await S.store.update("clientes", id, o) : await S.store.insert("clientes", o); if (ent) await S.store.update("entradas", ent, {procesada:true}); if (!id) await log("", "Cliente nuevo: " + o.nombre); }, "Guardado");
+    if (ok) { closeModal(); if (crearP && nuevo) formProyecto({nombre: [o.nombre, o.ciudad].filter(Boolean).join(" · ") + " · "}, nuevo.id); } },
+  delC: el => confirmar("¿Eliminar este cliente? Sus proyectos quedan como internos.", () => guardar(() => S.store.remove("clientes", el.dataset.id), "Eliminado")),
+  convertir: el => { const e = byId(S.data.entradas, el.dataset.id); formCliente({nombre: e.nombre, canal: CANALES.includes(e.canal) ? e.canal : "Otro", contacto: e.contacto, notas: e.mensaje}, e.id); },
+  descartar: async el => guardar(() => S.store.update("entradas", el.dataset.id, {procesada:true}), "Descartada"),
+  chat: el => { const t = byId(S.data.tareas, el.dataset.id); copiar(t.chat_claude); toast("Título copiado: búscalo en tus chats de Claude"); },
+  ok: el => { const fn = S._ok; S._ok = null; closeModal(); fn && fn(); },
+  brief: el => { const t = byId(S.data.tareas, el.dataset.id); const b = brief(t);
+    modal(`<h2>${hx("claude","",34)} Brief para Claude</h2><p class="small muted">Abre un chat nuevo, ponle el título de la primera línea y pega este brief.</p><pre class="brief">${esc(b)}</pre>
+      <div class="mfoot">${t.chat_url?`<a class="btn ghost" href="${esc(t.chat_url)}" target="_blank" rel="noopener">${ic("link")}Abrir chat</a>`:`<a class="btn ghost" href="https://claude.ai/new" target="_blank" rel="noopener">${ic("link")}Chat nuevo</a>`}<button class="btn" data-act="copyBrief">${ic("copiar")}Copiar brief</button></div>`);
+    S._brief = b; },
+  copyBrief: () => copiar(S._brief),
+  reporte: async () => {
+    const txt = $("#rep").value; const lines = txt.split("\n").map(l => l.trim()).filter(l => l.startsWith("#"));
+    if (!lines.length) return toast("Pega una línea que empiece con #CÓDIGO");
+    let n = 0, fallos = [];
+    for (const l of lines){
+      const parts = l.split("|").map(s => s.trim()); const code = parts[0].slice(1).trim().toUpperCase();
+      const patch = {}; let nota = "";
+      parts.slice(1).forEach(p => { const i = p.indexOf(":"); if (i < 0) return; const k = norm(p.slice(0,i)), v = p.slice(i+1).trim();
+        if (k === "estado"){ const e = ESTADOS_T.find(x => norm(x) === norm(v)); if (e) patch.estado = e; }
+        if (k === "avance") patch.avance = clamp(parseInt(v) || 0, 0, 100);
+        if (k === "nota") nota = v;
+        if (k === "chat" && /^https?:/.test(v)) patch.chat_url = v; });
+      if (patch.estado === "hecha") patch.avance = 100;
+      const t = S.data.tareas.find(x => (x.codigo||"").toUpperCase() === code), p = S.data.proyectos.find(x => x.codigo.toUpperCase() === code);
+      try {
+        if (t){ if (nota) patch.notas = ((t.notas ? t.notas + "\n" : "") + `[${isoL(new Date())}] ${nota}`); await S.store.update("tareas", t.id, patch); }
+        else if (p && isAdmin()){ const pp = {}; if (patch.avance != null) pp.avance = patch.avance; if (nota) pp.notas = ((p.notas ? p.notas + "\n" : "") + `[${isoL(new Date())}] ${nota}`); await S.store.update("proyectos", p.id, pp); }
+        else { fallos.push(code); continue; }
+        await S.store.log(code, "Claude: " + [patch.estado, patch.avance != null ? patch.avance + "%" : "", nota].filter(Boolean).join(" · "), "Claude"); n++;
+      } catch (e) { fallos.push(code); }
+    }
+    await recargar(); toast(`${n} actualización(es) aplicada(s)` + (fallos.length ? ` · no encontré: ${fallos.join(", ")}` : ""));
+  },
+  notif: async () => { if (!("Notification" in window)) return toast("Este navegador no permite avisos"); const r = await Notification.requestPermission(); toast(r === "granted" ? "Avisos activados" : "Avisos no permitidos"); revisarAlarmas(true); },
+  resetDemo: () => confirmar("¿Volver a los datos de ejemplo? Se borra lo que hayas cargado en el demo.", () => { S.store.reset(); recargar(); }),
+  logout: async () => { await S.store.logout(); location.reload(); },
+  fab: () => modal(`<h2>${hx("mas","",34)} Agregar</h2><div class="grid" style="margin-top:14px">
+      <button class="btn ghost" data-act="newT">${ic("tareas")}Tarea</button>
+      <button class="btn ghost" data-act="newP">${ic("plano")}Proyecto</button>
+      <button class="btn ghost" data-act="newC">${ic("local")}Cliente</button></div>`)
+};
+const CHG = {
+  f: el => { S.f[el.dataset.k] = el.value; render(); },
+  estado: async el => { const t = byId(S.data.tareas, el.dataset.id); const patch = {estado: el.value}; if (el.value === "hecha") patch.avance = 100;
+    await guardar(async () => { await S.store.update("tareas", t.id, patch); await log(t.codigo, "Estado → " + el.value); }); },
+  rol: el => guardar(() => S.store.update("profiles", el.dataset.id, {rol: el.value}), "Rol actualizado"),
+  area: el => guardar(() => S.store.update("profiles", el.dataset.id, {area: el.value}), "Área actualizada"),
+  demoRol: async el => { S.demoRol = el.value; S.me = await S.store.me(el.value); S.view = "colmena"; S.f = {}; render(); }
+};
+document.addEventListener("click", e => { const el = e.target.closest("[data-act]"); if (!el) return; e.preventDefault(); ACT[el.dataset.act]?.(el, e); });
+document.addEventListener("change", e => { const el = e.target.closest("[data-chg]"); if (el) CHG[el.dataset.chg]?.(el); });
+let tIn; document.addEventListener("input", e => { const el = e.target.closest("[data-inp]"); if (!el) return; clearTimeout(tIn); tIn = setTimeout(() => { S.f[el.dataset.k] = el.value; const pos = el.selectionStart; render(); const n = document.querySelector(`[data-inp][data-k="${el.dataset.k}"]`); if (n){ n.focus(); try { n.setSelectionRange(pos,pos); } catch {} } }, 250); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+/* ---------- alarmas en el dispositivo ---------- */
+function revisarAlarmas(forzar){
+  if (!S.data) return; const rojas = alarmas().filter(a => a.nivel === "bad");
+  document.title = (rojas.length ? `(${rojas.length}) ` : "") + "Colmena AVEJ";
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  let vistos = {}; try { vistos = JSON.parse(sessionStorage.getItem("colmena-avisos") || "{}"); } catch {}
+  rojas.forEach(a => { const k = a.codigo + a.det.slice(0,12); if (vistos[k] && !forzar) return; vistos[k] = 1;
+    try { new Notification("Colmena AVEJ · " + a.codigo, {body: a.titulo + " — " + a.det, icon: LOGO}); } catch {} });
+  try { sessionStorage.setItem("colmena-avisos", JSON.stringify(vistos)); } catch {}
+}
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+function render(){
+  const vistas = VISTAS.filter(v => !v.admin || isAdmin());
+  if (!vistas.find(v => v.id === S.view)) S.view = "colmena";
+  const al = alarmas(); const rojas = al.filter(a => a.nivel === "bad").length;
+  const seg = segActual(); const actual = vistas.find(v => v.id === S.view);
+  const vista = {colmena:vColmena, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
+  const cnt = {colmena: rojas, clientes: V().entradas.length, claude: abiertas(V().tareas).filter(t => t.responsable_tipo === "claude" && t.estado === "en revisión").length};
+  $("#root").innerHTML = `<div class="app">
+    <nav class="nav">
+      <div class="brand"><img src="${LOGO}" alt="AVEJ"><div><b>COLMENA</b><small>AVEJ Innova</small></div></div>
+      ${vistas.map(v => `<button class="${S.view===v.id?"on":""}" data-act="go" data-v="${v.id}">${ic(v.ic)}<span>${v.nombre}</span>${cnt[v.id]?`<span class="cnt">${cnt[v.id]}</span>`:""}</button>`).join("")}
+      <div class="sp"></div>
+      <div class="foot">${MODO_REAL ? "Conectado a la base de datos" : "Modo demo · datos locales"}</div>
+    </nav>
+    <main>
+      <header class="top">
+        <h1>${esc(actual.nombre)}</h1>
+        <div class="now">${hx(seg?seg.ic:"luna","",24)}<span>Ahora:</span> <b>${esc(seg?seg.nombre:"Fuera de bloque")}</b></div>
+        <div class="sp"></div>
+        <button class="iconbtn" data-act="go" data-v="colmena" title="Alarmas">${ic("campana")}${rojas?`<span class="dot">${rojas}</span>`:""}</button>
+        <div class="who">${MODO_REAL
+          ? `<span class="muted">${esc(S.me.nombre)} · ${esc(S.me.rol)}</span><button class="iconbtn" data-act="logout" title="Salir">${ic("salir")}</button>`
+          : `<select data-chg="demoRol" title="Ver como"><option value="admin" ${S.demoRol==="admin"?"selected":""}>Ver como admin</option><option value="colaborador" ${S.demoRol==="colaborador"?"selected":""}>Ver como colaborador</option></select>`}</div>
+      </header>
+      <section id="view">
+        ${!MODO_REAL && S.view==="colmena" ? `<div class="demo-note">${ic("alerta")} Modo demo con datos de ejemplo guardados solo en este navegador. Conecta Supabase (ver LEEME) para usarlo con tu equipo.</div>` : ""}
+        ${!isAdmin() && S.view==="colmena" ? `<div class="demo-note">${ic("persona")} Vista de colaborador: ves solo tus tareas y los proyectos donde participas (área: ${esc(S.me.area||"—")}).</div>` : ""}
+        ${vista()}
+      </section>
+    </main>
+    ${isAdmin() ? `<button class="fab" data-act="fab" title="Agregar"><svg viewBox="0 0 24 24"><polygon points="${HEX}" fill="#C9702F"/><path d="M12 7.5v9 M7.5 12h9" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></button>` : ""}
+  </div>`;
+  revisarAlarmas();
+}
+
+function pantallaLogin(msg = ""){
+  $("#root").innerHTML = `<div class="login"><div class="card">
+    <img src="${LOGO}" alt="AVEJ"><h1>COLMENA AVEJ</h1><p class="muted small">Panel de gestión · acceso del equipo</p>
+    <form id="fL"><input name="email" type="email" placeholder="Correo" required autocomplete="username"><input name="password" type="password" placeholder="Contraseña" required autocomplete="current-password">
+    <button class="btn" style="width:100%;justify-content:center;margin-top:14px">Entrar</button></form>
+    <p class="small" style="color:var(--bad);min-height:18px">${esc(msg)}</p>
+    <button class="link" id="olv" style="margin:auto">¿Olvidaste la contraseña?</button>
+  </div></div>`;
+  $("#fL").addEventListener("submit", async e => { e.preventDefault(); const fd = new FormData(e.target);
+    try { await S.store.login(fd.get("email"), fd.get("password")); await arrancar(); } catch (err) { pantallaLogin("No se pudo entrar: " + (err.message || err)); } });
+  $("#olv").addEventListener("click", async () => { const em = $("#fL").email.value; if (!em) return pantallaLogin("Escribe tu correo arriba primero"); try { await S.store.reset(em); pantallaLogin("Te enviamos un correo para cambiar la contraseña"); } catch (err) { pantallaLogin(err.message); } });
+}
+
+async function arrancar(){
+  if (MODO_REAL && !S.store.session) return pantallaLogin();
+  try { S.me = MODO_REAL ? await S.store.me() : await S.store.me(S.demoRol); }
+  catch (e) { return pantallaLogin("Tu usuario no tiene perfil todavía. Pide al admin que lo active."); }
+  if (S.me.activo === false) { await S.store.logout?.(); return pantallaLogin("Usuario desactivado"); }
+  S.data = await S.store.loadAll(isAdmin());
+  render();
+  if (MODO_REAL && !S._live){ S._live = true; S.store.live(() => { clearTimeout(S._lt); S._lt = setTimeout(async () => { if (!$("#ov")) await recargar(); }, 800); }); }
+  if (!S._tick){ S._tick = setInterval(() => { if (!$("#ov") && !document.activeElement?.matches("input,textarea,select")) render(); }, 60000); }
+}
+
+(async () => {
+  try { S.store = MODO_REAL ? new SupaStore() : new LocalStore(); await S.store.init(); await arrancar(); }
+  catch (e) { console.error(e); $("#root").innerHTML = `<div class="login"><div class="card"><h1>COLMENA AVEJ</h1><p>No se pudo iniciar: ${esc(e.message||e)}</p></div></div>`; }
+})();
+</script>
+</body>
+</html>
