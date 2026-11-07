@@ -278,7 +278,11 @@ const G = {
   editar:"M4 20h4L19 9l-4-4L4 16z M13.5 6.5l4 4",
   reloj:"M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16z M12 8v4h3",
   pausa:"M8 5v14 M16 5v14",
-  recarga:"M20 11a8 8 0 1 0-2.3 5.7 M20 4v7h-7"
+  recarga:"M20 11a8 8 0 1 0-2.3 5.7 M20 4v7h-7",
+  ajustes:"M12 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1",
+  telegram:"M21 4L3 11l6 2.5L19 7l-7.5 8v5l3.5-3.5L19 19z",
+  tarjeta:"M3 6h18v12H3z M3 10h18 M7 15h4",
+  rayo:"M13 2L5 13h6l-1 9 8-11h-6z"
 };
 const ic = (n, cls="") => `<svg class="i ${cls}" viewBox="0 0 24 24"><path d="${G[n]||G.tareas}"/></svg>`;
 const HEX = "12,1.6 21.4,7 21.4,17 12,22.4 2.6,17 2.6,7";
@@ -363,6 +367,15 @@ function seed(){
       {id:2, codigo:"AV-0004.1", texto:"Claude: informe listo para revisión (80%)", autor:"Claude", created_at:now},
       {id:1, codigo:"AV-0001.1", texto:"Distribución aprobada · tarea hecha", autor:"Jhonattan", created_at:now}
     ],
+    alertas:[
+      {id:"a1", tipo:"asesor", urgencia:"alta", titulo:"Jisabella pide un asesor: Marta Ruiz", detalle:"Quiere hablar con una persona sobre el Kit Local Pro", contacto:"+34 6xx xxx xxx", enlace:"", origen:"HighLevel", estado:"nueva", created_at:now},
+      {id:"a2", tipo:"suscripcion", urgencia:"media", titulo:"Renovar en 3 día(s): LinkDM", detalle:"Plan Pro", contacto:"", enlace:"", origen:"Suscripciones", estado:"nueva", created_at:now}
+    ],
+    suscripciones:[
+      {id:"s1", nombre:"HighLevel", costo:97, moneda:"USD", ciclo:"mensual", proxima_renovacion:addDays(12), metodo_pago:"Tarjeta", activa:true, notas:""},
+      {id:"s2", nombre:"LinkDM", costo:null, moneda:"USD", ciclo:"mensual", proxima_renovacion:addDays(3), metodo_pago:"", activa:true, notas:"Plan Pro"}
+    ],
+    ajustes:[],
     entradas:[
       {id:"e1", nombre:"Marta Ruiz", contacto:"+34 6xx xxx xxx", canal:"Instagram", mensaje:"Cafetería en Valencia, quiere renovar la barra", procesada:false, created_at:now},
       {id:"e2", nombre:"Nails Studio", contacto:"+57 3xx xxx xxxx", canal:"HighLevel", mensaje:"Spa de uñas en Bogotá · pidió diagnóstico", procesada:false, created_at:now}
@@ -379,7 +392,9 @@ function recalcLocal(db, pid){
 }
 
 class LocalStore {
-  async init(){ try { this.db = JSON.parse(localStorage.getItem(LS_KEY)); } catch { this.db = null; } if (!this.db) this.db = seed(); this.save(); }
+  async init(){ try { this.db = JSON.parse(localStorage.getItem(LS_KEY)); } catch { this.db = null; } if (!this.db) this.db = seed();
+    const s0 = seed(); ["alertas","suscripciones","ajustes"].forEach(k => { if (!this.db[k]) this.db[k] = s0[k]; }); this.save(); }
+  async setAjuste(clave, valor){ const r = this.db.ajustes.find(x => x.clave === clave); if (r) r.valor = valor; else this.db.ajustes.push({clave, valor}); this.save(); }
   save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(this.db)); } catch {} }
   async me(rol){ return this.db.profiles.find(p => p.rol === rol) || this.db.profiles[0]; }
   async loadAll(){ return JSON.parse(JSON.stringify(this.db)); }
@@ -429,17 +444,21 @@ class SupaStore {
   async me(){ const { data, error } = await this.c.from("profiles").select("*").eq("id", this.session.user.id).single(); if (error) throw error; return data; }
   async loadAll(isAdmin){
     const q = (t, f) => (f ? f(this.c.from(t).select("*")) : this.c.from(t).select("*")).then(r => { if (r.error) throw r.error; return r.data; });
-    const [profiles, clientes, proyectos, tareas, bitacora, entradas] = await Promise.all([
+    const [profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes] = await Promise.all([
       q("profiles"), q("clientes"), q("proyectos"), q("tareas"),
       q("bitacora", x => x.order("created_at", {ascending:false}).limit(150)),
-      isAdmin ? q("entradas", x => x.eq("procesada", false).order("created_at", {ascending:false})) : Promise.resolve([])
+      isAdmin ? q("entradas", x => x.eq("procesada", false).order("created_at", {ascending:false})) : Promise.resolve([]),
+      isAdmin ? q("alertas", x => x.neq("estado", "resuelta").order("created_at", {ascending:false}).limit(200)).catch(() => []) : Promise.resolve([]),
+      isAdmin ? q("suscripciones", x => x.order("proxima_renovacion", {ascending:true})).catch(() => []) : Promise.resolve([]),
+      isAdmin ? q("ajustes").catch(() => []) : Promise.resolve([])
     ]);
-    return {profiles, clientes, proyectos, tareas, bitacora, entradas};
+    return {profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes};
   }
   async insert(t, row){ const { data, error } = await this.c.from(t).insert(row).select().single(); if (error) throw error; return data; }
   async update(t, id, patch){ const { data, error } = await this.c.from(t).update(patch).eq("id", id).select().single(); if (error) throw error; return data; }
   async remove(t, id){ const { error } = await this.c.from(t).delete().eq("id", id); if (error) throw error; }
   async log(codigo, texto, autor){ await this.c.from("bitacora").insert({codigo, texto, autor}); }
+  async setAjuste(clave, valor){ const { error } = await this.c.from("ajustes").upsert({clave, valor, updated_at: new Date().toISOString()}); if (error) throw error; }
   live(cb){ try { this.c.channel("colmena").on("postgres_changes", {event:"*", schema:"public"}, () => cb()).subscribe(); } catch {} }
 }
 
@@ -457,7 +476,7 @@ function V(){
   const pids = new Set(tareas.map(t => t.proyecto_id));
   const proyectos = D.proyectos.filter(p => !p.privado && (p.responsable_id === S.me.id || pids.has(p.id)));
   const cids = new Set(proyectos.map(p => p.cliente_id));
-  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
+  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], alertas: [], suscripciones: [], ajustes: [], bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
 }
 const proyDe = t => t.proyecto_id ? byId(S.data.proyectos, t.proyecto_id) : null;
 const cliDe = p => p?.cliente_id ? byId(S.data.clientes, p.cliente_id) : null;
@@ -496,8 +515,14 @@ function alarmas(D = V()){
       det: s.txt === "Vencido" ? `Venció hace ${-s.dias} día(s) y va en ${s.av}%` : `Debería ir en ${s.esperado}% y va en ${s.av}% · ${s.dias === 0 ? "vence hoy" : "faltan " + s.dias + " día(s)"}`}); });
   abiertas(D.tareas).forEach(t => { const d = diasHasta(t.fecha_limite); if (d !== null && d < 0)
     out.push({nivel:"bad", tipo:"tarea", id:t.id, codigo:t.codigo, titulo:t.titulo, det:`Tarea vencida hace ${-d} día(s) · ${quien(t, true)}`}); });
+  (D.alertas || []).filter(a => a.estado === "nueva" && a.urgencia !== "baja").forEach(a =>
+    out.push({nivel: a.urgencia === "alta" ? "bad" : "warn", tipo:"alerta", id:a.id, codigo: TIPO_AL[a.tipo]?.n || "Aviso", titulo:a.titulo, det:[a.detalle, haceCuanto(a.created_at)].filter(Boolean).join(" · ")}));
   return out.sort((a,b) => NIVEL_ORD[a.nivel] - NIVEL_ORD[b.nivel]);
 }
+const TIPO_AL = {asesor:{n:"Asesor", ic:"persona"}, personalizada:{n:"Personalizada", ic:"chat"}, cliente_nuevo:{n:"Cliente nuevo", ic:"local"},
+  agente:{n:"Agente", ic:"rayo"}, suscripcion:{n:"Suscripción", ic:"tarjeta"}, pago:{n:"Pago", ic:"check"}, otro:{n:"Aviso", ic:"campana"}};
+function haceCuanto(ts){ const m = Math.round((Date.now() - new Date(ts)) / 60000); if (m < 1) return "ahora"; if (m < 60) return `hace ${m} min`; const h = Math.round(m/60); if (h < 24) return `hace ${h} h`; return `hace ${Math.round(h/24)} d`; }
+const ajuste = k => (S.data?.ajustes || []).find(x => x.clave === k)?.valor || "";
 function segActual(d = new Date()){ const m = minsAhora(); return segmentosDelDia(d).find(s => s.ini && hm(s.ini) <= m && m < hm(s.fin)); }
 
 /* ---------- piezas de interfaz ---------- */
@@ -536,13 +561,15 @@ const lista = (ts, opts) => ts.length ? ts.map(t => filaTarea(t, opts)).join("")
    ===================================================================== */
 const VISTAS = [
   {id:"colmena",   nombre:"Colmena",     ic:"colmena"},
+  {id:"alertas",   nombre:"Alertas",     ic:"campana", admin:true},
   {id:"hoy",       nombre:"Mi día",      ic:"hoy"},
   {id:"matriz",    nombre:"Prioridades", ic:"matriz"},
   {id:"proyectos", nombre:"Proyectos",   ic:"plano"},
   {id:"tareas",    nombre:"Tareas",      ic:"tareas"},
   {id:"clientes",  nombre:"Clientes",    ic:"local",  admin:true},
   {id:"claude",    nombre:"Claude",      ic:"claude"},
-  {id:"equipo",    nombre:"Equipo",      ic:"equipo", admin:true}
+  {id:"equipo",    nombre:"Equipo",      ic:"equipo", admin:true},
+  {id:"ajustes",   nombre:"Ajustes",     ic:"ajustes", admin:true}
 ];
 
 function vColmena(){
@@ -567,7 +594,7 @@ function vColmena(){
   <div class="grid g2" style="margin-top:16px">
     <div class="card">
       <h2>${hx("campana", al.length?"bad":"ok", 28)} Alarmas de tiempo</h2>
-      ${al.length ? al.slice(0,8).map(a => `<div class="alarm ${a.nivel}" data-act="${a.tipo==="proyecto"?"openP":"editT"}" data-id="${a.id}">${hx(a.tipo==="proyecto"?"plano":"tareas", a.nivel, 30)}<div class="t"><div class="row"><span class="code">${esc(a.codigo)}</span><b style="font-weight:600">${esc(a.titulo)}</b></div><div class="small muted">${esc(a.det)}</div></div></div>`).join("")
+      ${al.length ? al.slice(0,8).map(a => `<div class="alarm ${a.nivel}" data-act="${a.tipo==="proyecto"?"openP":a.tipo==="alerta"?"go":"editT"}" data-v="alertas" data-id="${a.id}">${hx(a.tipo==="proyecto"?"plano":a.tipo==="alerta"?"campana":"tareas", a.nivel, 30)}<div class="t"><div class="row"><span class="code">${esc(a.codigo)}</span><b style="font-weight:600">${esc(a.titulo)}</b></div><div class="small muted">${esc(a.det)}</div></div></div>`).join("")
         : `<div class="empty">Todo en ruta. Ningún proyecto está por debajo del ritmo que necesita.</div>`}
       <div class="row" style="margin-top:12px"><button class="btn ghost sm" data-act="notif">${ic("campana")}Activar avisos en este dispositivo</button></div>
     </div>
@@ -725,6 +752,74 @@ function vClaude(){
   ${grupos.map(g => { const ts = ordenar(ab.filter(t => t.estado === g)); return ts.length ? `<div class="sec">${hx(g==="en revisión"?"lupa":g==="bloqueada"?"alerta":"claude", g==="bloqueada"?"bad":g==="en revisión"?"warn":"", 26)} ${g[0].toUpperCase()+g.slice(1)} <span class="muted small" style="font-family:var(--fb)">${ts.length}</span></div><div class="card">${lista(ts)}</div>` : ""; }).join("") || `<div class="empty" style="margin-top:20px">Claude no tiene tareas abiertas.</div>`}`;
 }
 
+function vAlertas(){
+  const f = S.f.ae || "abiertas";
+  const al = (V().alertas || []).filter(a => f === "abiertas" ? a.estado !== "resuelta" : a.estado === f);
+  const btn = (v, l) => `<button class="btn ${f===v?"":"ghost"} sm" data-act="fset" data-k="ae" data-val="${v}">${l}</button>`;
+  return `<div class="filters">${btn("abiertas","Abiertas")}${btn("nueva","Nuevas")}${btn("vista","Vistas")}
+    <span class="small muted" style="margin-left:auto">Llegan de HighLevel, del monitor del bot y de tus suscripciones.</span></div>
+  <div class="card">${al.map(a => { const t = TIPO_AL[a.tipo] || TIPO_AL.otro; const n = a.urgencia === "alta" ? "bad" : a.urgencia === "media" ? "warn" : "mute";
+    return `<div class="task" style="${a.estado==="nueva"?"":"opacity:.75"}"><span>${hx(t.ic, n, 32)}</span>
+      <div class="t"><b>${esc(a.titulo)}</b>
+        <div class="meta">${stChip(n, t.n)}${a.estado==="nueva"?stChip("bad","Nueva"):stChip("mute",a.estado)}<span>${esc(haceCuanto(a.created_at))}</span>
+          ${a.contacto?`<span>${esc(a.contacto)}</span>`:""}${a.enlace?`<a class="link" href="${esc(a.enlace)}" target="_blank" rel="noopener">${ic("link")}Abrir en HighLevel</a>`:""}</div>
+        ${a.detalle?`<div class="small" style="margin-top:6px">${esc(a.detalle)}</div>`:""}</div>
+      <div class="row wrap" style="justify-content:flex-end">
+        ${a.estado==="nueva"?`<button class="btn ghost sm" data-act="alVista" data-id="${a.id}">Vista</button>`:""}
+        <button class="btn ghost sm" data-act="alTarea" data-id="${a.id}">${ic("tareas")}Tarea</button>
+        <button class="btn sm" data-act="alResolver" data-id="${a.id}">${ic("check")}Resuelta</button></div></div>`; }).join("") || `<div class="empty">Sin alertas. Todo tranquilo en la colmena.</div>`}</div>`;
+}
+
+function vAjustes(){
+  const D = S.data, tok = ajuste("telegram_token"), chat = ajuste("telegram_chat"), hook = ajuste("hook_token");
+  const base = MODO_REAL && hook ? `${CFG.supabaseUrl}/functions/v1/colmena-hook?token=${hook}&tipo=` : "";
+  const EV = [["asesor","Jisabella pide un asesor (alta)"],["personalizada","Solicitud de atención personalizada (alta)"],["cliente_nuevo","Cliente nuevo / formulario (media)"],
+              ["mensaje_entrante","Latido: entró un mensaje (no avisa, alimenta el monitor)"],["bot_respondio","Latido: Jisabella respondió (no avisa)"],["agente","El agente falló (alta)"],["pago","Pago recibido (media)"],["otro","Cualquier otro aviso (media)"]];
+  const subs = (D.suscripciones || []);
+  return `<div class="grid g2" style="align-items:start">
+  <div class="card"><h2>${hx("telegram","",28)} Avisos al celular (Telegram)</h2>
+    ${!MODO_REAL ? `<p class="small muted">Disponible al conectar la base de datos.</p>` : `
+    <p class="small muted" style="margin-top:-6px">Estado: ${tok&&chat?stChip("ok","Conectado"):tok?stChip("warn","Falta detectar tu chat"):stChip("mute","Sin configurar")}</p>
+    <ol class="small" style="padding-left:18px;line-height:1.7;margin:6px 0 10px">
+      <li>En Telegram abre <b>@BotFather</b> → <b>/newbot</b> → ponle nombre (ej. <i>Colmena AVEJ</i>) y un usuario que termine en <i>bot</i>.</li>
+      <li>BotFather te da un <b>token</b>: pégalo aquí y guarda.</li>
+      <li>Abre tu bot nuevo en Telegram y escríbele <b>hola</b>.</li>
+      <li>Toca <b>Detectar mi chat</b> y luego <b>Enviar prueba</b>.</li></ol>
+    <div class="form" style="grid-template-columns:1fr;margin-top:0"><label>Token del bot<input id="tgTok" type="password" placeholder="${tok?"•••••••• (guardado)":"123456789:AA..."}" autocomplete="off"></label></div>
+    <div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="tgGuardar">Guardar token</button><button class="btn ghost sm" data-act="tgDetectar" ${tok?"":"disabled"}>Detectar mi chat</button><button class="btn ghost sm" data-act="tgProbar" ${tok&&chat?"":"disabled"}>Enviar prueba</button></div>`}
+  </div>
+  <div class="card"><h2>${hx("link","",28)} Conexión con HighLevel</h2>
+    ${!base ? `<p class="small muted">Disponible al conectar la base de datos.</p>` : `
+    <p class="small muted" style="margin-top:-6px">En cada workflow de HighLevel agrega la acción <b>Webhook</b> (método POST) con la URL del tipo de evento. La URL incluye tu clave privada: no la compartas.</p>
+    ${EV.map(([k,l]) => `<div class="task" style="grid-template-columns:1fr auto"><div class="t"><b style="font-size:13.5px">${esc(l)}</b><div class="small muted" style="word-break:break-all">…/colmena-hook?tipo=${k}</div></div><button class="btn ghost sm" data-act="copyHook" data-tipo="${k}">${ic("copiar")}Copiar</button></div>`).join("")}
+    <div class="row" style="margin-top:10px"><button class="btn sm" data-act="hookProbar">${ic("rayo")}Probar conexión</button></div>`}
+  </div></div>
+  <div class="sec">${hx("tarjeta","",26)} Suscripciones y renovaciones <button class="btn sm" data-act="newS" style="margin-left:auto">${ic("mas")}Suscripción</button></div>
+  <div class="card" style="padding:4px 12px"><table class="tbl"><thead><tr><th>Herramienta</th><th>Renueva</th><th class="hm">Costo</th><th class="hm">Pago</th><th></th></tr></thead><tbody>
+  ${subs.map(x => { const d = diasHasta(x.proxima_renovacion); const n = !x.activa ? "mute" : d === null ? "mute" : d < 0 ? "bad" : d <= 5 ? "warn" : "ok";
+    return `<tr><td><b style="font-weight:600;cursor:pointer" data-act="editS" data-id="${x.id}">${esc(x.nombre)}</b><div class="small muted">${esc(x.ciclo||"")}${x.activa?"":" · inactiva"}</div></td>
+    <td>${stChip(n, d===null?"Sin fecha":d<0?`Vencida ${-d}d`:d===0?"Hoy":`${fmtD(x.proxima_renovacion)} · ${d}d`)}</td>
+    <td class="hm">${x.costo!=null?esc(x.costo+" "+(x.moneda||"")):"—"}</td><td class="hm small">${esc(x.metodo_pago||"")}</td>
+    <td>${d!==null&&d<=5&&x.activa?`<button class="btn ghost sm" data-act="renovar" data-id="${x.id}">Renovada</button>`:""}</td></tr>`; }).join("") || `<tr><td colspan="5"><div class="empty">Agrega HighLevel, LinkDM, Hotmart, dominio, Higgsfield… y te aviso 5 días antes.</div></td></tr>`}
+  </tbody></table></div>`;
+}
+
+function formSuscripcion(x = {}){
+  const nuevo = !x.id; x = {moneda:"USD", ciclo:"mensual", activa:true, ...x};
+  modal(`<h2>${hx("tarjeta","",34)} ${nuevo?"Nueva suscripción":esc(x.nombre)}</h2>
+   <form class="form" id="fS">
+    <label>Herramienta<input name="nombre" required value="${esc(x.nombre||"")}" placeholder="HighLevel, LinkDM…"></label>
+    <label>Próxima renovación<input type="date" name="proxima_renovacion" value="${esc(x.proxima_renovacion||"")}"></label>
+    <label>Costo<input type="number" step="0.01" name="costo" value="${esc(x.costo??"")}"></label>
+    <label>Moneda<select name="moneda">${opts(["USD","COP","EUR"].map(m=>[m,m]), x.moneda)}</select></label>
+    <label>Ciclo<select name="ciclo">${opts(["mensual","anual","trimestral","semanal"].map(m=>[m,m]), x.ciclo)}</select></label>
+    <label>Medio de pago<input name="metodo_pago" value="${esc(x.metodo_pago||"")}" placeholder="Tarjeta, PayPal…"></label>
+    <label class="full">Notas<textarea name="notas">${esc(x.notas||"")}</textarea></label>
+    <label class="cb full"><input type="checkbox" name="activa" ${x.activa?"checked":""}> Activa</label>
+   </form>
+   <div class="mfoot">${!nuevo?`<button class="btn danger" data-act="delS" data-id="${x.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveS" data-id="${x.id||""}">Guardar</button></div>`);
+}
+
 function vEquipo(){
   const D = S.data;
   return `<div class="card"><h2>${hx("equipo","",28)} Personas y roles</h2>
@@ -859,7 +954,14 @@ function brief(t){
 /* =====================================================================
    ACCIONES
    ===================================================================== */
-async function recargar(){ S.data = await S.store.loadAll(isAdmin()); render(); }
+async function recargar(){
+  const antes = new Set((S.data?.alertas || []).map(a => a.id));
+  S.data = await S.store.loadAll(isAdmin()); render();
+  const nuevas = (S.data.alertas || []).filter(a => a.estado === "nueva" && !antes.has(a.id));
+  if (antes.size || S._cargado) nuevas.forEach(a => { toast("🔔 " + a.titulo);
+    try { if ("Notification" in window && Notification.permission === "granted") new Notification("Colmena AVEJ · " + (TIPO_AL[a.tipo]?.n || "Aviso"), {body: a.titulo, icon: LOGO}); } catch {} });
+  S._cargado = true;
+}
 async function guardar(fn, okMsg){ try { await fn(); await recargar(); if (okMsg) toast(okMsg); return true; } catch (e) { console.error(e); toast("Error: " + (e.message || e)); return false; } }
 const log = (codigo, texto) => S.store.log(codigo, texto, S.me.nombre);
 
@@ -901,6 +1003,34 @@ const ACT = {
       <div class="mfoot">${t.chat_url?`<a class="btn ghost" href="${esc(t.chat_url)}" target="_blank" rel="noopener">${ic("link")}Abrir chat</a>`:`<a class="btn ghost" href="https://claude.ai/new" target="_blank" rel="noopener">${ic("link")}Chat nuevo</a>`}<button class="btn" data-act="copyBrief">${ic("copiar")}Copiar brief</button></div>`);
     S._brief = b; },
   copyBrief: () => copiar(S._brief),
+  fset: el => { S.f[el.dataset.k] = el.dataset.val; render(); },
+  alVista: el => guardar(() => S.store.update("alertas", el.dataset.id, {estado:"vista"})),
+  alResolver: el => guardar(() => S.store.update("alertas", el.dataset.id, {estado:"resuelta", resuelta_at: new Date().toISOString()}), "Alerta resuelta"),
+  alTarea: el => { const a = byId(S.data.alertas, el.dataset.id);
+    formTarea({titulo: a.titulo, segmento: a.tipo === "asesor" || a.tipo === "personalizada" ? "mensajes1" : "entregables", importancia: a.urgencia === "alta" ? 3 : 2,
+      fecha_limite: addDays(0), notas: [a.detalle, a.contacto, a.enlace].filter(Boolean).join("\n")});
+    if (a.estado === "nueva") S.store.update("alertas", a.id, {estado:"vista"}).catch(()=>{}); },
+  newS: () => formSuscripcion(),
+  editS: el => formSuscripcion(byId(S.data.suscripciones, el.dataset.id)),
+  saveS: async el => { const f = $("#fS"); if (!f.reportValidity()) return; const o = leer("#fS"); const id = el.dataset.id;
+    if (await guardar(() => id ? S.store.update("suscripciones", id, o) : S.store.insert("suscripciones", o), "Guardado")) closeModal(); },
+  delS: el => confirmar("¿Eliminar esta suscripción?", () => guardar(() => S.store.remove("suscripciones", el.dataset.id), "Eliminada")),
+  renovar: el => { const x = byId(S.data.suscripciones, el.dataset.id); const d = parseD(x.proxima_renovacion) || hoy0();
+    const m = {mensual:1, trimestral:3, anual:12}[x.ciclo]; if (m) d.setMonth(d.getMonth() + m); else d.setDate(d.getDate() + 7);
+    guardar(() => S.store.update("suscripciones", x.id, {proxima_renovacion: isoL(d)}), "Próxima renovación: " + fmtD(isoL(d))); },
+  tgGuardar: async () => { const v = $("#tgTok").value.trim(); if (!/^\d+:[\w-]{20,}$/.test(v)) return toast("Ese token no parece válido");
+    await guardar(async () => { await S.store.setAjuste("telegram_token", v); await S.store.setAjuste("telegram_chat", ""); }, "Token guardado. Ahora escríbele 'hola' a tu bot"); },
+  tgDetectar: async () => { try { const r = await fetch(`https://api.telegram.org/bot${ajuste("telegram_token")}/getUpdates`).then(r => r.json());
+      const msg = (r.result || []).reverse().find(u => u.message?.chat?.id); if (!msg) return toast("No encontré mensajes: escríbele 'hola' a tu bot y vuelve a intentar");
+      await guardar(() => S.store.setAjuste("telegram_chat", String(msg.message.chat.id)), "Chat detectado: " + (msg.message.chat.first_name || "listo")); }
+    catch (e) { toast("No pude hablar con Telegram: " + e.message); } },
+  tgProbar: async () => { try { const r = await fetch(`https://api.telegram.org/bot${ajuste("telegram_token")}/sendMessage`, {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({chat_id: ajuste("telegram_chat"), text: "🐝 Colmena AVEJ conectada. Aquí te llegarán las alertas."})}).then(r => r.json());
+      toast(r.ok ? "Mensaje enviado: revisa Telegram" : "Telegram respondió: " + r.description); } catch (e) { toast("Error: " + e.message); } },
+  copyHook: el => copiar(`${CFG.supabaseUrl}/functions/v1/colmena-hook?token=${ajuste("hook_token")}&tipo=${el.dataset.tipo}`),
+  hookProbar: async () => { try { const r = await fetch(`${CFG.supabaseUrl}/functions/v1/colmena-hook?token=${ajuste("hook_token")}&tipo=otro&urgencia=media`, {method:"POST",
+      headers:{"Content-Type":"application/json"}, body: JSON.stringify({titulo:"Prueba de conexión HighLevel → Colmena", detalle:"Si ves esto, el webhook funciona.", nombre:"Prueba"})}).then(r => r.json());
+      toast(r.ok ? "¡Funciona! Revisa la pestaña Alertas" : "Error: " + (r.error || "desconocido")); await recargar(); } catch (e) { toast("La función aún no responde: " + e.message); } },
   reporte: async () => {
     const txt = $("#rep").value; const lines = txt.split("\n").map(l => l.trim()).filter(l => l.startsWith("#"));
     if (!lines.length) return toast("Pega una línea que empiece con #CÓDIGO");
@@ -964,8 +1094,8 @@ function render(){
   if (!vistas.find(v => v.id === S.view)) S.view = "colmena";
   const al = alarmas(); const rojas = al.filter(a => a.nivel === "bad").length;
   const seg = segActual(); const actual = vistas.find(v => v.id === S.view);
-  const vista = {colmena:vColmena, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
-  const cnt = {colmena: rojas, clientes: V().entradas.length, claude: abiertas(V().tareas).filter(t => t.responsable_tipo === "claude" && t.estado === "en revisión").length};
+  const vista = {colmena:vColmena, alertas:vAlertas, ajustes:vAjustes, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
+  const cnt = {alertas: (V().alertas||[]).filter(a => a.estado === "nueva").length, colmena: rojas, clientes: V().entradas.length, claude: abiertas(V().tareas).filter(t => t.responsable_tipo === "claude" && t.estado === "en revisión").length};
   $("#root").innerHTML = `<div class="app">
     <nav class="nav">
       <div class="brand"><img src="${LOGO}" alt="AVEJ"><div><b>COLMENA</b><small>AVEJ Innova</small></div></div>
