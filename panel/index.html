@@ -414,12 +414,17 @@ class LocalStore {
 
 class SupaStore {
   async init(){
+    const h = new URLSearchParams(location.hash.slice(1));
+    this.crearClave = ["invite","recovery","signup"].includes(h.get("type"));
     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
-    this.c = createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+    this.c = createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, {auth:{flowType:"implicit", detectSessionInUrl:true, persistSession:true}});
+    this.c.auth.onAuthStateChange(ev => { if (ev === "PASSWORD_RECOVERY") this.crearClave = true; });
     const { data } = await this.c.auth.getSession(); this.session = data.session;
+    if (location.hash.includes("access_token")) history.replaceState(null, "", location.pathname);
   }
+  async setPassword(password){ const { error } = await this.c.auth.updateUser({password}); if (error) throw error; this.crearClave = false; }
   async login(email, password){ const { data, error } = await this.c.auth.signInWithPassword({email, password}); if (error) throw error; this.session = data.session; }
-  async reset(email){ const { error } = await this.c.auth.resetPasswordForEmail(email, {redirectTo: location.href}); if (error) throw error; }
+  async reset(email){ const { error } = await this.c.auth.resetPasswordForEmail(email, {redirectTo: location.origin + location.pathname}); if (error) throw error; }
   async logout(){ await this.c.auth.signOut(); this.session = null; }
   async me(){ const { data, error } = await this.c.from("profiles").select("*").eq("id", this.session.user.id).single(); if (error) throw error; return data; }
   async loadAll(isAdmin){
@@ -723,7 +728,7 @@ function vClaude(){
 function vEquipo(){
   const D = S.data;
   return `<div class="card"><h2>${hx("equipo","",28)} Personas y roles</h2>
-    <p class="small muted" style="margin-top:-6px">${MODO_REAL ? "Para agregar a alguien: Supabase → Authentication → Add user (correo y contraseña). Aparecerá aquí como colaborador; tú le asignas área y rol." : "En modo demo puedes ver el panel como colaborador con el selector de arriba."} El <b>admin</b> ve todo, incluidas tus tareas personales. El <b>colaborador</b> solo ve sus tareas, los proyectos donde participa y nunca lo privado.</p>
+    <p class="small muted" style="margin-top:-6px">${MODO_REAL ? "Para agregar a alguien: Supabase → Authentication → Users → Add user → Send invitation (solo su correo). Le llega un enlace, crea su contraseña y aparece aquí como colaborador; tú le asignas área y rol." : "En modo demo puedes ver el panel como colaborador con el selector de arriba."} El <b>admin</b> ve todo, incluidas tus tareas personales. El <b>colaborador</b> solo ve sus tareas, los proyectos donde participa y nunca lo privado.</p>
     <table class="tbl"><thead><tr><th>Nombre</th><th class="hm">Correo</th><th>Rol</th><th>Área</th><th>Carga</th></tr></thead><tbody>
     ${D.profiles.map(p => { const ab = abiertas(D.tareas.filter(t => t.responsable_id === p.id && t.responsable_tipo !== "claude")); const v = ab.filter(t => diasHasta(t.fecha_limite) < 0).length;
       return `<tr><td><b style="font-weight:600">${esc(p.nombre)}</b></td><td class="hm small muted">${esc(p.email||"")}</td>
@@ -999,10 +1004,22 @@ function pantallaLogin(msg = ""){
   </div></div>`;
   $("#fL").addEventListener("submit", async e => { e.preventDefault(); const fd = new FormData(e.target);
     try { await S.store.login(fd.get("email"), fd.get("password")); await arrancar(); } catch (err) { pantallaLogin("No se pudo entrar: " + (err.message || err)); } });
-  $("#olv").addEventListener("click", async () => { const em = $("#fL").email.value; if (!em) return pantallaLogin("Escribe tu correo arriba primero"); try { await S.store.reset(em); pantallaLogin("Te enviamos un correo para cambiar la contraseña"); } catch (err) { pantallaLogin(err.message); } });
+  $("#olv").addEventListener("click", async () => { const em = $("#fL").email.value; if (!em) return pantallaLogin("Escribe tu correo arriba primero"); try { await S.store.reset(em); pantallaLogin("Te enviamos un correo para crear una nueva contraseña"); } catch (err) { pantallaLogin(err.message); } });
+}
+
+function pantallaClave(msg = ""){
+  $("#root").innerHTML = `<div class="login"><div class="card">
+    <img src="${LOGO}" alt="AVEJ"><h1>COLMENA AVEJ</h1><p class="muted small">Bienvenido. Crea tu contraseña para entrar al panel.</p>
+    <form id="fK"><input name="p1" type="password" placeholder="Nueva contraseña (mín. 8)" minlength="8" required autocomplete="new-password"><input name="p2" type="password" placeholder="Repítela" minlength="8" required autocomplete="new-password">
+    <button class="btn" style="width:100%;justify-content:center;margin-top:14px">Guardar y entrar</button></form>
+    <p class="small" style="color:var(--bad);min-height:18px">${esc(msg)}</p></div></div>`;
+  $("#fK").addEventListener("submit", async e => { e.preventDefault(); const fd = new FormData(e.target);
+    if (fd.get("p1") !== fd.get("p2")) return pantallaClave("Las contraseñas no coinciden");
+    try { await S.store.setPassword(fd.get("p1")); toast("Contraseña guardada"); await arrancar(); } catch (err) { pantallaClave(err.message || String(err)); } });
 }
 
 async function arrancar(){
+  if (MODO_REAL && S.store.session && S.store.crearClave) return pantallaClave();
   if (MODO_REAL && !S.store.session) return pantallaLogin();
   try { S.me = MODO_REAL ? await S.store.me() : await S.store.me(S.demoRol); }
   catch (e) { return pantallaLogin("Tu usuario no tiene perfil todavía. Pide al admin que lo active."); }
