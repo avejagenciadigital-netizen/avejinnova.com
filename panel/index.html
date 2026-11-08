@@ -202,6 +202,17 @@ window.AVEJ_CONFIG = {
 };
 </script>
 
+<style>
+.fbars{display:flex;align-items:flex-end;gap:14px;height:170px;padding:8px 4px 0;border-bottom:1px solid var(--line)}
+.fbars .m{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.fbars .pair{display:flex;align-items:flex-end;gap:4px;height:130px}
+.fbars .pair i{width:16px;border-radius:4px 4px 0 0;display:block}
+.fbars .lbl{font-size:11px;color:var(--muted);white-space:nowrap}
+.money{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--ok)} .neg{color:#F07A66}
+.leg{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:8px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
 <script type="module">
 /* =====================================================================
    COLMENA AVEJ · Panel de control de gestión
@@ -223,6 +234,14 @@ const ESTADOS_C = ["nuevo","en curso","recurrente","cerrado","perdido"];
 const CANALES = ["Instagram","WhatsApp","TikTok","Web","HighLevel","Referido","Otro"];
 const IMPORTANCIA = {1:"Normal",2:"Importante",3:"Crítica"};
 const RESP_TIPO = {humano:"Persona", claude:"Claude", externo:"Externo / proveedor"};
+const MEDIOS = ["Hotmart","Nequi","Bre-B","Global66","PayPal","Binance","BTC Lightning","Transferencia","Tarjeta","Efectivo","Broker","Otro"];
+const MONEDAS = ["USD","COP","EUR","ARS","DOP"];
+const CAT_ING = ["Servicio a cliente","Mensualidad redes","Producto Hotmart","Resultado trading","Otro ingreso"];
+const CAT_GAS = ["Herramientas y suscripciones","Publicidad","Colaboradores","Trading (pérdida o comisiones)","Comisiones e impuestos","Otro gasto"];
+const MARCAS_FIN = ["AVEJ Innova","Smell Parfum","San Cayetano","Fábrica de Millonarios","Trading","General"];
+const usd = n => (n < 0 ? "-" : "") + "US$" + Math.abs(+n||0).toLocaleString("es-CO",{minimumFractionDigits:2, maximumFractionDigits:2});
+let FX = null;
+async function tasas(){ if (FX) return FX; try { const r = await fetch("https://open.er-api.com/v6/latest/USD").then(r => r.json()); if (r.result === "success") FX = r.rates; } catch {} return FX; }
 /* Marca que toca en el bloque de contenido según el día (1=lunes … 6=sábado) */
 const MARCA_DIA = {1:"AVEJ Innova",2:"Smell Parfum",3:"San Cayetano",4:"AVEJ Innova",5:"Smell Parfum",6:"San Cayetano"};
 /* Segmentos del día. fijo:true = bloque protegido (no se le asignan tareas) */
@@ -282,7 +301,10 @@ const G = {
   ajustes:"M12 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7z M12 2.5v3 M12 18.5v3 M2.5 12h3 M18.5 12h3 M5.3 5.3l2.1 2.1 M16.6 16.6l2.1 2.1 M5.3 18.7l2.1-2.1 M16.6 7.4l2.1-2.1",
   telegram:"M21 4L3 11l6 2.5L19 7l-7.5 8v5l3.5-3.5L19 19z",
   tarjeta:"M3 6h18v12H3z M3 10h18 M7 15h4",
-  rayo:"M13 2L5 13h6l-1 9 8-11h-6z"
+  rayo:"M13 2L5 13h6l-1 9 8-11h-6z",
+  dinero:"M3 6.5h18v11H3z M12 9.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5z M6 9.5v5 M18 9.5v5",
+  sube:"M4 17l6-6 4 4 6-7 M15 8h5v5",
+  baja:"M4 7l6 6 4-4 6 7 M15 16h5v-5"
 };
 const ic = (n, cls="") => `<svg class="i ${cls}" viewBox="0 0 24 24"><path d="${G[n]||G.tareas}"/></svg>`;
 const HEX = "12,1.6 21.4,7 21.4,17 12,22.4 2.6,17 2.6,7";
@@ -376,6 +398,14 @@ function seed(){
       {id:"s2", nombre:"LinkDM", costo:null, moneda:"USD", ciclo:"mensual", proxima_renovacion:addDays(3), metodo_pago:"", activa:true, notas:"Plan Pro"}
     ],
     ajustes:[],
+    movimientos:[
+      {id:"m1", tipo:"ingreso", fecha:addDays(-5), concepto:"Xuixo · cuota 1 de 3", marca:"AVEJ Innova", categoria:"Servicio a cliente", cliente_id:"c1", proyecto_id:"p1", monto:650, moneda:"EUR", tasa_usd:1.08, monto_usd:702, medio:"Global66", estado:"cobrado", vence:null, notas:""},
+      {id:"m2", tipo:"ingreso", fecha:addDays(10), concepto:"Xuixo · cuota 2 de 3", marca:"AVEJ Innova", categoria:"Servicio a cliente", cliente_id:"c1", proyecto_id:"p1", monto:470, moneda:"EUR", tasa_usd:1.08, monto_usd:507.6, medio:"Global66", estado:"pendiente", vence:addDays(10), notas:""},
+      {id:"m3", tipo:"ingreso", fecha:addDays(-2), concepto:"Kit Local Pro · Pedro Tenerife", marca:"AVEJ Innova", categoria:"Producto Hotmart", cliente_id:"c4", proyecto_id:"p4", monto:32.99, moneda:"EUR", tasa_usd:1.08, monto_usd:35.63, medio:"Hotmart", estado:"cobrado", vence:null, notas:""},
+      {id:"m4", tipo:"ingreso", fecha:addDays(-3), concepto:"Semana de opciones", marca:"Trading", categoria:"Resultado trading", cliente_id:null, proyecto_id:null, monto:180, moneda:"USD", tasa_usd:1, monto_usd:180, medio:"Broker", estado:"cobrado", vence:null, notas:""},
+      {id:"m5", tipo:"gasto", fecha:addDays(-6), concepto:"HighLevel", marca:"General", categoria:"Herramientas y suscripciones", cliente_id:null, proyecto_id:null, monto:97, moneda:"USD", tasa_usd:1, monto_usd:97, medio:"Tarjeta", estado:"pagado", vence:null, notas:""},
+      {id:"m6", tipo:"gasto", fecha:addDays(-1), concepto:"Anuncios retargeting", marca:"AVEJ Innova", categoria:"Publicidad", cliente_id:null, proyecto_id:null, monto:40000, moneda:"COP", tasa_usd:0.00025, monto_usd:10, medio:"Tarjeta", estado:"pagado", vence:null, notas:""}
+    ],
     entradas:[
       {id:"e1", nombre:"Marta Ruiz", contacto:"+34 6xx xxx xxx", canal:"Instagram", mensaje:"Cafetería en Valencia, quiere renovar la barra", procesada:false, created_at:now},
       {id:"e2", nombre:"Nails Studio", contacto:"+57 3xx xxx xxxx", canal:"HighLevel", mensaje:"Spa de uñas en Bogotá · pidió diagnóstico", procesada:false, created_at:now}
@@ -393,7 +423,7 @@ function recalcLocal(db, pid){
 
 class LocalStore {
   async init(){ try { this.db = JSON.parse(localStorage.getItem(LS_KEY)); } catch { this.db = null; } if (!this.db) this.db = seed();
-    const s0 = seed(); ["alertas","suscripciones","ajustes"].forEach(k => { if (!this.db[k]) this.db[k] = s0[k]; }); this.save(); }
+    const s0 = seed(); ["alertas","suscripciones","ajustes","movimientos"].forEach(k => { if (!this.db[k]) this.db[k] = s0[k]; }); this.save(); }
   async setAjuste(clave, valor){ const r = this.db.ajustes.find(x => x.clave === clave); if (r) r.valor = valor; else this.db.ajustes.push({clave, valor}); this.save(); }
   save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(this.db)); } catch {} }
   async me(rol){ return this.db.profiles.find(p => p.rol === rol) || this.db.profiles[0]; }
@@ -444,15 +474,16 @@ class SupaStore {
   async me(){ const { data, error } = await this.c.from("profiles").select("*").eq("id", this.session.user.id).single(); if (error) throw error; return data; }
   async loadAll(isAdmin){
     const q = (t, f) => (f ? f(this.c.from(t).select("*")) : this.c.from(t).select("*")).then(r => { if (r.error) throw r.error; return r.data; });
-    const [profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes] = await Promise.all([
+    const [profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes, movimientos] = await Promise.all([
       q("profiles"), q("clientes"), q("proyectos"), q("tareas"),
       q("bitacora", x => x.order("created_at", {ascending:false}).limit(150)),
       isAdmin ? q("entradas", x => x.eq("procesada", false).order("created_at", {ascending:false})) : Promise.resolve([]),
       isAdmin ? q("alertas", x => x.neq("estado", "resuelta").order("created_at", {ascending:false}).limit(200)).catch(() => []) : Promise.resolve([]),
       isAdmin ? q("suscripciones", x => x.order("proxima_renovacion", {ascending:true})).catch(() => []) : Promise.resolve([]),
-      isAdmin ? q("ajustes").catch(() => []) : Promise.resolve([])
+      isAdmin ? q("ajustes").catch(() => []) : Promise.resolve([]),
+      isAdmin ? q("movimientos", x => x.order("fecha", {ascending:false}).limit(2000)).catch(() => []) : Promise.resolve([])
     ]);
-    return {profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes};
+    return {profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes, movimientos};
   }
   async insert(t, row){ const { data, error } = await this.c.from(t).insert(row).select().single(); if (error) throw error; return data; }
   async update(t, id, patch){ const { data, error } = await this.c.from(t).update(patch).eq("id", id).select().single(); if (error) throw error; return data; }
@@ -476,7 +507,7 @@ function V(){
   const pids = new Set(tareas.map(t => t.proyecto_id));
   const proyectos = D.proyectos.filter(p => !p.privado && (p.responsable_id === S.me.id || pids.has(p.id)));
   const cids = new Set(proyectos.map(p => p.cliente_id));
-  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], alertas: [], suscripciones: [], ajustes: [], bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
+  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], alertas: [], suscripciones: [], ajustes: [], movimientos: [], bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
 }
 const proyDe = t => t.proyecto_id ? byId(S.data.proyectos, t.proyecto_id) : null;
 const cliDe = p => p?.cliente_id ? byId(S.data.clientes, p.cliente_id) : null;
@@ -515,12 +546,14 @@ function alarmas(D = V()){
       det: s.txt === "Vencido" ? `Venció hace ${-s.dias} día(s) y va en ${s.av}%` : `Debería ir en ${s.esperado}% y va en ${s.av}% · ${s.dias === 0 ? "vence hoy" : "faltan " + s.dias + " día(s)"}`}); });
   abiertas(D.tareas).forEach(t => { const d = diasHasta(t.fecha_limite); if (d !== null && d < 0)
     out.push({nivel:"bad", tipo:"tarea", id:t.id, codigo:t.codigo, titulo:t.titulo, det:`Tarea vencida hace ${-d} día(s) · ${quien(t, true)}`}); });
+  (D.movimientos || []).filter(m => m.tipo === "ingreso" && m.estado === "pendiente" && m.vence && diasHasta(m.vence) < 0).forEach(m =>
+    out.push({nivel:"bad", tipo:"cobro", id:m.id, codigo:"Cobro", titulo:m.concepto, det:`Venció hace ${-diasHasta(m.vence)} día(s) · ${usd(m.monto_usd)}`}));
   (D.alertas || []).filter(a => a.estado === "nueva" && a.urgencia !== "baja").forEach(a =>
     out.push({nivel: a.urgencia === "alta" ? "bad" : "warn", tipo:"alerta", id:a.id, codigo: TIPO_AL[a.tipo]?.n || "Aviso", titulo:a.titulo, det:[a.detalle, haceCuanto(a.created_at)].filter(Boolean).join(" · ")}));
   return out.sort((a,b) => NIVEL_ORD[a.nivel] - NIVEL_ORD[b.nivel]);
 }
 const TIPO_AL = {asesor:{n:"Asesor", ic:"persona"}, personalizada:{n:"Personalizada", ic:"chat"}, cliente_nuevo:{n:"Cliente nuevo", ic:"local"},
-  agente:{n:"Agente", ic:"rayo"}, suscripcion:{n:"Suscripción", ic:"tarjeta"}, pago:{n:"Pago", ic:"check"}, otro:{n:"Aviso", ic:"campana"}};
+  agente:{n:"Agente", ic:"rayo"}, cobro:{n:"Cobro", ic:"dinero"}, suscripcion:{n:"Suscripción", ic:"tarjeta"}, pago:{n:"Pago", ic:"check"}, otro:{n:"Aviso", ic:"campana"}};
 function haceCuanto(ts){ const m = Math.round((Date.now() - new Date(ts)) / 60000); if (m < 1) return "ahora"; if (m < 60) return `hace ${m} min`; const h = Math.round(m/60); if (h < 24) return `hace ${h} h`; return `hace ${Math.round(h/24)} d`; }
 const ajuste = k => (S.data?.ajustes || []).find(x => x.clave === k)?.valor || "";
 function segActual(d = new Date()){ const m = minsAhora(); return segmentosDelDia(d).find(s => s.ini && hm(s.ini) <= m && m < hm(s.fin)); }
@@ -568,6 +601,7 @@ const VISTAS = [
   {id:"tareas",    nombre:"Tareas",      ic:"tareas"},
   {id:"clientes",  nombre:"Clientes",    ic:"local",  admin:true},
   {id:"claude",    nombre:"Claude",      ic:"claude"},
+  {id:"finanzas",  nombre:"Finanzas",    ic:"dinero", admin:true},
   {id:"equipo",    nombre:"Equipo",      ic:"equipo", admin:true},
   {id:"ajustes",   nombre:"Ajustes",     ic:"ajustes", admin:true}
 ];
@@ -594,7 +628,7 @@ function vColmena(){
   <div class="grid g2" style="margin-top:16px">
     <div class="card">
       <h2>${hx("campana", al.length?"bad":"ok", 28)} Alarmas de tiempo</h2>
-      ${al.length ? al.slice(0,8).map(a => `<div class="alarm ${a.nivel}" data-act="${a.tipo==="proyecto"?"openP":a.tipo==="alerta"?"go":"editT"}" data-v="alertas" data-id="${a.id}">${hx(a.tipo==="proyecto"?"plano":a.tipo==="alerta"?"campana":"tareas", a.nivel, 30)}<div class="t"><div class="row"><span class="code">${esc(a.codigo)}</span><b style="font-weight:600">${esc(a.titulo)}</b></div><div class="small muted">${esc(a.det)}</div></div></div>`).join("")
+      ${al.length ? al.slice(0,8).map(a => `<div class="alarm ${a.nivel}" data-act="${a.tipo==="proyecto"?"openP":a.tipo==="alerta"||a.tipo==="cobro"?"go":"editT"}" data-v="${a.tipo==="cobro"?"finanzas":"alertas"}" data-id="${a.id}">${hx(a.tipo==="proyecto"?"plano":a.tipo==="alerta"?"campana":a.tipo==="cobro"?"dinero":"tareas", a.nivel, 30)}<div class="t"><div class="row"><span class="code">${esc(a.codigo)}</span><b style="font-weight:600">${esc(a.titulo)}</b></div><div class="small muted">${esc(a.det)}</div></div></div>`).join("")
         : `<div class="empty">Todo en ruta. Ningún proyecto está por debajo del ritmo que necesita.</div>`}
       <div class="row" style="margin-top:12px"><button class="btn ghost sm" data-act="notif">${ic("campana")}Activar avisos en este dispositivo</button></div>
     </div>
@@ -804,6 +838,90 @@ function vAjustes(){
   </tbody></table></div>`;
 }
 
+const mesKey = d => String(d||"").slice(0,7);
+const mesNombre = k => { const [y,m] = k.split("-").map(Number); return new Date(y, m-1, 1).toLocaleDateString("es-CO",{month:"short", year:"2-digit"}); };
+function vFinanzas(){
+  const all = S.data.movimientos || [];
+  const hoyK = isoL(new Date()).slice(0,7); const mes = S.f.fm || hoyK;
+  const meses = [...new Set([hoyK, ...all.map(m => mesKey(m.fecha))])].sort().reverse();
+  const delMes = all.filter(m => mesKey(m.fecha) === mes);
+  const ingC = delMes.filter(m => m.tipo === "ingreso" && m.estado === "cobrado");
+  const gas = delMes.filter(m => m.tipo === "gasto");
+  const sum = a => a.reduce((t, m) => t + (+m.monto_usd || 0), 0);
+  const I = sum(ingC), G = sum(gas), U = I - G;
+  const porCobrar = all.filter(m => m.tipo === "ingreso" && m.estado === "pendiente").sort((a,b) => String(a.vence||a.fecha).localeCompare(String(b.vence||b.fecha)));
+  const PC = sum(porCobrar);
+  const kpi = (v, l, ic_, tone) => `<div class="kpi" style="cursor:default">${hx(ic_, tone, 40)}<div><b class="money" style="font-size:26px">${v}</b><span>${l}</span></div></div>`;
+  const marcas = MARCAS_FIN.map(mk => { const i = sum(ingC.filter(m => m.marca === mk)), g = sum(gas.filter(m => m.marca === mk)); return {mk, i, g, u: i - g}; }).filter(x => x.i || x.g);
+  const ult = []; { const d = new Date(); d.setDate(1); for (let k = 5; k >= 0; k--){ const x = new Date(d.getFullYear(), d.getMonth() - k, 1); ult.push(isoL(x).slice(0,7)); } }
+  const serie = ult.map(k => ({k, i: sum(all.filter(m => m.tipo === "ingreso" && m.estado === "cobrado" && mesKey(m.fecha) === k)), g: sum(all.filter(m => m.tipo === "gasto" && mesKey(m.fecha) === k))}));
+  const mx = Math.max(1, ...serie.map(x => Math.max(x.i, x.g)));
+  const fila = m => { const c = byId(S.data.clientes, m.cliente_id);
+    return `<tr><td class="small">${fmtD(m.fecha)}</td>
+    <td><b style="font-weight:600;cursor:pointer" data-act="editM" data-id="${m.id}">${esc(m.concepto)}</b><div class="small muted">${esc([m.categoria, c?.nombre, m.medio].filter(Boolean).join(" · "))}</div></td>
+    <td class="hm">${chipMarca(m.marca||"General")}</td>
+    <td class="money small hm">${m.moneda !== "USD" ? esc((+m.monto).toLocaleString("es-CO") + " " + m.moneda) : ""}</td>
+    <td class="money ${m.tipo==="ingreso"?"pos":"neg"}" style="font-weight:600">${m.tipo==="ingreso"?"+":"−"}${usd(m.monto_usd).replace("-","")}</td>
+    <td>${m.estado==="pendiente"?stChip(m.vence && diasHasta(m.vence) < 0 ? "bad" : "warn", "por cobrar"):""}</td></tr>`; };
+  return `<div class="filters">
+    <select data-chg="f" data-k="fm">${meses.map(k => `<option value="${k}" ${k===mes?"selected":""}>${mesNombre(k)}</option>`).join("")}</select>
+    <button class="btn sm" data-act="newM" data-tipo="ingreso">${ic("sube")}Ingreso</button>
+    <button class="btn ghost sm" data-act="newM" data-tipo="gasto">${ic("baja")}Gasto</button>
+    <span class="small muted" style="margin-left:auto">Totales en USD · otras monedas se convierten con la tasa del día</span></div>
+  <div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    ${kpi(usd(I), "Ingresos cobrados del mes", "sube", "ok")}
+    ${kpi(usd(G), "Gastos del mes", "baja", "warn")}
+    ${kpi(usd(U), "Utilidad del mes" + (I ? ` · margen ${Math.round(U / I * 100)}%` : ""), "dinero", U >= 0 ? "ok" : "bad")}
+    ${kpi(usd(PC), `Por cobrar (${porCobrar.length})`, "reloj", porCobrar.some(m => m.vence && diasHasta(m.vence) < 0) ? "bad" : "")}
+  </div>
+  <div class="grid g2" style="margin-top:16px;align-items:start">
+    <div class="card"><h2>${hx("sube","",28)} Últimos 6 meses</h2>
+      <div class="fbars">${serie.map(x => `<div class="m" title="${mesNombre(x.k)}: ingresos ${usd(x.i)} · gastos ${usd(x.g)}">
+        <div class="pair"><i style="height:${Math.round(x.i / mx * 130)}px;background:var(--ok)"></i><i style="height:${Math.round(x.g / mx * 130)}px;background:var(--copper-dim)"></i></div>
+        <span class="lbl">${mesNombre(x.k)}</span><span class="lbl money ${x.i - x.g >= 0 ? "pos" : "neg"}">${usd(x.i - x.g)}</span></div>`).join("")}</div>
+      <div class="leg"><span><i style="background:var(--ok)"></i>Ingresos cobrados</span><span><i style="background:var(--copper-dim)"></i>Gastos</span><span>Debajo: utilidad</span></div>
+    </div>
+    <div class="card"><h2>${hx("colmena","",28)} Por marca · ${mesNombre(mes)}</h2>
+      <table class="tbl"><thead><tr><th>Marca</th><th>Ingresos</th><th>Gastos</th><th>Utilidad</th></tr></thead><tbody>
+      ${marcas.map(x => `<tr><td>${chipMarca(x.mk)}</td><td class="money">${usd(x.i)}</td><td class="money">${usd(x.g)}</td><td class="money ${x.u>=0?"pos":"neg"}" style="font-weight:600">${usd(x.u)}</td></tr>`).join("") || `<tr><td colspan="4"><div class="empty">Sin movimientos este mes.</div></td></tr>`}
+      </tbody></table></div>
+  </div>
+  <div class="sec">${hx("reloj", porCobrar.some(m => m.vence && diasHasta(m.vence) < 0) ? "bad" : "", 26)} Cuentas por cobrar</div>
+  <div class="card">${porCobrar.map(m => { const d = m.vence ? diasHasta(m.vence) : null; const c = byId(S.data.clientes, m.cliente_id);
+    return `<div class="task" style="grid-template-columns:1fr auto"><div class="t"><b data-act="editM" data-id="${m.id}" style="cursor:pointer">${esc(m.concepto)}</b>
+      <div class="meta">${c?`<span>${esc(c.nombre)}</span>`:""}<span class="money" style="color:var(--ink);font-weight:600">${m.moneda!=="USD"?esc((+m.monto).toLocaleString("es-CO")+" "+m.moneda)+" · ":""}${usd(m.monto_usd)}</span>
+      ${d===null?stChip("mute","sin fecha"):stChip(d<0?"bad":d<=3?"warn":"mute", d<0?`vencido ${-d}d`:d===0?"vence hoy":`vence ${fmtD(m.vence)}`)}${m.medio?`<span>${esc(m.medio)}</span>`:""}</div></div>
+      <button class="btn sm" data-act="cobrar" data-id="${m.id}">${ic("check")}Cobrado</button></div>`; }).join("") || `<div class="empty">No hay nada pendiente por cobrar.</div>`}</div>
+  <div class="sec">${hx("tareas","",26)} Movimientos de ${mesNombre(mes)} <span class="muted small" style="font-family:var(--fb)">${delMes.length}</span></div>
+  <div class="card" style="padding:4px 12px"><table class="tbl"><thead><tr><th>Fecha</th><th>Concepto</th><th class="hm">Marca</th><th class="hm">Original</th><th>USD</th><th></th></tr></thead><tbody>
+  ${delMes.sort((a,b) => String(b.fecha).localeCompare(String(a.fecha))).map(fila).join("") || `<tr><td colspan="6"><div class="empty">Sin movimientos este mes. Usa los botones Ingreso o Gasto.</div></td></tr>`}
+  </tbody></table></div>`;
+}
+
+function formMovimiento(m = {}){
+  const nuevo = !m.id; const tipo = m.tipo || "ingreso";
+  m = {tipo, fecha: addDays(0), moneda:"USD", marca: "AVEJ Innova", estado: tipo === "ingreso" ? "cobrado" : "pagado", categoria: tipo === "ingreso" ? CAT_ING[0] : CAT_GAS[0], ...m};
+  const cats = tipo === "ingreso" ? CAT_ING : CAT_GAS;
+  modal(`<h2>${hx(tipo==="ingreso"?"sube":"baja", tipo==="ingreso"?"ok":"warn", 34)} ${nuevo ? (tipo==="ingreso"?"Nuevo ingreso":"Nuevo gasto") : esc(m.concepto)}</h2>
+   <form class="form" id="fM">
+    <input type="hidden" name="tipo" value="${tipo}">
+    <label class="full">Concepto<input name="concepto" required value="${esc(m.concepto||"")}" placeholder="${tipo==="ingreso"?"Ej: Xuixo · cuota 2 de 3":"Ej: HighLevel noviembre"}"></label>
+    <label>Monto<input name="monto" type="number" step="0.01" required value="${esc(m.monto??"")}"></label>
+    <label>Moneda<select name="moneda">${opts(MONEDAS.map(x=>[x,x]), m.moneda)}</select></label>
+    <label>Fecha<input name="fecha" type="date" required value="${esc(m.fecha||"")}"></label>
+    <label>Marca<select name="marca">${opts(MARCAS_FIN.map(x=>[x,x]), m.marca)}</select></label>
+    <label>Categoría<select name="categoria">${opts(cats.map(x=>[x,x]), m.categoria)}</select></label>
+    <label>Medio<select name="medio"><option value="">—</option>${opts(MEDIOS.map(x=>[x,x]), m.medio)}</select></label>
+    ${tipo==="ingreso" ? `<label>Cliente<select name="cliente_id"><option value="">—</option>${opts(S.data.clientes.map(c=>[c.id,c.nombre]), m.cliente_id)}</select></label>
+    <label>Proyecto<select name="proyecto_id"><option value="">—</option>${opts(S.data.proyectos.map(p=>[p.id,p.codigo+" · "+p.nombre]), m.proyecto_id)}</select></label>
+    <label>Estado<select name="estado">${opts([["cobrado","Cobrado"],["pendiente","Por cobrar"]], m.estado)}</select></label>
+    <label>Vence (si está por cobrar)<input name="vence" type="date" value="${esc(m.vence||"")}"></label>` : `<input type="hidden" name="estado" value="pagado">`}
+    <label class="full">Tasa a USD (1 unidad = ? USD) <span class="muted" id="fxInfo">${m.moneda==="USD"?"":"se calcula sola al guardar si la dejas vacía"}</span><input name="tasa_usd" type="number" step="any" value="${m.moneda!=="USD" && m.tasa_usd ? esc(m.tasa_usd) : ""}" placeholder="Automática"></label>
+    <label class="full">Notas<textarea name="notas">${esc(m.notas||"")}</textarea></label>
+   </form>
+   <div class="mfoot">${!nuevo?`<button class="btn danger" data-act="delM" data-id="${m.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveM" data-id="${m.id||""}">Guardar</button></div>`);
+}
+
 function formSuscripcion(x = {}){
   const nuevo = !x.id; x = {moneda:"USD", ciclo:"mensual", activa:true, ...x};
   modal(`<h2>${hx("tarjeta","",34)} ${nuevo?"Nueva suscripción":esc(x.nombre)}</h2>
@@ -1011,13 +1129,29 @@ const ACT = {
       fecha_limite: addDays(0), notas: [a.detalle, a.contacto, a.enlace].filter(Boolean).join("\n")});
     if (a.estado === "nueva") S.store.update("alertas", a.id, {estado:"vista"}).catch(()=>{}); },
   newS: () => formSuscripcion(),
+  newM: el => formMovimiento({tipo: el.dataset.tipo}),
+  editM: el => formMovimiento(byId(S.data.movimientos, el.dataset.id)),
+  saveM: async el => { const f = $("#fM"); if (!f.reportValidity()) return; const o = leer("#fM"); const id = el.dataset.id;
+    o.monto = Number(o.monto);
+    if (o.moneda === "USD") o.tasa_usd = 1;
+    else if (!o.tasa_usd) { const r = await tasas(); if (!r || !r[o.moneda]) return toast("No pude traer la tasa del día: escríbela a mano"); o.tasa_usd = +(1 / r[o.moneda]).toPrecision(6); }
+    o.monto_usd = Math.round(o.monto * o.tasa_usd * 100) / 100;
+    if (o.tipo === "ingreso" && o.estado === "cobrado") o.vence = null;
+    if (await guardar(() => id ? S.store.update("movimientos", id, o) : S.store.insert("movimientos", o), (o.tipo==="ingreso"?"Ingreso":"Gasto") + " guardado · " + usd(o.monto_usd))) closeModal(); },
+  delM: el => confirmar("¿Eliminar este movimiento?", () => guardar(() => S.store.remove("movimientos", el.dataset.id), "Eliminado")),
+  cobrar: el => { const m = byId(S.data.movimientos, el.dataset.id); guardar(() => S.store.update("movimientos", m.id, {estado:"cobrado", fecha: isoL(new Date()), vence: null}), "Cobrado: " + usd(m.monto_usd)); },
   editS: el => formSuscripcion(byId(S.data.suscripciones, el.dataset.id)),
   saveS: async el => { const f = $("#fS"); if (!f.reportValidity()) return; const o = leer("#fS"); const id = el.dataset.id;
     if (await guardar(() => id ? S.store.update("suscripciones", id, o) : S.store.insert("suscripciones", o), "Guardado")) closeModal(); },
   delS: el => confirmar("¿Eliminar esta suscripción?", () => guardar(() => S.store.remove("suscripciones", el.dataset.id), "Eliminada")),
   renovar: el => { const x = byId(S.data.suscripciones, el.dataset.id); const d = parseD(x.proxima_renovacion) || hoy0();
     const m = {mensual:1, trimestral:3, anual:12}[x.ciclo]; if (m) d.setMonth(d.getMonth() + m); else d.setDate(d.getDate() + 7);
-    guardar(() => S.store.update("suscripciones", x.id, {proxima_renovacion: isoL(d)}), "Próxima renovación: " + fmtD(isoL(d))); },
+    guardar(async () => {
+      await S.store.update("suscripciones", x.id, {proxima_renovacion: isoL(d)});
+      if (x.costo){ let t = 1; if ((x.moneda||"USD") !== "USD"){ const r = await tasas(); t = r && r[x.moneda] ? +(1 / r[x.moneda]).toPrecision(6) : 0; }
+        if (t) await S.store.insert("movimientos", {tipo:"gasto", fecha: isoL(new Date()), concepto: x.nombre + " · renovación", marca:"General", categoria:"Herramientas y suscripciones",
+          monto:+x.costo, moneda:x.moneda||"USD", tasa_usd:t, monto_usd: Math.round(x.costo * t * 100) / 100, medio:x.metodo_pago||null, estado:"pagado"}); }
+    }, "Renovada y registrada como gasto · próxima: " + fmtD(isoL(d))); },
   tgGuardar: async () => { const v = $("#tgTok").value.trim(); if (!/^\d+:[\w-]{20,}$/.test(v)) return toast("Ese token no parece válido");
     await guardar(async () => { await S.store.setAjuste("telegram_token", v); await S.store.setAjuste("telegram_chat", ""); }, "Token guardado. Ahora escríbele 'hola' a tu bot"); },
   tgDetectar: async () => { try { const r = await fetch(`https://api.telegram.org/bot${ajuste("telegram_token")}/getUpdates`).then(r => r.json());
@@ -1060,7 +1194,9 @@ const ACT = {
   fab: () => modal(`<h2>${hx("mas","",34)} Agregar</h2><div class="grid" style="margin-top:14px">
       <button class="btn ghost" data-act="newT">${ic("tareas")}Tarea</button>
       <button class="btn ghost" data-act="newP">${ic("plano")}Proyecto</button>
-      <button class="btn ghost" data-act="newC">${ic("local")}Cliente</button></div>`)
+      <button class="btn ghost" data-act="newC">${ic("local")}Cliente</button>
+      <button class="btn ghost" data-act="newM" data-tipo="ingreso">${ic("sube")}Ingreso</button>
+      <button class="btn ghost" data-act="newM" data-tipo="gasto">${ic("baja")}Gasto</button></div>`)
 };
 const CHG = {
   f: el => { S.f[el.dataset.k] = el.value; render(); },
@@ -1094,7 +1230,7 @@ function render(){
   if (!vistas.find(v => v.id === S.view)) S.view = "colmena";
   const al = alarmas(); const rojas = al.filter(a => a.nivel === "bad").length;
   const seg = segActual(); const actual = vistas.find(v => v.id === S.view);
-  const vista = {colmena:vColmena, alertas:vAlertas, ajustes:vAjustes, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
+  const vista = {colmena:vColmena, alertas:vAlertas, finanzas:vFinanzas, ajustes:vAjustes, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
   const cnt = {alertas: (V().alertas||[]).filter(a => a.estado === "nueva").length, colmena: rojas, clientes: V().entradas.length, claude: abiertas(V().tareas).filter(t => t.responsable_tipo === "claude" && t.estado === "en revisión").length};
   $("#root").innerHTML = `<div class="app">
     <nav class="nav">
