@@ -212,6 +212,25 @@ window.AVEJ_CONFIG = {
 .pos{color:var(--ok)} .neg{color:#F07A66}
 .leg{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:8px}
 .leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px;margin-top:14px}
+.board .col{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:140px}
+.board .colh{display:flex;justify-content:space-between;align-items:center;border-top:3px solid;padding-top:8px}
+.board .colp{margin:4px 0 10px;font-size:11.5px;line-height:1.35}
+.lead{background:var(--surface2);border:1px solid var(--line);border-left:4px solid;border-radius:10px;padding:9px 10px;margin-bottom:8px;cursor:pointer}
+.lead:hover{border-color:var(--copper)}
+.lead .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.lead .nx{display:flex;gap:6px;align-items:flex-start;margin-top:7px;font-size:12px;line-height:1.3}
+.lead .nx svg{width:14px;height:14px;flex:none;margin-top:1px}
+.lead .nx.bad{color:#F07A66}.lead .nx.warn{color:var(--copper)}
+.kpis.embk{grid-template-columns:repeat(6,minmax(0,1fr))}
+.kpi .dot{width:14px;height:14px;border-radius:50%;flex:none;margin:0 4px}
+.etapas{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.etapas button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer}
+.etapas button:hover{border-color:var(--c);color:var(--ink)}
+.etapas button.on{background:var(--c);border-color:var(--c);color:#16140f;font-weight:600}
+.qa{display:grid;gap:8px;margin-top:8px}.qa div{font-size:13px}.qa b{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+.pasos .task{padding:8px 0}
+@media(max-width:900px){.kpis.embk{grid-template-columns:repeat(2,minmax(0,1fr))}.board{grid-auto-columns:82%}}
 </style>
 <script type="module">
 /* =====================================================================
@@ -238,6 +257,27 @@ const MEDIOS = ["Hotmart","Nequi","Bre-B","Global66","PayPal","Binance","BTC Lig
 const MONEDAS = ["USD","COP","EUR","ARS","DOP"];
 const CAT_ING = ["Servicio a cliente","Mensualidad redes","Producto Hotmart","Resultado trading","Otro ingreso"];
 const CAT_GAS = ["Herramientas y suscripciones","Publicidad","Colaboradores","Trading (pérdida o comisiones)","Comisiones e impuestos","Otro gasto"];
+const ETAPAS_DEF = [
+  {etapa:"tofu", nombre:"TOFU · Frío", orden:1, descripcion:"Llenó el diagnóstico o escribió por primera vez. Aún no conoce la oferta.", dias_estancado:7},
+  {etapa:"mofu", nombre:"MOFU · Tibio", orden:2, descripcion:"Ya recibió el diagnóstico o la propuesta y la está evaluando.", dias_estancado:7},
+  {etapa:"bofu", nombre:"BOFU · Caliente", orden:3, descripcion:"Pidió precio o link de pago. Está listo para cerrar.", dias_estancado:5},
+  {etapa:"seguimiento", nombre:"Seguimiento", orden:4, descripcion:"Pidió tiempo. Se le escribe en la fecha acordada.", dias_estancado:null},
+  {etapa:"retargeting", nombre:"Retargeting", orden:5, descripcion:"Dejó de responder. Se reactiva con anuncios y mensajes.", dias_estancado:30},
+  {etapa:"ganado", nombre:"Ganado (pagó)", orden:6, descripcion:"Pagó: ya es cliente.", dias_estancado:null},
+  {etapa:"perdido", nombre:"Perdido", orden:7, descripcion:"Dijo que no o no respondió tras el retargeting.", dias_estancado:null}];
+const PASOS_DEF = [
+  ["tofu",1,"Preparar el diagnóstico gratuito","claude",1,3,20,"entregables"],["tofu",2,"Enviar el diagnóstico por WhatsApp y confirmar que lo recibió","humano",2,3,10,"mensajes1"],
+  ["mofu",1,"Enviar la propuesta con la oferta del diagnóstico","humano",1,3,15,"mensajes1"],["mofu",2,"Seguimiento a las 48 h: resolver dudas","humano",3,2,10,"mensajes2"],
+  ["bofu",1,"Enviar el link de pago de su región y cerrar","humano",0,3,10,"mensajes1"],["bofu",2,"Recordatorio de pago si aún no ha pagado","humano",2,3,5,"mensajes2"],
+  ["seguimiento",1,"Escribirle en la fecha acordada","humano",7,2,10,"mensajes1"],
+  ["retargeting",1,"Agregar a la audiencia de retargeting en Meta","humano",1,1,5,"contenido"],["retargeting",2,"Redactar mensaje de reactivación con un caso de éxito","claude",3,1,10,"mensajes2"],
+  ["ganado",1,"Bienvenida: pedir fotos y datos, y crear su proyecto","humano",1,3,20,"mensajes1"]
+].map(([etapa,orden,titulo,responsable_tipo,dias,importancia,estimado_min,segmento]) => ({etapa,orden,titulo,responsable_tipo,dias,importancia,estimado_min,segmento,activo:true}));
+const COL_ET = {tofu:"#6FA8DC", mofu:"#E8B04B", bofu:"#E07B39", seguimiento:"#A08FE0", retargeting:"#A6A297", ganado:"#5FB37A", perdido:"#C25B4A"};
+const PRODUCTOS = ["Idea Express","Kit Local Pro","Premium","Kit Hogar","Redes y contenido","Google y reseñas","Chatbot IA","Remodelación / ejecución"];
+const etapas = () => ((S.data?.embudo_etapas?.length ? S.data.embudo_etapas : ETAPAS_DEF)).slice().sort((a,b) => a.orden - b.orden);
+const etNombre = k => etapas().find(e => e.etapa === k)?.nombre || k;
+const diasDesde = iso => iso ? Math.max(0, Math.floor((Date.now() - new Date(iso)) / 86400000)) : 0;
 const MARCAS_FIN = ["AVEJ Innova","Smell Parfum","San Cayetano","Fábrica de Millonarios","Trading","General"];
 const usd = n => (n < 0 ? "-" : "") + "US$" + Math.abs(+n||0).toLocaleString("es-CO",{minimumFractionDigits:2, maximumFractionDigits:2});
 let FX = null;
@@ -304,7 +344,8 @@ const G = {
   rayo:"M13 2L5 13h6l-1 9 8-11h-6z",
   dinero:"M3 6.5h18v11H3z M12 9.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5z M6 9.5v5 M18 9.5v5",
   sube:"M4 17l6-6 4 4 6-7 M15 8h5v5",
-  baja:"M4 7l6 6 4-4 6 7 M15 16h5v-5"
+  baja:"M4 7l6 6 4-4 6 7 M15 16h5v-5",
+  embudo:"M3 4h18l-7 8.5V18l-4 2v-7.5z"
 };
 const ic = (n, cls="") => `<svg class="i ${cls}" viewBox="0 0 24 24"><path d="${G[n]||G.tareas}"/></svg>`;
 const HEX = "12,1.6 21.4,7 21.4,17 12,22.4 2.6,17 2.6,7";
@@ -398,6 +439,13 @@ function seed(){
       {id:"s2", nombre:"LinkDM", costo:null, moneda:"USD", ciclo:"mensual", proxima_renovacion:addDays(3), metodo_pago:"", activa:true, notas:"Plan Pro"}
     ],
     ajustes:[],
+    embudo_etapas: ETAPAS_DEF.map((e,i) => ({...e, id:"et"+i, responsable_id:null})),
+    embudo_pasos: PASOS_DEF.map((p,i) => ({...p, id:"ps"+i})),
+    leads:[
+      {id:"l1", nombre:"Gabriel Estrada", negocio:"Barbería", contacto:"+57 313 000 0000", canal:"Instagram", origen:"Diagnóstico", etapa:"tofu", interes:"Kit Local Pro", etapa_desde:new Date().toISOString(), created_at:new Date().toISOString(), datos:{"¿Cuál es el problema principal de su espacio hoy? (puede marcar varios)":"Se ve oscuro y desordenado"}},
+      {id:"l2", nombre:"Mariela Castillo", negocio:"Tienda de ropa", contacto:"+58 426 000 0000", canal:"Instagram", origen:"Diagnóstico", etapa:"mofu", interes:"Premium", valor_usd:45.99, etapa_desde:new Date(Date.now()-3*864e5).toISOString(), created_at:new Date(Date.now()-5*864e5).toISOString()},
+      {id:"l3", nombre:"Café Lumbre", negocio:"Cafetería", contacto:"@cafelumbre", canal:"Instagram", origen:"Jisabella (pidió asesor)", etapa:"bofu", interes:"Kit Local Pro", valor_usd:24.99, etapa_desde:new Date(Date.now()-864e5).toISOString(), created_at:new Date(Date.now()-9*864e5).toISOString()}
+    ],
     movimientos:[
       {id:"m1", tipo:"ingreso", fecha:addDays(-5), concepto:"Xuixo · cuota 1 de 3", marca:"AVEJ Innova", categoria:"Servicio a cliente", cliente_id:"c1", proyecto_id:"p1", monto:650, moneda:"EUR", tasa_usd:1.08, monto_usd:702, medio:"Global66", estado:"cobrado", vence:null, notas:""},
       {id:"m2", tipo:"ingreso", fecha:addDays(10), concepto:"Xuixo · cuota 2 de 3", marca:"AVEJ Innova", categoria:"Servicio a cliente", cliente_id:"c1", proyecto_id:"p1", monto:470, moneda:"EUR", tasa_usd:1.08, monto_usd:507.6, medio:"Global66", estado:"pendiente", vence:addDays(10), notas:""},
@@ -423,7 +471,19 @@ function recalcLocal(db, pid){
 
 class LocalStore {
   async init(){ try { this.db = JSON.parse(localStorage.getItem(LS_KEY)); } catch { this.db = null; } if (!this.db) this.db = seed();
-    const s0 = seed(); ["alertas","suscripciones","ajustes","movimientos"].forEach(k => { if (!this.db[k]) this.db[k] = s0[k]; }); this.save(); }
+    const s0 = seed(); ["alertas","suscripciones","ajustes","movimientos","embudo_etapas","embudo_pasos","leads"].forEach(k => { if (!this.db[k]) this.db[k] = s0[k]; });
+    if (!this.db._embudo){ this.db.leads.forEach(l => this.pasosLead(l, false)); this.db._embudo = 1; }
+    this.save(); }
+  pasosLead(l, cerrar){
+    if (cerrar) this.db.tareas.filter(t => t.lead_id === l.id && t.estado !== "hecha").forEach(t => { t.estado = "hecha"; t.avance = 100; t.notas = [t.notas, "Cerrada al pasar a " + l.etapa].filter(Boolean).join(" · "); });
+    const et = this.db.embudo_etapas.find(e => e.etapa === l.etapa), adm = this.db.profiles.find(p => p.rol === "admin");
+    const resp = l.responsable_id || et?.responsable_id || adm?.id;
+    this.db.embudo_pasos.filter(p => p.etapa === l.etapa && p.activo !== false).sort((a,b) => a.orden - b.orden).forEach(p => { this.db.seq.t++;
+      this.db.tareas.push({id: uid(), codigo: "TS-" + pad(this.db.seq.t), titulo: p.titulo + " · " + l.nombre, proyecto_id: null, responsable_tipo: p.responsable_tipo, responsable_id: resp,
+        chat_claude: p.responsable_tipo === "claude" ? "Lead · " + l.nombre : null, segmento: p.segmento,
+        fecha_limite: l.etapa === "seguimiento" && l.proxima_fecha ? l.proxima_fecha : addDays(p.dias), importancia: p.importancia, estimado_min: p.estimado_min,
+        estado: "pendiente", avance: 0, privada: false, notas: "Embudo: " + l.etapa, lead_id: l.id, created_at: new Date().toISOString()}); });
+  }
   async setAjuste(clave, valor){ const r = this.db.ajustes.find(x => x.clave === clave); if (r) r.valor = valor; else this.db.ajustes.push({clave, valor}); this.save(); }
   save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(this.db)); } catch {} }
   async me(rol){ return this.db.profiles.find(p => p.rol === rol) || this.db.profiles[0]; }
@@ -438,11 +498,13 @@ class LocalStore {
         row.codigo = pr.codigo + "." + n;
       } else { this.db.seq.t++; row.codigo = "TS-" + pad(this.db.seq.t); }
     }
-    this.db[t].push(row); if (t === "tareas") recalcLocal(this.db, row.proyecto_id); this.save(); return row;
+    if (t === "leads"){ row.etapa = row.etapa || "tofu"; row.etapa_desde = row.created_at; }
+    this.db[t].push(row); if (t === "tareas") recalcLocal(this.db, row.proyecto_id); if (t === "leads") this.pasosLead(row, false); this.save(); return row;
   }
   async update(t, id, patch){
     const r = this.db[t].find(x => x.id === id); if (!r) throw new Error("No encontrado");
-    const old = r.proyecto_id; Object.assign(r, patch, {updated_at: new Date().toISOString()});
+    const old = r.proyecto_id, oldEt = r.etapa; Object.assign(r, patch, {updated_at: new Date().toISOString()});
+    if (t === "leads" && patch.etapa && patch.etapa !== oldEt){ r.etapa_desde = r.updated_at; this.pasosLead(r, true); }
     if (t === "tareas"){ recalcLocal(this.db, r.proyecto_id); if (old !== r.proyecto_id) recalcLocal(this.db, old); }
     this.save(); return r;
   }
@@ -474,16 +536,19 @@ class SupaStore {
   async me(){ const { data, error } = await this.c.from("profiles").select("*").eq("id", this.session.user.id).single(); if (error) throw error; return data; }
   async loadAll(isAdmin){
     const q = (t, f) => (f ? f(this.c.from(t).select("*")) : this.c.from(t).select("*")).then(r => { if (r.error) throw r.error; return r.data; });
-    const [profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes, movimientos] = await Promise.all([
+    const [profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes, movimientos, leads, embudo_etapas, embudo_pasos] = await Promise.all([
       q("profiles"), q("clientes"), q("proyectos"), q("tareas"),
       q("bitacora", x => x.order("created_at", {ascending:false}).limit(150)),
       isAdmin ? q("entradas", x => x.eq("procesada", false).order("created_at", {ascending:false})) : Promise.resolve([]),
       isAdmin ? q("alertas", x => x.neq("estado", "resuelta").order("created_at", {ascending:false}).limit(200)).catch(() => []) : Promise.resolve([]),
       isAdmin ? q("suscripciones", x => x.order("proxima_renovacion", {ascending:true})).catch(() => []) : Promise.resolve([]),
       isAdmin ? q("ajustes").catch(() => []) : Promise.resolve([]),
-      isAdmin ? q("movimientos", x => x.order("fecha", {ascending:false}).limit(2000)).catch(() => []) : Promise.resolve([])
+      isAdmin ? q("movimientos", x => x.order("fecha", {ascending:false}).limit(2000)).catch(() => []) : Promise.resolve([]),
+      q("leads", x => x.order("created_at", {ascending:false}).limit(1000)).catch(() => []),
+      q("embudo_etapas").catch(() => []),
+      q("embudo_pasos").catch(() => [])
     ]);
-    return {profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes, movimientos};
+    return {profiles, clientes, proyectos, tareas, bitacora, entradas, alertas, suscripciones, ajustes, movimientos, leads, embudo_etapas, embudo_pasos};
   }
   async insert(t, row){ const { data, error } = await this.c.from(t).insert(row).select().single(); if (error) throw error; return data; }
   async update(t, id, patch){ const { data, error } = await this.c.from(t).update(patch).eq("id", id).select().single(); if (error) throw error; return data; }
@@ -507,7 +572,7 @@ function V(){
   const pids = new Set(tareas.map(t => t.proyecto_id));
   const proyectos = D.proyectos.filter(p => !p.privado && (p.responsable_id === S.me.id || pids.has(p.id)));
   const cids = new Set(proyectos.map(p => p.cliente_id));
-  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], alertas: [], suscripciones: [], ajustes: [], movimientos: [], bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
+  return {...D, tareas, proyectos, clientes: D.clientes.filter(c => cids.has(c.id)), entradas: [], alertas: [], suscripciones: [], ajustes: [], movimientos: [], leads: (D.leads||[]).filter(l => l.responsable_id === S.me.id), bitacora: D.bitacora.filter(b => b.autor === S.me.nombre)};
 }
 const proyDe = t => t.proyecto_id ? byId(S.data.proyectos, t.proyecto_id) : null;
 const cliDe = p => p?.cliente_id ? byId(S.data.clientes, p.cliente_id) : null;
@@ -552,7 +617,7 @@ function alarmas(D = V()){
     out.push({nivel: a.urgencia === "alta" ? "bad" : "warn", tipo:"alerta", id:a.id, codigo: TIPO_AL[a.tipo]?.n || "Aviso", titulo:a.titulo, det:[a.detalle, haceCuanto(a.created_at)].filter(Boolean).join(" · ")}));
   return out.sort((a,b) => NIVEL_ORD[a.nivel] - NIVEL_ORD[b.nivel]);
 }
-const TIPO_AL = {asesor:{n:"Asesor", ic:"persona"}, personalizada:{n:"Personalizada", ic:"chat"}, cliente_nuevo:{n:"Cliente nuevo", ic:"local"},
+const TIPO_AL = {asesor:{n:"Asesor", ic:"persona"}, personalizada:{n:"Personalizada", ic:"chat"}, cliente_nuevo:{n:"Lead", ic:"embudo"}, lead:{n:"Lead", ic:"embudo"},
   agente:{n:"Agente", ic:"rayo"}, cobro:{n:"Cobro", ic:"dinero"}, suscripcion:{n:"Suscripción", ic:"tarjeta"}, pago:{n:"Pago", ic:"check"}, otro:{n:"Aviso", ic:"campana"}};
 function haceCuanto(ts){ const m = Math.round((Date.now() - new Date(ts)) / 60000); if (m < 1) return "ahora"; if (m < 60) return `hace ${m} min`; const h = Math.round(m/60); if (h < 24) return `hace ${h} h`; return `hace ${Math.round(h/24)} d`; }
 const ajuste = k => (S.data?.ajustes || []).find(x => x.clave === k)?.valor || "";
@@ -599,6 +664,7 @@ const VISTAS = [
   {id:"matriz",    nombre:"Prioridades", ic:"matriz"},
   {id:"proyectos", nombre:"Proyectos",   ic:"plano"},
   {id:"tareas",    nombre:"Tareas",      ic:"tareas"},
+  {id:"embudo",    nombre:"Embudo",      ic:"embudo"},
   {id:"clientes",  nombre:"Clientes",    ic:"local",  admin:true},
   {id:"claude",    nombre:"Claude",      ic:"claude"},
   {id:"finanzas",  nombre:"Finanzas",    ic:"dinero", admin:true},
@@ -623,7 +689,7 @@ function vColmena(){
     ${kpi(3, hoyTs.length, "Tareas para hoy", "hoy", "", "hoy")}
     ${kpi(4, venc.length, "Tareas vencidas", "reloj", venc.length?"bad":"ok", "tareas")}
     ${kpi(5, conClaude.length, "En manos de Claude", "claude", "", "claude")}
-    ${isAdmin() ? kpi(6, D.entradas.length, "Clientes nuevos", "entrada", D.entradas.length?"warn":"", "clientes") : kpi(6, ab.length, "Mis tareas abiertas", "tareas", "", "tareas")}
+    ${isAdmin() ? kpi(6, (D.leads||[]).filter(l => l.etapa === "tofu").length, "Leads nuevos (TOFU)", "embudo", (D.leads||[]).some(l => l.etapa === "tofu")?"warn":"", "embudo") : kpi(6, ab.length, "Mis tareas abiertas", "tareas", "", "tareas")}
   </div>
   <div class="grid g2" style="margin-top:16px">
     <div class="card">
@@ -746,13 +812,10 @@ function vTareas(){
 
 function vClientes(){
   const D = V();
-  const ent = D.entradas.filter(e => !e.procesada);
   return `
-  <div class="card"><h2>${hx("entrada", ent.length?"warn":"", 28)} Clientes nuevos por atender <span class="muted small" style="font-family:var(--fb)">${ent.length}</span></h2>
-    <p class="small muted" style="margin-top:-6px">Llegan solos desde HighLevel (formularios y Jisabella) o los agregas a mano. Conviértelos en cliente y crea su proyecto.</p>
-    ${ent.map(e => `<div class="task"><span>${hx("local","warn",30)}</span><div class="t"><b>${esc(e.nombre||"Sin nombre")}</b><div class="meta"><span class="chip">${esc(e.canal||"—")}</span><span>${esc(e.contacto||"")}</span><span>${esc(e.mensaje||"")}</span></div></div>
-      <div class="row"><button class="btn sm" data-act="convertir" data-id="${e.id}">Convertir</button><button class="btn ghost sm" data-act="descartar" data-id="${e.id}">Descartar</button></div></div>`).join("") || `<div class="empty">No hay entradas nuevas.</div>`}
-  </div>
+  <div class="card row" style="gap:14px;align-items:center">${hx("embudo","",34)}<div style="flex:1"><b>Aquí solo están los clientes: quienes ya pagaron.</b>
+    <div class="small muted">Los interesados (diagnósticos, mensajes, Jisabella) están en el Embudo: ${(D.leads||[]).filter(l => !["ganado","perdido"].includes(l.etapa)).length} activos. Un lead pasa a cliente al registrar su pago.</div></div>
+    <button class="btn sm" data-act="go" data-v="embudo">${ic("embudo")}Ir al Embudo</button></div>
   <div class="sec">${hx("local","",26)} Cartera de clientes <button class="btn sm" data-act="newC" style="margin-left:auto">${ic("mas")}Cliente</button></div>
   <div class="card" style="padding:4px 12px"><table class="tbl"><thead><tr><th>Cliente</th><th class="hm">Ubicación</th><th class="hm">Canal</th><th>Estado</th><th>Proyectos</th><th></th></tr></thead><tbody>
   ${D.clientes.sort((a,b)=>ESTADOS_C.indexOf(a.estado)-ESTADOS_C.indexOf(b.estado)).map(c => { const ps = D.proyectos.filter(p => p.cliente_id === c.id);
@@ -800,17 +863,25 @@ function vAlertas(){
         ${a.detalle?`<div class="small" style="margin-top:6px">${esc(a.detalle)}</div>`:""}</div>
       <div class="row wrap" style="justify-content:flex-end">
         ${a.estado==="nueva"?`<button class="btn ghost sm" data-act="alVista" data-id="${a.id}">Vista</button>`:""}
-        <button class="btn ghost sm" data-act="alTarea" data-id="${a.id}">${ic("tareas")}Tarea</button>
+        ${(a.ref||"").match(/^lead-(?:auto-)?([0-9a-f-]{36})/) ? `<button class="btn ghost sm" data-act="openL" data-id="${(a.ref||"").match(/^lead-(?:auto-)?([0-9a-f-]{36})/)[1]}">${ic("embudo")}Ver lead</button>` : `<button class="btn ghost sm" data-act="alTarea" data-id="${a.id}">${ic("tareas")}Tarea</button>`}
         <button class="btn sm" data-act="alResolver" data-id="${a.id}">${ic("check")}Resuelta</button></div></div>`; }).join("") || `<div class="empty">Sin alertas. Todo tranquilo en la colmena.</div>`}</div>`;
 }
 
 function vAjustes(){
   const D = S.data, tok = ajuste("telegram_token"), chat = ajuste("telegram_chat"), hook = ajuste("hook_token");
   const base = MODO_REAL && hook ? `${CFG.supabaseUrl}/functions/v1/colmena-hook?token=${hook}&tipo=` : "";
-  const EV = [["asesor","Jisabella pide un asesor (alta)"],["personalizada","Solicitud de atención personalizada (alta)"],["cliente_nuevo","Cliente nuevo / formulario (media)"],
+  const EV = [["asesor","Jisabella pide un asesor (alta)"],["personalizada","Solicitud de atención personalizada (alta)"],["cliente_nuevo","Lead nuevo / formulario de diagnóstico → entra al Embudo (media)"],
               ["mensaje_entrante","Latido: entró un mensaje (no avisa, alimenta el monitor)"],["bot_respondio","Latido: Jisabella respondió (no avisa)"],["agente","El agente falló (alta)"],["pago","Pago recibido (media)"],["otro","Cualquier otro aviso (media)"]];
   const subs = (D.suscripciones || []);
-  return `<div class="grid g2" style="align-items:start">
+  const embudoCard = `<div class="card" style="margin-bottom:16px"><h2>${hx("embudo","",28)} Embudo: quién atiende cada etapa y qué tareas se crean</h2>
+    <p class="small muted" style="margin-top:-6px">Cuando un lead entra a una etapa, la Colmena cierra las tareas de la etapa anterior y crea estas, a nombre del responsable del lead o, si no tiene, del de la etapa. Los leads sin movimiento pasan solos a Retargeting y luego a Perdido.</p>
+    <div class="grid g3 pasos" style="align-items:start">${etapas().filter(e => e.etapa !== "perdido").map(e => `<div style="border-top:3px solid ${COL_ET[e.etapa]};padding-top:8px">
+      <div class="row" style="justify-content:space-between"><b>${esc(e.nombre)}</b>${e.dias_estancado?`<span class="small muted">rescate a los ${e.dias_estancado} d</span>`:""}</div>
+      <label class="small muted" style="display:block;margin:6px 0">Responsable <select data-chg="etResp" data-id="${e.id||""}" ${e.id?"":"disabled"}><option value="">Admin</option>${opts(S.data.profiles.map(p=>[p.id,p.nombre]), e.responsable_id)}</select></label>
+      ${(S.data.embudo_pasos||[]).filter(p => p.etapa === e.etapa).sort((a,b) => a.orden - b.orden).map(p => `<div class="task" data-act="editPs" data-id="${p.id}" style="cursor:pointer;${p.activo===false?"opacity:.5":""}">
+        <span>${hx(p.responsable_tipo==="claude"?"claude":"tareas","",24)}</span><div class="t"><b style="font-weight:500;font-size:13px">${esc(p.titulo)}</b><div class="meta"><span>${p.dias===0?"mismo día":"+"+p.dias+" d"}</span><span>${esc(RESP_TIPO[p.responsable_tipo]||"")}</span></div></div></div>`).join("")}
+      <button class="btn ghost sm" data-act="newPs" data-etapa="${e.etapa}">${ic("mas")}Paso</button></div>`).join("")}</div></div>`;
+  return `${embudoCard}<div class="grid g2" style="align-items:start">
   <div class="card"><h2>${hx("telegram","",28)} Avisos al celular (Telegram)</h2>
     ${!MODO_REAL ? `<p class="small muted">Disponible al conectar la base de datos.</p>` : `
     <p class="small muted" style="margin-top:-6px">Estado: ${tok&&chat?stChip("ok","Conectado"):tok?stChip("warn","Falta detectar tu chat"):stChip("mute","Sin configurar")}</p>
@@ -922,6 +993,108 @@ function formMovimiento(m = {}){
    <div class="mfoot">${!nuevo?`<button class="btn danger" data-act="delM" data-id="${m.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveM" data-id="${m.id||""}">Guardar</button></div>`);
 }
 
+function vEmbudo(){
+  const D = V(), f = S.f, L = D.leads || [], q = (f.lq || "").toLowerCase();
+  const fil = L.filter(l => (!f.lr || l.responsable_id === f.lr) && (!f.lc || l.canal === f.lc) && (!q || [l.nombre,l.negocio,l.contacto,l.interes].join(" ").toLowerCase().includes(q)));
+  const ab = abiertas(D.tareas);
+  const prox = id => ab.filter(t => t.lead_id === id).sort((a,b) => String(a.fecha_limite||"9").localeCompare(String(b.fecha_limite||"9")))[0];
+  const act = etapas().filter(e => !["ganado","perdido"].includes(e.etapa));
+  const n90 = L.filter(l => diasDesde(l.created_at) <= 90), gan = n90.filter(l => l.etapa === "ganado").length;
+  const card = l => { const t0 = prox(l.id), d = t0?.fecha_limite ? diasHasta(t0.fecha_limite) : null, dd = diasDesde(l.etapa_desde || l.created_at);
+    return `<div class="lead" data-act="openL" data-id="${l.id}" style="border-left-color:${COL_ET[l.etapa]}">
+      <b>${esc(l.nombre)}</b>${l.negocio?`<div class="small muted">${esc(l.negocio)}</div>`:""}
+      <div class="meta"><span class="chip">${esc(l.canal||"—")}</span>${l.interes?`<span class="chip">${esc(l.interes)}</span>`:""}<span class="small muted">${dd===0?"hoy":dd+" d aquí"}</span>${l.valor_usd?`<span class="small money">${usd(l.valor_usd)}</span>`:""}</div>
+      ${t0?`<div class="nx ${d!==null&&d<0?"bad":d===0?"warn":""}">${ic(t0.responsable_tipo==="claude"?"claude":"reloj")}<span>${esc(t0.titulo.replace(" · " + l.nombre, ""))}${d!==null&&d<0?" · vencida":d===0?" · hoy":""}</span></div>`
+          :`<div class="nx muted">${ic("alerta")}<span>Sin próximo paso</span></div>`}</div>`; };
+  return `<div class="filters">
+    <input data-inp data-k="lq" placeholder="Buscar lead…" value="${esc(f.lq||"")}">
+    ${isAdmin()?`<select data-chg="f" data-k="lr"><option value="">Todos los responsables</option>${S.data.profiles.map(p => `<option value="${p.id}" ${f.lr===p.id?"selected":""}>${esc(p.nombre)}</option>`).join("")}</select>`:""}
+    <select data-chg="f" data-k="lc"><option value="">Todos los canales</option>${CANALES.map(c => `<option ${f.lc===c?"selected":""}>${c}</option>`).join("")}</select>
+    ${isAdmin()?`<button class="btn sm" data-act="newL">${ic("mas")}Lead</button>`:""}
+    <span class="small muted" style="margin-left:auto">Cliente = solo quien ya pagó</span></div>
+  <div class="kpis embk">${act.map(e => `<div class="kpi" style="cursor:default"><span class="dot" style="background:${COL_ET[e.etapa]}"></span><div><b>${fil.filter(l => l.etapa === e.etapa).length}</b><span>${esc(e.nombre)}</span></div></div>`).join("")}
+    <div class="kpi" style="cursor:default"><span class="dot" style="background:${COL_ET.ganado}"></span><div><b>${n90.length ? Math.round(gan / n90.length * 100) : 0}%</b><span>Cierre 90 días · ${gan} ganado(s)</span></div></div></div>
+  <div class="board">${act.map(e => { const ls = fil.filter(l => l.etapa === e.etapa).sort((a,b) => String(a.etapa_desde||a.created_at).localeCompare(String(b.etapa_desde||b.created_at)));
+    return `<div class="col"><div class="colh" style="border-top-color:${COL_ET[e.etapa]}"><b>${esc(e.nombre)}</b><span class="muted small">${ls.length}</span></div>
+      <p class="muted colp">${esc(e.descripcion||"")}</p>${ls.map(card).join("") || `<div class="empty small">Vacío</div>`}</div>`; }).join("")}</div>
+  <div class="sec">${hx("check","",26)} Cerrados <span class="muted small" style="font-family:var(--fb)">${fil.filter(l => ["ganado","perdido"].includes(l.etapa)).length}</span>
+    <button class="btn ghost sm" data-act="togCerr" style="margin-left:auto">${f.cerr?"Ocultar":"Ver"}</button></div>
+  ${f.cerr ? `<div class="card" style="padding:4px 12px"><table class="tbl"><thead><tr><th>Lead</th><th>Etapa</th><th class="hm">Canal</th><th>Desde</th></tr></thead><tbody>
+    ${fil.filter(l => ["ganado","perdido"].includes(l.etapa)).map(l => `<tr><td><b data-act="openL" data-id="${l.id}" style="cursor:pointer;font-weight:600">${esc(l.nombre)}</b></td><td>${stChip(l.etapa==="ganado"?"ok":"bad", etNombre(l.etapa))}</td><td class="hm small">${esc(l.canal||"")}</td><td class="small">${fmtD(String(l.etapa_desde||l.created_at).slice(0,10))}</td></tr>`).join("") || `<tr><td colspan="4"><div class="empty">Nada cerrado aún.</div></td></tr>`}
+    </tbody></table></div>` : ""}`;
+}
+
+function modalLead(id){
+  const l = id ? byId(S.data.leads || [], id) : null; if (id && !l) return toast("Ese lead ya no está en el embudo");
+  const x = l || {etapa:"tofu", canal:"Instagram", origen:"Manual"}, adm = isAdmin();
+  const ts = l ? S.data.tareas.filter(t => t.lead_id === l.id).sort((a,b) => (a.estado==="hecha") - (b.estado==="hecha") || String(a.fecha_limite||"9").localeCompare(String(b.fecha_limite||"9"))) : [];
+  const qa = l?.datos ? Object.entries(l.datos).filter(([k,v]) => /\s/.test(k) && v !== null && typeof v !== "object" && String(v).trim()) : [];
+  const et = etapas().find(e => e.etapa === x.etapa);
+  modal(`<h2>${hx("embudo","",34)} ${l ? esc(l.nombre) : "Nuevo lead"}</h2>
+   ${l ? `<div class="etapas">${etapas().map(e => `<button type="button" class="${e.etapa===x.etapa?"on":""}" style="--c:${COL_ET[e.etapa]}" data-act="${e.etapa==="ganado"?"ganarL":"moverL"}" data-id="${l.id}" data-etapa="${e.etapa}">${esc(e.nombre)}</button>`).join("")}</div>
+     <p class="small muted" style="margin:0 0 12px">${esc(et?.descripcion||"")} · ${diasDesde(l.etapa_desde||l.created_at)} día(s) en esta etapa${l.cliente_id?" · ya es cliente":""}${l.enlace?` · <a class="link" href="${esc(l.enlace)}" target="_blank" rel="noopener">${ic("link")}Abrir en HighLevel</a>`:""}</p>` : ""}
+   <form class="form" id="fL">
+    <label>Nombre<input name="nombre" required value="${esc(x.nombre||"")}"></label>
+    <label>Negocio<input name="negocio" value="${esc(x.negocio||"")}" placeholder="Barbería, cafetería…"></label>
+    <label>Contacto<input name="contacto" value="${esc(x.contacto||"")}" placeholder="WhatsApp, correo, @usuario"></label>
+    <label>Canal<select name="canal">${opts(CANALES.map(c=>[c,c]), x.canal)}</select></label>
+    <label>Interesado en<input name="interes" list="dlProd" value="${esc(x.interes||"")}"><datalist id="dlProd">${PRODUCTOS.map(p=>`<option value="${esc(p)}">`).join("")}</datalist></label>
+    <label>Valor estimado (USD)<input name="valor_usd" type="number" step="0.01" value="${esc(x.valor_usd??"")}"></label>
+    <label>Responsable<select name="responsable_id" ${adm?"":"disabled"}><option value="">El de la etapa</option>${opts(S.data.profiles.map(p=>[p.id,p.nombre]), x.responsable_id)}</select></label>
+    <label>Próximo contacto<input name="proxima_fecha" type="date" value="${esc(x.proxima_fecha||"")}"></label>
+    <label>Origen<input name="origen" value="${esc(x.origen||"")}"></label>
+    ${!l ? `<label>Etapa inicial<select name="etapa">${opts(etapas().filter(e=>e.etapa!=="ganado").map(e=>[e.etapa,e.nombre]), x.etapa)}</select></label>` : ""}
+    <label class="full">Notas<textarea name="notas">${esc(x.notas||"")}</textarea></label>
+   </form>
+   ${l ? `<div class="sec" style="margin-top:14px">${hx("tareas","",24)} Tareas de este lead <button class="btn ghost sm" data-act="tareaL" data-id="${l.id}" style="margin-left:auto">${ic("mas")}Tarea</button></div>
+     <div>${ts.map(t => `<div class="task" style="padding:8px 0"><button class="chk ${t.estado==="hecha"?"on":""}" data-act="toggle" data-id="${t.id}">${ic("check")}</button>
+       <div class="t"><b data-act="editT" data-id="${t.id}" style="cursor:pointer;${t.estado==="hecha"?"text-decoration:line-through;opacity:.6":""}">${esc(t.titulo.replace(" · " + l.nombre, ""))}</b>
+       <div class="meta"><span class="code">${esc(t.codigo||"")}</span>${quien(t)}${t.estado!=="hecha"?fechaTxt(t):""}</div></div></div>`).join("") || `<div class="empty small">Sin tareas.</div>`}</div>
+     ${qa.length ? `<details style="margin-top:12px"><summary class="small" style="cursor:pointer">Respuestas del formulario (${qa.length})</summary><div class="qa">${qa.map(([k,v]) => `<div><b>${esc(k)}</b>${esc(String(v))}</div>`).join("")}</div></details>` : ""}` : ""}
+   <div class="mfoot">${l&&adm?`<button class="btn danger" data-act="delL" data-id="${l.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cerrar</button><button class="btn" data-act="saveL" data-id="${l?.id||""}">Guardar</button></div>`);
+}
+
+function formGanar(l){
+  modal(`<h2>${hx("dinero","ok",34)} ${esc(l.nombre)} pagó</h2>
+   <p class="small muted" style="margin-top:-6px">Se crea como cliente, el pago queda en Finanzas y el lead pasa a <b>Ganado</b>.</p>
+   <form class="form" id="fG">
+    <label>Qué compró<input name="producto" list="dlProd2" required value="${esc(l.interes||"")}"><datalist id="dlProd2">${PRODUCTOS.map(p=>`<option value="${esc(p)}">`).join("")}</datalist></label>
+    <label>Marca<select name="marca">${opts(MARCAS_FIN.filter(m=>m!=="Trading"&&m!=="General").map(x=>[x,x]), "AVEJ Innova")}</select></label>
+    <label>Monto pagado<input name="monto" type="number" step="0.01" required value="${esc(l.valor_usd??"")}"></label>
+    <label>Moneda<select name="moneda">${opts(MONEDAS.map(x=>[x,x]), "USD")}</select></label>
+    <label>Medio<select name="medio">${opts(MEDIOS.map(x=>[x,x]), "Hotmart")}</select></label>
+    <label>Fecha del pago<input name="fecha" type="date" required value="${addDays(0)}"></label>
+    <label>Ciudad<input name="ciudad"></label>
+    <label>País<input name="pais"></label>
+    <label class="cb full"><input type="checkbox" name="crearP" checked> Crear su proyecto a continuación</label>
+   </form>
+   <div class="mfoot"><span class="sp"></span><button class="btn ghost" data-act="openL" data-id="${l.id}">Volver</button><button class="btn" data-act="saveG" data-id="${l.id}">${ic("check")}Registrar pago y convertir</button></div>`);
+}
+
+async function aUSD(monto, moneda, tasa){
+  if (moneda === "USD") return {tasa_usd:1, monto_usd: Math.round(monto * 100) / 100};
+  if (!tasa){ const r = await tasas(); if (!r || !r[moneda]) throw new Error("No pude traer la tasa del día: escríbela a mano en Finanzas"); tasa = +(1 / r[moneda]).toPrecision(6); }
+  return {tasa_usd: tasa, monto_usd: Math.round(monto * tasa * 100) / 100};
+}
+
+function formPaso(p = {}, etapa){
+  p = {etapa, responsable_tipo:"humano", dias:1, importancia:2, estimado_min:15, segmento:"mensajes1", activo:true, orden:((S.data.embudo_pasos||[]).filter(x=>x.etapa===etapa).length+1), ...p};
+  modal(`<h2>${hx("tareas","",34)} Paso de ${esc(etNombre(p.etapa))}</h2>
+   <p class="small muted" style="margin-top:-6px">Esta tarea se crea sola cada vez que un lead entra a esta etapa.</p>
+   <form class="form" id="fPs">
+    <input type="hidden" name="etapa" value="${esc(p.etapa)}">
+    <label class="full">Tarea<input name="titulo" required value="${esc(p.titulo||"")}"></label>
+    <label>¿Quién la ejecuta?<select name="responsable_tipo">${opts(Object.entries(RESP_TIPO), p.responsable_tipo)}</select></label>
+    <label>Bloque del día<select name="segmento">${opts(SEG_ALL.filter(s=>!s.fijo).map(s=>[s.id,s.nombre]), p.segmento)}</select></label>
+    <label>Plazo (días desde que entra)<input name="dias" type="number" min="0" value="${esc(p.dias)}"></label>
+    <label>Importancia<select name="importancia">${opts(Object.entries(IMPORTANCIA), p.importancia)}</select></label>
+    <label>Minutos estimados<input name="estimado_min" type="number" min="5" step="5" value="${esc(p.estimado_min)}"></label>
+    <label>Orden<input name="orden" type="number" min="1" value="${esc(p.orden)}"></label>
+    <label class="cb full"><input type="checkbox" name="activo" ${p.activo!==false?"checked":""}> Activo</label>
+   </form>
+   <div class="mfoot">${p.id?`<button class="btn danger" data-act="delPs" data-id="${p.id}">Eliminar</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="savePs" data-id="${p.id||""}">Guardar</button></div>`);
+}
+
 function formSuscripcion(x = {}){
   const nuevo = !x.id; x = {moneda:"USD", ciclo:"mensual", activa:true, ...x};
   modal(`<h2>${hx("tarjeta","",34)} ${nuevo?"Nueva suscripción":esc(x.nombre)}</h2>
@@ -996,6 +1169,7 @@ function formTarea(t = {}, proyId){
     <label>Avance: <output id="avO">${+t.avance||0}%</output><input name="avance" type="range" min="0" max="100" step="5" value="${+t.avance||0}" oninput="avO.value=this.value+'%'"></label>
     <label class="full">Notas<textarea name="notas">${esc(t.notas||"")}</textarea></label>
     ${adm?`<label class="cb full"><input type="checkbox" name="privada" ${t.privada?"checked":""}> Privada (personal: solo la ves tú)</label>`:""}
+    ${t.lead_id?`<input type="hidden" name="lead_id" value="${esc(t.lead_id)}">`:""}
    </form>
    <div class="mfoot">${!nuevo&&adm?`<button class="btn danger" data-act="delT" data-id="${t.id}">Eliminar</button>`:""}${!nuevo&&t.responsable_tipo==="claude"?`<button class="btn ghost" data-act="brief" data-id="${t.id}">${ic("copiar")}Brief</button>`:""}<span class="sp"></span><button class="btn ghost" data-act="close">Cancelar</button><button class="btn" data-act="saveT" data-id="${t.id||""}">Guardar</button></div>`);
 }
@@ -1129,6 +1303,34 @@ const ACT = {
       fecha_limite: addDays(0), notas: [a.detalle, a.contacto, a.enlace].filter(Boolean).join("\n")});
     if (a.estado === "nueva") S.store.update("alertas", a.id, {estado:"vista"}).catch(()=>{}); },
   newS: () => formSuscripcion(),
+  newL: () => modalLead(),
+  openL: el => modalLead(el.dataset.id),
+  togCerr: () => { S.f.cerr = !S.f.cerr; render(); },
+  saveL: async el => { const f = $("#fL"); if (!f.reportValidity()) return; const o = leer("#fL"); const id = el.dataset.id;
+    if (await guardar(async () => { if (id) await S.store.update("leads", id, o); else { const n = await S.store.insert("leads", o); await log("", "Lead nuevo: " + n.nombre); } }, "Lead guardado")) closeModal(); },
+  moverL: async el => { const id = el.dataset.id, etapa = el.dataset.etapa, l = byId(S.data.leads, id); if (l.etapa === etapa) return;
+    const o = $("#fL") ? leer("#fL") : {}; o.etapa = etapa;
+    if (etapa === "seguimiento" && !o.proxima_fecha) o.proxima_fecha = addDays(7);
+    if (await guardar(async () => { await S.store.update("leads", id, o); await log("", l.nombre + " → " + etNombre(etapa)); }, l.nombre + " → " + etNombre(etapa))) modalLead(id); },
+  ganarL: el => { const l = byId(S.data.leads, el.dataset.id); if (l.cliente_id) return toast("Ya es cliente"); const o = $("#fL") ? leer("#fL") : {}; formGanar({...l, ...o}); },
+  saveG: async el => { const f = $("#fG"); if (!f.reportValidity()) return; const g = leer("#fG"); const l = byId(S.data.leads, el.dataset.id); let cli;
+    const ok = await guardar(async () => {
+      const u = await aUSD(Number(g.monto), g.moneda);
+      cli = await S.store.insert("clientes", {nombre: l.nombre, negocio: l.negocio || null, canal: CANALES.includes(l.canal) ? l.canal : "Otro", contacto: l.contacto || null, ciudad: g.ciudad, pais: g.pais, estado: "en curso",
+        notas: ["Venía del embudo (" + (l.origen || "lead") + ")", g.producto, l.notas].filter(Boolean).join(" · ")});
+      await S.store.insert("movimientos", {tipo:"ingreso", fecha: g.fecha, concepto: g.producto + " · " + l.nombre, marca: g.marca, categoria: g.medio === "Hotmart" ? "Producto Hotmart" : "Servicio a cliente",
+        cliente_id: cli.id, monto: Number(g.monto), moneda: g.moneda, ...u, medio: g.medio, estado: "cobrado"});
+      await S.store.update("leads", l.id, {etapa: "ganado", cliente_id: cli.id, interes: g.producto, valor_usd: u.monto_usd});
+      await log("", "Cliente nuevo (pagó): " + l.nombre + " · " + usd(u.monto_usd));
+    }, "¡" + l.nombre + " ya es cliente!");
+    if (ok){ closeModal(); if (g.crearP && cli) formProyecto({nombre: l.nombre + " · " + g.producto}, cli.id); } },
+  delL: el => confirmar("¿Eliminar este lead? Sus tareas quedan sueltas.", () => guardar(() => S.store.remove("leads", el.dataset.id), "Lead eliminado")),
+  tareaL: el => { const l = byId(S.data.leads, el.dataset.id); formTarea({lead_id: l.id, segmento: "mensajes1", notas: "Lead: " + l.nombre}); },
+  newPs: el => formPaso({}, el.dataset.etapa),
+  editPs: el => formPaso(byId(S.data.embudo_pasos, el.dataset.id)),
+  savePs: async el => { const f = $("#fPs"); if (!f.reportValidity()) return; const o = leer("#fPs"); const id = el.dataset.id;
+    if (await guardar(() => id ? S.store.update("embudo_pasos", id, o) : S.store.insert("embudo_pasos", o), "Paso guardado")) closeModal(); },
+  delPs: el => confirmar("¿Eliminar este paso del embudo?", () => guardar(() => S.store.remove("embudo_pasos", el.dataset.id), "Paso eliminado")),
   newM: el => formMovimiento({tipo: el.dataset.tipo}),
   editM: el => formMovimiento(byId(S.data.movimientos, el.dataset.id)),
   saveM: async el => { const f = $("#fM"); if (!f.reportValidity()) return; const o = leer("#fM"); const id = el.dataset.id;
@@ -1202,6 +1404,7 @@ const CHG = {
   f: el => { S.f[el.dataset.k] = el.value; render(); },
   estado: async el => { const t = byId(S.data.tareas, el.dataset.id); const patch = {estado: el.value}; if (el.value === "hecha") patch.avance = 100;
     await guardar(async () => { await S.store.update("tareas", t.id, patch); await log(t.codigo, "Estado → " + el.value); }); },
+  etResp: el => guardar(() => S.store.update("embudo_etapas", el.dataset.id, {responsable_id: el.value || null}), "Responsable de la etapa actualizado"),
   rol: el => guardar(() => S.store.update("profiles", el.dataset.id, {rol: el.value}), "Rol actualizado"),
   area: el => guardar(() => S.store.update("profiles", el.dataset.id, {area: el.value}), "Área actualizada"),
   demoRol: async el => { S.demoRol = el.value; S.me = await S.store.me(el.value); S.view = "colmena"; S.f = {}; render(); }
@@ -1230,8 +1433,8 @@ function render(){
   if (!vistas.find(v => v.id === S.view)) S.view = "colmena";
   const al = alarmas(); const rojas = al.filter(a => a.nivel === "bad").length;
   const seg = segActual(); const actual = vistas.find(v => v.id === S.view);
-  const vista = {colmena:vColmena, alertas:vAlertas, finanzas:vFinanzas, ajustes:vAjustes, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
-  const cnt = {alertas: (V().alertas||[]).filter(a => a.estado === "nueva").length, colmena: rojas, clientes: V().entradas.length, claude: abiertas(V().tareas).filter(t => t.responsable_tipo === "claude" && t.estado === "en revisión").length};
+  const vista = {colmena:vColmena, alertas:vAlertas, finanzas:vFinanzas, embudo:vEmbudo, ajustes:vAjustes, hoy:vHoy, matriz:vMatriz, proyectos:vProyectos, tareas:vTareas, clientes:vClientes, claude:vClaude, equipo:vEquipo}[S.view];
+  const cnt = {alertas: (V().alertas||[]).filter(a => a.estado === "nueva").length, colmena: rojas, embudo: (V().leads||[]).filter(l => l.etapa === "tofu").length, claude: abiertas(V().tareas).filter(t => t.responsable_tipo === "claude" && t.estado === "en revisión").length};
   $("#root").innerHTML = `<div class="app">
     <nav class="nav">
       <div class="brand"><img src="${LOGO}" alt="AVEJ"><div><b>COLMENA</b><small>AVEJ Innova</small></div></div>
