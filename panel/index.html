@@ -71,6 +71,7 @@ main{min-width:0}
 .btn:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
 .btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.wa{background:#1FA855;color:#fff}.btn.conv{background:var(--copper);color:#fff}
 .btn.danger{background:transparent;border:1px solid var(--bad);color:var(--bad)}
 .chip{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:2px 9px;font-size:11.5px;font-weight:600;border:1px solid var(--line);white-space:nowrap}
 .chip i{width:7px;height:7px;border-radius:50%;display:inline-block}
@@ -621,6 +622,17 @@ const TIPO_AL = {asesor:{n:"Asesor", ic:"persona"}, personalizada:{n:"Personaliz
   agente:{n:"Agente", ic:"rayo"}, cobro:{n:"Cobro", ic:"dinero"}, suscripcion:{n:"Suscripción", ic:"tarjeta"}, pago:{n:"Pago", ic:"check"}, otro:{n:"Aviso", ic:"campana"}};
 function haceCuanto(ts){ const m = Math.round((Date.now() - new Date(ts)) / 60000); if (m < 1) return "ahora"; if (m < 60) return `hace ${m} min`; const h = Math.round(m/60); if (h < 24) return `hace ${h} h`; return `hace ${Math.round(h/24)} d`; }
 const ajuste = k => (S.data?.ajustes || []).find(x => x.clave === k)?.valor || "";
+// Links de atención en un clic: conversación de Jisabella (HighLevel) y WhatsApp directo
+const telDe = x => { const d = x?.datos || {}; const raw = d.phone || d.contact?.phone || (/^[+\d\s()-]{8,}$/.test(String(x?.contacto||"").split("·")[0].trim()) ? String(x.contacto).split("·")[0] : "");
+  const n = String(raw||"").replace(/\D/g, ""); return n.length >= 10 ? n : ""; };
+const nombreDe = x => { const d = x?.datos || {}; return String(d.first_name || d.full_name || d.contact_name || x?.nombre || "").trim().split(/\s+/)[0] || ""; };
+const waLink = x => { const n = telDe(x); if (!n) return ""; const nom = nombreDe(x);
+  return `https://wa.me/${n}?text=${encodeURIComponent(`Hola${nom ? " " + nom : ""}, te habla Jhonattan de AVEJ Innova. Vi tu mensaje con Jisabella y quiero atenderte personalmente.`)}`; };
+const convLink = x => { if (x?.enlace) return x.enlace; const d = x?.datos || {}; const cid = d.contact_id || x?.hl_contact_id; const loc = d.location?.id || d.location_id || ajuste("hl_location_id");
+  return cid && loc ? `https://app.gohighlevel.com/v2/location/${loc}/contacts/detail/${cid}` : ""; };
+const botonesAtender = x => { const c = convLink(x), w = waLink(x);
+  return (c ? `<a class="btn conv sm" href="${esc(c)}" target="_blank" rel="noopener">${ic("chat")}Conversación Jisabella</a>` : "")
+       + (w ? `<a class="btn wa sm" href="${esc(w)}" target="_blank" rel="noopener">${ic("chat")}WhatsApp</a>` : ""); };
 function segActual(d = new Date()){ const m = minsAhora(); return segmentosDelDia(d).find(s => s.ini && hm(s.ini) <= m && m < hm(s.fin)); }
 
 /* ---------- piezas de interfaz ---------- */
@@ -859,9 +871,10 @@ function vAlertas(){
     return `<div class="task" style="${a.estado==="nueva"?"":"opacity:.75"}"><span>${hx(t.ic, n, 32)}</span>
       <div class="t"><b>${esc(a.titulo)}</b>
         <div class="meta">${stChip(n, t.n)}${a.estado==="nueva"?stChip("bad","Nueva"):stChip("mute",a.estado)}<span>${esc(haceCuanto(a.created_at))}</span>
-          ${a.contacto?`<span>${esc(a.contacto)}</span>`:""}${a.enlace?`<a class="link" href="${esc(a.enlace)}" target="_blank" rel="noopener">${ic("link")}Abrir en HighLevel</a>`:""}</div>
+          ${a.contacto?`<span>${esc(a.contacto)}</span>`:""}</div>
         ${a.detalle?`<div class="small" style="margin-top:6px">${esc(a.detalle)}</div>`:""}</div>
       <div class="row wrap" style="justify-content:flex-end">
+        ${botonesAtender(a)}
         ${a.estado==="nueva"?`<button class="btn ghost sm" data-act="alVista" data-id="${a.id}">Vista</button>`:""}
         ${(a.ref||"").match(/^lead-(?:auto-)?([0-9a-f-]{36})/) ? `<button class="btn ghost sm" data-act="openL" data-id="${(a.ref||"").match(/^lead-(?:auto-)?([0-9a-f-]{36})/)[1]}">${ic("embudo")}Ver lead</button>` : `<button class="btn ghost sm" data-act="alTarea" data-id="${a.id}">${ic("tareas")}Tarea</button>`}
         <button class="btn sm" data-act="alResolver" data-id="${a.id}">${ic("check")}Resuelta</button></div></div>`; }).join("") || `<div class="empty">Sin alertas. Todo tranquilo en la colmena.</div>`}</div>`;
@@ -1032,7 +1045,7 @@ function modalLead(id){
   const et = etapas().find(e => e.etapa === x.etapa);
   modal(`<h2>${hx("embudo","",34)} ${l ? esc(l.nombre) : "Nuevo lead"}</h2>
    ${l ? `<div class="etapas">${etapas().map(e => `<button type="button" class="${e.etapa===x.etapa?"on":""}" style="--c:${COL_ET[e.etapa]}" data-act="${e.etapa==="ganado"?"ganarL":"moverL"}" data-id="${l.id}" data-etapa="${e.etapa}">${esc(e.nombre)}</button>`).join("")}</div>
-     <p class="small muted" style="margin:0 0 12px">${esc(et?.descripcion||"")} · ${diasDesde(l.etapa_desde||l.created_at)} día(s) en esta etapa${l.cliente_id?" · ya es cliente":""}${l.enlace?` · <a class="link" href="${esc(l.enlace)}" target="_blank" rel="noopener">${ic("link")}Abrir en HighLevel</a>`:""}</p>` : ""}
+     <p class="small muted" style="margin:0 0 12px">${esc(et?.descripcion||"")} · ${diasDesde(l.etapa_desde||l.created_at)} día(s) en esta etapa${l.cliente_id?" · ya es cliente":""}</p>${botonesAtender(l) ? `<div class="row wrap" style="gap:8px;margin:-4px 0 12px">${botonesAtender(l)}</div>` : ""}` : ""}
    <form class="form" id="fL">
     <label>Nombre<input name="nombre" required value="${esc(x.nombre||"")}"></label>
     <label>Negocio<input name="negocio" value="${esc(x.negocio||"")}" placeholder="Barbería, cafetería…"></label>
