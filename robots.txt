@@ -2,4 +2,5 @@ User-agent: *
 Disallow: /nuevo/
 Disallow: /pago-recibido.html
 Disallow: /gracias.html
+Disallow: /recorridos/xuixo/
 Sitemap: https://avejinnova.com/sitemap.xml
