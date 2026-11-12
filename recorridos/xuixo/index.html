@@ -90,15 +90,15 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 <script>
 const C=[
  {id:'C1',name:'Sang et Or',idea:"Les couleurs catalanes et du rugby du Roussillon, rouge sang et or, dans l'esprit chaleureux de Vigatane.",
-  pal:['#8E1B1B','#D4A23C','#A86B32','#F1EADF','#9C4A1E'],floor:['#9b3a26','#c98a3a'],wall:'#efe5d4',low:null,lamp:'#c9a04a',seat:'#a8302a',fac:'#2B3A7A',store:'stripes'},
+  pal:['#8E1B1B','#D4A23C','#A86B32','#F1EADF','#9C4A1E'],floor:['#a9a49c'],wall:'#efe5d4',low:null,lamp:'#c9a04a',seat:'#a8302a',fac:'#2B3A7A',store:'stripes'},
  {id:'C2',name:'Le Vestiaire',idea:"Le club-house d'après-match : cuir, laiton et vert bouteille, pour voir le match et rester à la troisième mi-temps.",
-  pal:['#1F3B2E','#8B5A2B','#B08D57','#4A2F1E','#EDE3CF'],floor:['#8f8b85'],wall:'#1f3b2e',low:'#4a2f1e',lamp:'#1f4a35',seat:'#2e5a44',fac:'#2B3A7A',store:'#1e1e1e'},
+  pal:['#1F3B2E','#8B5A2B','#B08D57','#4A2F1E','#EDE3CF'],floor:['#a9a49c'],wall:'#1f3b2e',low:'#4a2f1e',lamp:'#1f4a35',seat:'#2e5a44',fac:'#2B3A7A',store:'#1e1e1e'},
  {id:'C3',name:'Atelier Corten',idea:"L'industriel assumé : corten, acier, brique, béton et gaines apparentes. Brut, honnête et le plus économique.",
-  pal:['#9C4A1E','#1E1E1E','#9A958E','#B5583A','#B98A5A'],floor:['#8a857e'],wall:'#2b2b2b',low:null,lamp:'#222222',seat:'#b98a5a',fac:'#2B3A7A',store:'#1e1e1e'},
+  pal:['#9C4A1E','#1E1E1E','#9A958E','#B5583A','#B98A5A'],floor:['#a9a49c'],wall:'#2b2b2b',low:null,lamp:'#222222',seat:'#b98a5a',fac:'#2B3A7A',store:'#1e1e1e'},
  {id:'C4',name:'Bleu Cosmique',idea:"Le bleu de la façade (Tollens EE105) entre dans la salle, avec le bois clair et le blanc des pieds de table.",
-  pal:['#2B3A7A','#C9A273','#F7F5F0','#B08D57','#9C4A1E'],floor:['#b8b3ab'],wall:'#f4f1ea',low:'#2b3a7a',lamp:'#2b3a7a',seat:'#2b3a7a',fac:'#2B3A7A',store:'#1e1e1e'},
+  pal:['#2B3A7A','#C9A273','#F7F5F0','#B08D57','#9C4A1E'],floor:['#a9a49c'],wall:'#f4f1ea',low:'#2b3a7a',lamp:'#2b3a7a',seat:'#2b3a7a',fac:'#2B3A7A',store:'#1e1e1e'},
  {id:'C5',name:'Bistrot Patrimoine',idea:"La brasserie catalane d'autrefois : le comptoir ancien en pièce maîtresse, miroirs, brocante et objets chinés.",
-  pal:['#5A3A22','#C58B3B','#6E8B7A','#EFE6D2','#1A1A1A'],floor:['#1d1d1d','#ece3cf'],wall:'#efe6d2',low:null,lamp:'#3d6b55',seat:'#5a3a22',fac:'#2B3A7A',store:'#1e1e1e'},
+  pal:['#5A3A22','#C58B3B','#6E8B7A','#EFE6D2','#1A1A1A'],floor:['#a9a49c'],wall:'#efe6d2',low:null,lamp:'#3d6b55',seat:'#5a3a22',fac:'#2B3A7A',store:'#1e1e1e'},
 ];
 const SP={terrasse:'Terrasse avant',interieur:'Salle et bar',patio:'Patio'};
 let cur=0, sp='interieur';
@@ -148,7 +148,7 @@ const Z={
  salle:[[7.7,12.25],[12.55,12.25],[11.65,20.2],[11.35,20.5],[11.35,24.2],[7.7,24.2]],
  cuisine:[[2.7,12.3],[7.7,12.3],[7.7,24.0],[6.4,24.0],[6.4,19.6],[5.2,18.2],[2.7,18.3]],
  couloir:[[8.45,24.2],[10.95,24.2],[10.95,34.0],[8.45,34.0]],
- terrasse:[[8.3,34.6],[14.8,34.6],[14.8,42.2],[8.3,42.2]],
+ terrasse:[[4.6,34.15],[11.0,34.15],[11.0,41.75],[4.6,41.75]],
 };
 // sol extérieur (place)
 slab([[0,0],[30,0],[30,46],[0,46]].map(p=>[p[0]-1,p[1]-1]),M('#a49b8e'),0.02,-0.03);
@@ -161,8 +161,9 @@ slab(Z.patio,concrete,0.05); slab(Z.terrasse,M('#d8cbb6'),0.03);
 const kit=slab(Z.cuisine,M('#9fb1c9'),0.05);
 // cuisine: volume translucide
 (function(){const g=new THREE.ExtrudeGeometry(shape(Z.cuisine),{depth:2.6,bevelEnabled:false});g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#6f8fb8',transparent:true,opacity:.28}));scene.add(m);})();
-// murs patio en corten 4 m
-[[[4.85,3.82],[20.4,3.82]],[[20.4,8.28],[13.9,8.28]],[[13.9,8.28],[12.6,12.2]],[[4.85,3.82],[3.75,9.62]],[[3.75,9.62],[6.35,9.62]]].forEach(s=>wall(s[0],s[1],4,corten,0.12));
+// murs patio : corten existant ; mur côté WC en enduit (pas de corten)
+[[[4.85,3.82],[20.4,3.82]],[[4.85,3.82],[3.75,9.62]],[[3.75,9.62],[6.35,9.62]]].forEach(s=>wall(s[0],s[1],4,corten,0.12));
+[[[20.4,8.28],[13.9,8.28]],[[13.9,8.28],[12.6,12.2]]].forEach(s=>wall(s[0],s[1],4,M('#ddd3c4'),0.16));
 // salle: mur pierre côté est, murs enduits côté bar et couloir
 const salleWalls=[];
 salleWalls.push(wall([12.55,12.25],[11.65,20.2],3,stone,0.25));
@@ -177,13 +178,13 @@ const fac=M('#2B3A7A');
 wall([7.6,34.0],[8.45,34.0],3.4,fac,0.25); wall([10.95,34.0],[15.2,34.0],3.4,M('#7a1f2b'),0.25); wall([8.45,34.0],[10.95,34.0],0.9,fac,0.25,2.5);
 // store conservé
 const storeMat=new THREE.MeshStandardMaterial({color:'#1e1e1e',side:THREE.DoubleSide});
-const store=new THREE.Mesh(new THREE.PlaneGeometry(6.9,3.0),storeMat);{const [x,z]=W(11.55,35.55);store.position.set(x,2.9,z);store.rotation.x=-Math.PI/2+0.16;scene.add(store);}
+const store=new THREE.Mesh(new THREE.PlaneGeometry(3.4,3.0),storeMat);{const [x,z]=W(9.25,35.55);store.position.set(x,2.9,z);store.rotation.x=-Math.PI/2+0.16;scene.add(store);}
 function stripeTex(){const c=document.createElement('canvas');c.width=256;c.height=16;const g=c.getContext('2d');for(let i=0;i<16;i++){g.fillStyle=i%2?'#D4A23C':'#a8221e';g.fillRect(i*16,0,16,16);}const t=new THREE.CanvasTexture(c);return t;}
 const stripes=stripeTex();
 // arbre de la place
-{const [x,z]=W(11.75,35.85);const t=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.24,3.2,10),M('#6b4f35'));t.position.set(x,1.6,z);t.castShadow=true;scene.add(t);const c=new THREE.Mesh(new THREE.SphereGeometry(2.1,14,10),M('#6f8f45'));c.position.set(x,4.6,z);c.scale.y=.7;c.castShadow=true;scene.add(c);}
+{const [x,z]=W(9.85,36.75);const t=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.24,3.2,10),M('#6b4f35'));t.position.set(x,1.6,z);t.castShadow=true;scene.add(t);const c=new THREE.Mesh(new THREE.SphereGeometry(2.1,14,10),M('#6f8f45'));c.position.set(x,4.6,z);c.scale.y=.7;c.castShadow=true;scene.add(c);}
 // comptoir ancien + passe + trappe
-box(8.02,17.4,0.6,3.2,1.1,wood); box(8.02,21.7,0.6,3.8,1.1,wood); box(8.02,13.8,0.6,2.4,1.0,M('#cbbba5'));
+box(8.02,17.4,0.6,3.2,1.1,wood); box(8.02,21.12,0.6,2.65,1.1,wood);slab([[7.45,22.55],[9.5,22.55],[9.5,24.15],[7.45,24.15]],M('#7cc47c'),0.02,0.05); box(8.02,13.8,0.6,2.4,1.0,M('#cbbba5'));
 {const t=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.04,3.2),M('#9aa0a6'));const [x,z]=W(8.02,17.4);t.position.set(x,1.12,z);scene.add(t);}
 // treille: poutres treillis + câbles + vigne
 for(let x=6;x<20.4;x+=3.2){wall([x,3.85],[x-1.0,8.3],0.35,black,0.12,3.9);}
@@ -199,10 +200,12 @@ fetch('layout.json').then(r=>r.json()).then(L=>{
     box(c[0],c[1],0.4,0.4,0.04,seat,0.44);
     const [X,Z]=W(c[0],c[1]);[[-.17,-.17],[.17,-.17],[-.17,.17],[.17,.17]].forEach(d=>{const l=new THREE.Mesh(leg,frame);l.position.set(X+d[0],0.22,Z+d[1]);scene.add(l);});
     // dossier orienté vers la table la plus proche
-    let best=null,bd=9;L.tables.forEach(t=>{const dd=Math.hypot(t[0]-c[0],t[1]-c[1]);if(dd<bd){bd=dd;best=t;}});
+    let best=null,bd=9;L.tables.concat((L.rtables||[]).map(r=>[r[0],r[1]])).forEach(t=>{const dd=Math.hypot(t[0]-c[0],t[1]-c[1]);if(dd<bd){bd=dd;best=t;}});
     if(best){const dx=c[0]-best[0],dy=c[1]-best[1],n=Math.hypot(dx,dy)||1;const bx=c[0]+dx/n*0.19,by=c[1]+dy/n*0.19;
       const m=box(bx,by,Math.abs(dx)>Math.abs(dy)?0.04:0.4,Math.abs(dx)>Math.abs(dy)?0.4:0.04,0.42,frame,0.48);}});
   L.stools.forEach(s=>{const [x,z]=W(s[0],s[1]);const top=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.17,0.04,14),black);top.position.set(x,0.75,z);scene.add(top);const m=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.13,0.73,8),black);m.position.set(x,0.365,z);m.castShadow=true;scene.add(m);});
+  (L.rtables||[]).forEach(t=>{const [x,z]=W(t[0],t[1]);const top=new THREE.Mesh(new THREE.CylinderGeometry(t[2]/2,t[2]/2,0.04,24),tableTop);top.position.set(x,0.76,z);top.castShadow=true;scene.add(top);const p=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.2,0.74,10),white);p.position.set(x,0.37,z);scene.add(p);});
+  (L.barrels||[]).forEach(b=>{const [x,z]=W(b[0],b[1]);const m=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,1.05,16),M('#6b4423'));m.position.set(x,0.525,z);m.castShadow=true;scene.add(m);[0.2,0.85].forEach(h=>{const r=new THREE.Mesh(new THREE.TorusGeometry(0.305,0.02,6,20),black);r.rotation.x=Math.PI/2;r.position.set(x,h,z);scene.add(r);});});
   L.tvs.forEach(t=>{const [x1,z1]=W(t[0],t[1]),[x2,z2]=W(t[2],t[3]);const big=t[4]<=2;const L_=big?2.18:Math.max(1.0,Math.hypot(x2-x1,z2-z1));const h=big?1.24:0.62;const m=new THREE.Mesh(new THREE.BoxGeometry(L_,h,0.06),new THREE.MeshStandardMaterial({color:'#2f7d3a',emissive:'#1f5a28',emissiveIntensity:.6}));m.position.set((x1+x2)/2,big?2.6:2.1,(z1+z2)/2);m.rotation.y=-Math.atan2(z2-z1,x2-x1);scene.add(m);});
   L.lamps.forEach(l=>{const [x,z]=W(l[0],l[1]);const p=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,3.4,8),mats.lamp);p.position.set(x,1.7,z);p.castShadow=true;scene.add(p);const h=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),new THREE.MeshStandardMaterial({color:'#fff2c8',emissive:'#ffd98a',emissiveIntensity:.9}));h.position.set(x,3.45,z);scene.add(h);});
   apply(); go('plan',true);
@@ -210,7 +213,7 @@ fetch('layout.json').then(r=>r.json()).then(L=>{
 
 function apply(){
   const c=C[cur];
-  const t=tileTex(c.floor[0],c.floor[1]); t.repeat.set(1.5,1.5); mats.salleFloor.map=t; mats.salleFloor.color.set('#ffffff'); mats.salleFloor.needsUpdate=true;
+  const t=tileTex(c.floor[0]); t.repeat.set(1.5,1.5); mats.salleFloor.map=t; mats.salleFloor.color.set('#ffffff'); mats.salleFloor.needsUpdate=true;
   mats.wall.color.set(c.wall); lows.forEach(m=>m.visible=!!c.low); if(c.low) mats.low.color.set(c.low);
   mats.lamp.color.set(c.lamp); mats.seat.color.set(c.seat);
   if(c.store==='stripes'){storeMat.map=stripes;storeMat.color.set('#ffffff');}else{storeMat.map=null;storeMat.color.set(c.store);} storeMat.needsUpdate=true;
@@ -221,7 +224,7 @@ function setConcept(i){cur=i;try{localStorage.setItem('xuixo-c',i)}catch(e){};ap
 // caméras (plan m) : position, cible
 const CAMS={
  plan:{p:[27,26,40],t:[12,0,20]},
- terrasse:{p:[11.6,1.7,45.5],t:[10.2,1.6,34.6],sp:'terrasse'},
+ terrasse:{p:[8.0,1.7,45.5],t:[8.6,1.6,34.6],sp:'terrasse'},
  couloir:{p:[9.7,1.65,33.2],t:[9.7,1.5,24.5],sp:'interieur'},
  interieur:{p:[9.9,1.65,24.6],t:[9.6,1.4,11.5],sp:'interieur'},
  patio:{p:[8.4,1.75,11.4],t:[18.5,1.6,5.2],sp:'patio'},
