@@ -94,13 +94,23 @@ footer{text-align:center; font-size:12px; color:var(--ink-muted); padding:0 20px
   </ol>
 
   <div class="hl-form">
-    <iframe src="https://api.leadconnectorhq.com/widget/form/dP2PF3rAk97tqnIsTBXi" style="width:100%;height:100%;border:none;border-radius:3px" id="inline-dP2PF3rAk97tqnIsTBXi" data-layout="{'id':'INLINE'}" data-trigger-type="alwaysShow" data-trigger-value="" data-activation-type="alwaysActivated" data-activation-value="" data-deactivation-type="neverDeactivate" data-deactivation-value="" data-form-name="Formulario de Datos de Servicio" data-height="1700" data-layout-iframe-id="inline-dP2PF3rAk97tqnIsTBXi" data-form-id="dP2PF3rAk97tqnIsTBXi" title="Formulario de Datos de Servicio"></iframe>
+    <iframe src="https://api.leadconnectorhq.com/widget/form/Sovc52TfXdUW9y51ngGk" style="width:100%;height:100%;border:none;border-radius:3px" id="inline-Sovc52TfXdUW9y51ngGk" data-layout="{'id':'INLINE'}" data-trigger-type="alwaysShow" data-trigger-value="" data-activation-type="alwaysActivated" data-activation-value="" data-deactivation-type="neverDeactivate" data-deactivation-value="" data-form-name="Formulario Clientes de Pago AVEJ" data-height="1700" data-layout-iframe-id="inline-Sovc52TfXdUW9y51ngGk" data-form-id="Sovc52TfXdUW9y51ngGk" title="Formulario Clientes de Pago AVEJ"></iframe>
   </div>
 
   <a class="cta" href="https://wa.me/573138287521?text=Hola%2C%20acabo%20de%20pagar%20mi%20kit%20de%20AVEJ%20Innova" target="_blank" rel="noopener">¿Prefieres enviarlo por WhatsApp? Escríbenos</a>
 </main>
 <footer>AVEJ Innova · avejinnova.com</footer>
 
+<script>
+// Prellenar el formulario con los datos que llegan en la URL (Hotmart u otros enlaces): nombre, correo, teléfono, plan
+(function(){
+  var q=new URLSearchParams(location.search), f=document.getElementById('inline-Sovc52TfXdUW9y51ngGk'); if(!f) return;
+  var map={name:'full_name',nombre:'full_name',full_name:'full_name',first_name:'first_name',last_name:'last_name',email:'email',correo:'email',phone:'phone',telefono:'phone',phone_number:'phone'};
+  var out=new URLSearchParams(); q.forEach(function(v,k){ var key=map[k.toLowerCase()]; if(key&&v) out.set(key,v); });
+  var nom=q.get('name')||q.get('nombre')||q.get('first_name'); if(nom){ var h=document.getElementById('hola'); if(h) h.textContent='Gracias por tu compra, '+nom.split(' ')[0]+'. Falta un solo paso para empezar.'; }
+  if([...out.keys()].length) f.src=f.src.split('?')[0]+'?'+out.toString();
+})();
+</script>
 <script src="https://link.msgsndr.com/js/form_embed.js"></script>
 <script>
 (function(){
