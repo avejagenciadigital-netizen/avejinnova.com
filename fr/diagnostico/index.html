@@ -1,30 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>
-/* Idioma: elección explícita (?l= o la guardada), luego el país elegido en la web, luego el idioma del teléfono */
-(function(){
-  var PAG='fr', L=['es','en','fr','pt'];
-  var PAIS_L={CO:'es',MX:'es',VE:'es',PE:'es',CL:'es',AR:'es',EC:'es',DO:'es',PA:'es',CR:'es',GT:'es',BR:'pt',US:'en',CA:'en',ES:'es',FR:'fr',PT:'pt',EU:'en',LA:'es',OT:'en'};
-  var q=new URLSearchParams(location.search), elegido=q.get('l'), lang=null;
-  try{
-    if(L.indexOf(elegido)>-1){ localStorage.setItem('avej-lang',elegido); lang=elegido; }
-    else{
-      var g=localStorage.getItem('avej-lang'); if(L.indexOf(g)>-1) lang=g;
-      else{ var p=localStorage.getItem('avej-pais'); if(PAIS_L[p]) lang=PAIS_L[p]; }
-    }
-  }catch(e){}
-  if(!lang){
-    var ls=(navigator.languages&&navigator.languages.length)?navigator.languages:(navigator.language?[navigator.language]:[]);
-    for(var i=0;i<ls.length;i++){ var c=String(ls[i]).slice(0,2).toLowerCase(); if(L.indexOf(c)>-1){ lang=c; break; } }
-    if(!lang && ls.length) lang='en';
-  }
-  if(lang && lang!==PAG){
-    q.delete('l'); var s=q.toString();
-    location.replace((lang==='es'?'/diagnostico/':'/'+lang+'/diagnostico/')+(s?'?'+s:'')+location.hash);
-  }
-})();
-</script>
 <!-- Medición AVEJ: GA4 + Meta Pixel -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NC3F1Z1X26"></script>
 <script>
@@ -67,12 +43,14 @@ a{color:inherit;}
 img{max-width:100%; display:block;}
 main{max-width:640px; margin:0 auto;}
 
-/* cabecera: solo la marca, sin menú */
+/* cabecera: marca y bandera del país, sin menú */
 header{border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,0px);}
-.bar{display:flex; align-items:center; gap:10px; padding:10px 20px; max-width:640px; margin:0 auto;}
-.bar img{height:36px; width:auto;}
+.bar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 20px; max-width:640px; margin:0 auto;}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand img{height:36px; width:auto;}
 .wordmark{font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.04em;}
 .wordmark span{color:var(--copper);}
+.nav-flag{background:transparent; border:1px solid var(--line); border-radius:999px; font-size:18px; line-height:1; padding:6px 9px; cursor:pointer;}
 
 /* hero */
 .hero{padding:32px 20px 32px; border-bottom:1px solid var(--line);}
@@ -81,24 +59,13 @@ header{border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,
 .hero p.sub{font-size:16.5px; color:var(--ink-muted); max-width:34ch; margin:0 0 22px;}
 .btn{display:flex; align-items:center; justify-content:center; gap:8px; min-height:52px; padding:14px 20px; border-radius:2px; font-weight:700; font-size:16px; text-decoration:none; border:1px solid transparent; cursor:pointer; font-family:inherit; width:100%; text-align:center;}
 .btn-primary{background:var(--copper); color:#17181A;}
-.btn-ghost{border-color:var(--line); color:var(--ink); background:transparent;}
 .hero .note{font-size:14px; color:var(--ink-muted); margin:12px 0 0; text-align:center;}
-
-/* banner de servicios */
-.offer{margin:24px 20px 0; border:1px solid var(--copper); border-radius:6px; padding:20px; background:linear-gradient(160deg, rgba(201,112,47,.16), rgba(201,112,47,.03) 60%), var(--surface);}
-.offer .kicker{margin-bottom:6px; color:var(--copper);}
-.offer h2{font-size:30px; margin:0 0 10px;}
-.offer p{margin:0 0 16px; color:var(--ink-muted); font-size:15px;}
-.offer p b{color:var(--ink); white-space:nowrap;}
-.offer-btns{display:grid; gap:10px;}
-@media (min-width:520px){ .offer-btns{grid-template-columns:1fr 1fr;} }
 
 /* secciones */
 .section{padding:36px 20px; border-bottom:1px solid var(--line);}
 .section h2{font-size:34px; margin:0 0 8px;}
 .section .lead{color:var(--ink-muted); font-size:15px; margin:0 0 22px; max-width:40ch;}
 .kicker{font-size:12px; color:var(--copper); font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin:0 0 8px;}
-.offer + .section{border-top:none;}
 
 /* antes / después */
 .ba-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
@@ -128,15 +95,39 @@ header{border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,
 .benefits li b{display:block; font-size:15px; color:var(--ink); margin-bottom:2px;}
 .hl-form{background:#fff; border-radius:6px; padding:6px; min-height:1350px; margin-top:18px;}
 
+/* después del formulario: Premium y WhatsApp */
+.next{display:grid; grid-template-columns:1.15fr 1fr; gap:10px; padding:28px 20px 4px;}
+.next a{display:flex; flex-direction:column; justify-content:center; gap:4px; min-height:118px; padding:16px 14px; border-radius:6px; text-decoration:none;}
+.premium{background:linear-gradient(150deg,#D9823D 0%,var(--copper) 45%,var(--copper-dim) 100%); color:#17181A; box-shadow:0 6px 22px rgba(201,112,47,.35);}
+.premium .pb-kicker{font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;}
+.premium .pb-title{font-family:'Bebas Neue',sans-serif; font-size:34px; line-height:.9; letter-spacing:.02em;}
+.premium .pb-price{font-size:14px; font-weight:700;}
+.premium .pb-go{font-size:13px; font-weight:700; text-decoration:underline; text-underline-offset:3px;}
+.ask{border:1px solid var(--copper); color:var(--ink); background:var(--surface);}
+.ask .wa-ico{font-size:22px; line-height:1;}
+.ask b{font-size:15px; line-height:1.2;}
+.ask span{font-size:13px; color:var(--ink-muted); line-height:1.3;}
+
 /* pie */
-footer{padding:28px 20px 104px; text-align:center; color:var(--ink-muted); font-size:13.5px;}
+footer{padding:22px 20px 104px; text-align:center; color:var(--ink-muted); font-size:13.5px;}
 footer p{margin:0 0 10px;}
 footer a{color:var(--ink);}
 .home-link{display:inline-block; border:1px solid var(--line); padding:10px 16px; border-radius:2px; text-decoration:none; font-weight:600; color:var(--ink); margin-bottom:18px;}
 .langs{margin-top:16px;}
 
-/* asesor flotante */
+/* WhatsApp flotante */
 .float-wa{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:20; background:var(--copper); color:#17181A; height:52px; padding:0 18px; border-radius:26px; display:flex; align-items:center; gap:8px; text-decoration:none; box-shadow:0 4px 14px rgba(0,0,0,.35); font-weight:700; font-size:14px;}
+
+/* selector de país (igual al de la portada) */
+.geo{position:fixed; inset:0; z-index:100; background:rgba(10,10,11,.78); display:flex; align-items:center; justify-content:center; padding:16px;}
+.geo[hidden]{display:none;}
+.geo-box{background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:22px 18px; width:100%; max-width:440px; max-height:90vh; overflow:auto;}
+.geo-title{font-family:'Bebas Neue',sans-serif; font-size:30px; line-height:1; margin:0 0 6px;}
+.geo-sub{color:var(--ink-muted); font-size:14px; margin:0 0 14px;}
+.geo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+.geo-grid button{font-family:inherit; background:transparent; border:1px solid var(--line); border-radius:6px; color:var(--ink); padding:10px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px;}
+.geo-grid button span{font-size:26px; line-height:1;}
+.geo-grid button[aria-pressed="true"]{border-color:var(--copper); background:rgba(201,112,47,.15);}
 
 @media (min-width:700px){
   .hero{padding-top:48px;}
@@ -148,8 +139,11 @@ footer a{color:var(--ink);}
 
 <header>
   <div class="bar">
-    <img src="/img/img-01.webp" alt="AVEJ Innova" width="51" height="36">
-    <span class="wordmark">AVEJ <span>INNOVA</span></span>
+    <span class="brand">
+      <img src="/img/img-01.webp" alt="AVEJ Innova" width="51" height="36">
+      <span class="wordmark">AVEJ <span>INNOVA</span></span>
+    </span>
+    <button type="button" class="nav-flag" id="flag-btn" aria-label="Changer de pays"><span id="flag-now">🌎</span></button>
   </div>
 </header>
 
@@ -162,16 +156,6 @@ footer a{color:var(--ink);}
   <a class="btn btn-primary" id="cta-hero" href="#formulario">Je veux mon diagnostic</a>
   <p class="note">Envoyé par WhatsApp et e-mail.</p>
 </section>
-
-<aside class="offer" id="servicios">
-  <p class="kicker">Vous savez déjà ce que vous voulez ?</p>
-  <h2>Passez directement à votre proposition</h2>
-  <p>Formules à partir de <b data-price="ie"></b>. La plus choisie, le Kit Local Pro (<b data-price="pro"></b>), comprend 3 propositions visuelles de votre commerce, un plan, une liste de matériaux et un budget estimé.</p>
-  <div class="offer-btns">
-    <a class="btn btn-primary" id="cta-planes" href="/fr/#planes">Voir les formules et les prix</a>
-    <a class="btn btn-ghost" id="cta-asesor" href="https://wa.me/573138287521?text=Bonjour%2C%20je%20viens%20d%E2%80%99Instagram%20et%20je%20voudrais%20parler%20%C3%A0%20un%20conseiller%20de%20vos%20services" target="_blank" rel="noopener">Parler à un conseiller</a>
-  </div>
-</aside>
 
 <section class="section">
   <p class="kicker">Ce que vous avez vu sur Instagram</p>
@@ -226,30 +210,99 @@ footer a{color:var(--ink);}
 
 </main>
 
+<div class="next" style="max-width:640px; margin:0 auto;">
+  <a class="premium" id="cta-premium" href="/fr/#planes">
+    <span class="pb-kicker">⭐ Notre service le plus vendu</span>
+    <span class="pb-title">Premium</span>
+    <span class="pb-price" data-price="premium"></span>
+    <span class="pb-go">Commander maintenant →</span>
+  </a>
+  <a class="ask" id="cta-pregunta" href="https://wa.me/573138287521?text=Bonjour%2C%20je%20suis%20sur%20la%20page%20du%20diagnostic%20et%20j%E2%80%99ai%20une%20question" target="_blank" rel="noopener">
+    <span class="wa-ico" aria-hidden="true">💬</span>
+    <b>Une question ?</b>
+    <span>Écrivez-nous sur WhatsApp</span>
+  </a>
+</div>
+
 <footer>
   <a class="home-link" href="/fr/#casas">C’est pour votre maison ? Voir le design de maisons</a>
   <p>Vous cherchez un autre service ? <a href="/fr/">Tout voir sur avejinnova.com</a></p>
   <p>AVEJ Innova · <a href="https://wa.me/573138287521?text=Bonjour%2C%20je%20viens%20d%E2%80%99Instagram%20et%20je%20voudrais%20mon%20diagnostic%20gratuit">+57 313 828 7521</a> · <a href="mailto:contacto@avejinnova.com">contacto@avejinnova.com</a></p>
   <p><a href="https://www.instagram.com/avej.innova" target="_blank" rel="noopener">Instagram @avej.innova</a></p>
-  <p class="langs">Langue: <a href="/diagnostico/?l=es" lang="es" data-l="es">Español</a> · <a href="/en/diagnostico/?l=en" lang="en" data-l="en">English</a> · <b>Français</b> · <a href="/pt/diagnostico/?l=pt" lang="pt" data-l="pt">Português</a></p>
+  <p class="langs"><a href="/diagnostico/?l=es" lang="es" data-l="es">Español</a> · <a href="/en/diagnostico/?l=en" lang="en" data-l="en">English</a> · <b>Français</b> · <a href="/pt/diagnostico/?l=pt" lang="pt" data-l="pt">Português</a></p>
 </footer>
 
-<a class="float-wa" href="https://wa.me/573138287521?text=Bonjour%2C%20je%20viens%20d%E2%80%99Instagram%20et%20je%20voudrais%20parler%20%C3%A0%20un%20conseiller%20de%20vos%20services" target="_blank" rel="noopener" aria-label="Écrire à un conseiller sur WhatsApp">💬 Conseiller</a>
+<a class="float-wa" href="https://wa.me/573138287521?text=Bonjour%2C%20je%20viens%20d%E2%80%99Instagram%20et%20je%20voudrais%20mon%20diagnostic%20gratuit" target="_blank" rel="noopener" aria-label="Écrire à un conseiller sur WhatsApp">💬 WhatsApp</a>
+
+<div class="geo" id="geo" hidden role="dialog" aria-modal="true" aria-labelledby="geo-title">
+  <div class="geo-box">
+    <p class="geo-title" id="geo-title">D’où nous rendez-vous visite ?</p>
+    <p class="geo-sub">Nous affichons la page dans votre langue et les prix de votre pays.</p>
+    <div class="geo-grid" id="geo-grid"></div>
+  </div>
+</div>
 
 <script>
-/* precios según la región, con la misma lógica de la portada */
-(function(){
-  var PRECIOS={ie:{latam:'US$12,99',eu:'15,99 €',us:'US$19,99'},pro:{latam:'US$24,99',eu:'32,99 €',us:'US$39,99'}};
-  var PAIS_R={CO:'latam',MX:'latam',VE:'latam',PE:'latam',CL:'latam',AR:'latam',EC:'latam',DO:'latam',PA:'latam',CR:'latam',GT:'latam',BR:'latam',US:'us',CA:'us',ES:'eu',FR:'eu',PT:'eu',EU:'eu',LA:'latam',OT:'us'};
-  var r=null;
-  try{ var s=localStorage.getItem('avej-region'); if(PRECIOS.ie[s]) r=s; if(!r){ var p=localStorage.getItem('avej-pais'); if(PAIS_R[p]) r=PAIS_R[p]; } }catch(e){}
-  if(!r){
-    var tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
-    if(/^Europe\//.test(tz)||tz==='Atlantic/Canary'||tz==='Atlantic/Madeira') r='eu';
-    else if(/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Juneau|Indiana|Kentucky|North_Dakota|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Whitehorse)/.test(tz)||tz==='Pacific/Honolulu') r='us';
-    else r='latam';
-  }
+/* ===== País: define región de precio e idioma, con la misma lógica de la portada ===== */
+var IDIOMA='fr';
+var PRECIOS={ie:{latam:'US$12,99',eu:'15,99 €',us:'US$19,99'},pro:{latam:'US$24,99',eu:'32,99 €',us:'US$39,99'},premium:{latam:'US$45,99',eu:'59,99 €',us:'US$69,99'}};
+var PAGOS={premium:{latam:'https://pay.hotmart.com/A108239366T?off=sphb5em6', eu:'https://pay.hotmart.com/A108239366T?off=18wqag66', us:'https://pay.hotmart.com/A108239366T?off=5fazkmzw'}};
+var PAISES=[ ['CO','🇨🇴','Colombia','latam','es'],['MX','🇲🇽','Mexique','latam','es'],['VE','🇻🇪','Venezuela','latam','es'], ['PE','🇵🇪','Pérou','latam','es'],['CL','🇨🇱','Chili','latam','es'],['AR','🇦🇷','Argentine','latam','es'], ['EC','🇪🇨','Équateur','latam','es'],['DO','🇩🇴','Rép. dominicaine','latam','es'],['PA','🇵🇦','Panama','latam','es'], ['CR','🇨🇷','Costa Rica','latam','es'],['GT','🇬🇹','Guatemala','latam','es'],['BR','🇧🇷','Brésil','latam','pt'], ['US','🇺🇸','États-Unis','us','en'],['CA','🇨🇦','Canada','us','en'],['ES','🇪🇸','Espagne','eu','es'], ['FR','🇫🇷','France','eu','fr'],['PT','🇵🇹','Portugal','eu','pt'],['EU','🇪🇺','Autre pays d’Europe','eu','en'], ['LA','🌎','Autre pays d’Amérique latine','latam','es'],['OT','🌐','Autre pays','us','en'] ];
+function rutaIdioma(l){ return l==='es' ? '/diagnostico/' : '/'+l+'/diagnostico/'; }
+function regionPorZonaHoraria(){
+  var tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
+  if(/^Europe\//.test(tz)||tz==='Atlantic/Canary'||tz==='Atlantic/Madeira') return 'eu';
+  if(/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Juneau|Indiana|Kentucky|North_Dakota|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Whitehorse)/.test(tz)||tz==='Pacific/Honolulu') return 'us';
+  return 'latam';
+}
+function paisPorZonaHoraria(){
+  var tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
+  var m={'America/Bogota':'CO','America/Mexico_City':'MX','America/Caracas':'VE','America/Lima':'PE','America/Santiago':'CL',
+    'America/Argentina/Buenos_Aires':'AR','America/Guayaquil':'EC','America/Santo_Domingo':'DO','America/Panama':'PA',
+    'America/Costa_Rica':'CR','America/Guatemala':'GT','America/Sao_Paulo':'BR','Europe/Madrid':'ES','Atlantic/Canary':'ES',
+    'Europe/Paris':'FR','Europe/Lisbon':'PT','America/Toronto':'CA','America/Vancouver':'CA'};
+  if(m[tz]) return m[tz];
+  var r=regionPorZonaHoraria(); return r==='eu'?'EU':(r==='us'?'US':'LA');
+}
+function pais(code){ return PAISES.filter(function(x){return x[0]===code;})[0]; }
+function aplicarRegion(r){
+  if(!PRECIOS.premium[r]) r='latam';
+  try{ localStorage.setItem('avej-region', r); }catch(e){}
   document.querySelectorAll('[data-price]').forEach(function(el){ var k=el.getAttribute('data-price'); if(PRECIOS[k]) el.textContent=PRECIOS[k][r]; });
+  var pb=document.getElementById('cta-premium'); if(pb && PAGOS.premium[r]) pb.href=PAGOS.premium[r];
+}
+/* devuelve true si cambia de página para mostrar el idioma del país */
+function aplicarPais(code, sinRedirigir){
+  var p=pais(code); if(!p) return false;
+  try{ localStorage.setItem('avej-pais', code); }catch(e){}
+  document.getElementById('flag-now').textContent=p[1];
+  aplicarRegion(p[3]);
+  if(p[4]!==IDIOMA && !sinRedirigir){ location.replace(rutaIdioma(p[4])+location.search+location.hash); return true; }
+  return false;
+}
+(function(){
+  var geo=document.getElementById('geo'), grid=document.getElementById('geo-grid');
+  var guardado=null; try{ guardado=localStorage.getItem('avej-pais'); }catch(e){}
+  PAISES.forEach(function(p){
+    var b=document.createElement('button'); b.type='button'; b.setAttribute('data-c',p[0]);
+    b.innerHTML='<span>'+p[1]+'</span>'+p[2];
+    b.addEventListener('click',function(){
+      grid.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); });
+      try{ avejTrack('pais_elegido',{pais:p[0],lang:IDIOMA,origen:'landing_bio'}); }catch(e){}
+      setTimeout(function(){ if(!aplicarPais(p[0])) geo.hidden=true; },150);
+    });
+    grid.appendChild(b);
+  });
+  function abrir(){
+    var sel=guardado||paisPorZonaHoraria(), b=grid.querySelector('[data-c="'+sel+'"]');
+    grid.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); });
+    geo.hidden=false;
+  }
+  document.getElementById('flag-btn').addEventListener('click',abrir);
+  /* ?l= viene de los enlaces de idioma del pie: el visitante eligió este idioma a mano */
+  var elegido=new URLSearchParams(location.search).get('l')===IDIOMA;
+  if(guardado && pais(guardado)){ aplicarPais(guardado, elegido); }
+  else { aplicarRegion(regionPorZonaHoraria()); setTimeout(abrir, 600); }
 })();
 
 /* lleva los parámetros UTM de la página al formulario de HighLevel */
@@ -275,13 +328,12 @@ document.querySelectorAll('.ba').forEach(function(block){
 /* medición de clics */
 document.addEventListener('click',function(e){
   var a=e.target.closest('a'); if(!a) return;
-  var o={origen:'landing_bio',lang:'fr'};
+  var o={origen:'landing_bio',lang:IDIOMA};
   if(a.id==='cta-hero') avejTrack('ir_formulario_diagnostico',o);
-  else if(a.id==='cta-planes') avejTrack('ir_planes',o,'ViewContent');
-  else if(a.id==='cta-asesor' || a.classList.contains('float-wa')) avejTrack('contacto_asesor',o,'Contact');
+  else if(a.id==='cta-premium') avejTrack('begin_checkout',{plan:'premium',origen:'landing_bio',lang:IDIOMA},'InitiateCheckout');
+  else if(a.id==='cta-pregunta') avejTrack('contacto_whatsapp',{origen:'landing_bio_pregunta',lang:IDIOMA},'Contact');
   else if(/wa\.me/.test(a.href||'')) avejTrack('contacto_whatsapp',o,'Contact');
   else if(/#casas$/.test(a.getAttribute('href')||'')) avejTrack('ir_casas',o);
-  else if(a.hasAttribute('data-l')) avejTrack('cambio_idioma',{origen:'landing_bio',de:'fr',a:a.getAttribute('data-l')});
 });
 </script>
 <script src="https://link.msgsndr.com/js/form_embed.js"></script>
