@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+/* Idioma: elección explícita (?l= o la guardada), luego el país elegido en la web, luego el idioma del teléfono */
+(function(){
+  var PAG='es', L=['es','en','fr','pt'];
+  var PAIS_L={CO:'es',MX:'es',VE:'es',PE:'es',CL:'es',AR:'es',EC:'es',DO:'es',PA:'es',CR:'es',GT:'es',BR:'pt',US:'en',CA:'en',ES:'es',FR:'fr',PT:'pt',EU:'en',LA:'es',OT:'en'};
+  var q=new URLSearchParams(location.search), elegido=q.get('l'), lang=null;
+  try{
+    if(L.indexOf(elegido)>-1){ localStorage.setItem('avej-lang',elegido); lang=elegido; }
+    else{
+      var g=localStorage.getItem('avej-lang'); if(L.indexOf(g)>-1) lang=g;
+      else{ var p=localStorage.getItem('avej-pais'); if(PAIS_L[p]) lang=PAIS_L[p]; }
+    }
+  }catch(e){}
+  if(!lang){
+    var ls=(navigator.languages&&navigator.languages.length)?navigator.languages:(navigator.language?[navigator.language]:[]);
+    for(var i=0;i<ls.length;i++){ var c=String(ls[i]).slice(0,2).toLowerCase(); if(L.indexOf(c)>-1){ lang=c; break; } }
+    if(!lang && ls.length) lang='en';
+  }
+  if(lang && lang!==PAG){
+    q.delete('l'); var s=q.toString();
+    location.replace((lang==='es'?'/diagnostico/':'/'+lang+'/diagnostico/')+(s?'?'+s:'')+location.hash);
+  }
+})();
+</script>
 <!-- Medición AVEJ: GA4 + Meta Pixel -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NC3F1Z1X26"></script>
 <script>
@@ -15,6 +39,10 @@ function avejTrack(name,params,fbStd){try{gtag('event',name,params||{});}catch(e
 <meta name="description" content="Envíanos fotos de tu local y recibe gratis una nota de 1 a 10 de cómo tu espacio ayuda a vender, tu presencia en redes y las 3 cosas que hoy te cuestan clientes.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://avejinnova.com/diagnostico/">
+<link rel="alternate" hreflang="es" href="https://avejinnova.com/diagnostico/">
+<link rel="alternate" hreflang="en" href="https://avejinnova.com/en/diagnostico/">
+<link rel="alternate" hreflang="fr" href="https://avejinnova.com/fr/diagnostico/">
+<link rel="alternate" hreflang="pt" href="https://avejinnova.com/pt/diagnostico/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://avejinnova.com/diagnostico/">
 <meta property="og:title" content="Diagnóstico gratis de tu local · AVEJ Innova">
@@ -51,16 +79,26 @@ header{border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,
 .eyebrow{font-size:13px; color:var(--copper); font-weight:600; letter-spacing:.04em; text-transform:uppercase; margin:0 0 12px;}
 .hero h1{font-size:52px; margin:0 0 16px; max-width:12ch;}
 .hero p.sub{font-size:16.5px; color:var(--ink-muted); max-width:34ch; margin:0 0 22px;}
-.btn{display:flex; align-items:center; justify-content:center; gap:8px; min-height:52px; padding:14px 20px; border-radius:2px; font-weight:700; font-size:16px; text-decoration:none; border:1px solid transparent; cursor:pointer; font-family:inherit; width:100%;}
+.btn{display:flex; align-items:center; justify-content:center; gap:8px; min-height:52px; padding:14px 20px; border-radius:2px; font-weight:700; font-size:16px; text-decoration:none; border:1px solid transparent; cursor:pointer; font-family:inherit; width:100%; text-align:center;}
 .btn-primary{background:var(--copper); color:#17181A;}
 .btn-ghost{border-color:var(--line); color:var(--ink); background:transparent;}
 .hero .note{font-size:14px; color:var(--ink-muted); margin:12px 0 0; text-align:center;}
+
+/* banner de servicios */
+.offer{margin:24px 20px 0; border:1px solid var(--copper); border-radius:6px; padding:20px; background:linear-gradient(160deg, rgba(201,112,47,.16), rgba(201,112,47,.03) 60%), var(--surface);}
+.offer .kicker{margin-bottom:6px; color:var(--copper);}
+.offer h2{font-size:30px; margin:0 0 10px;}
+.offer p{margin:0 0 16px; color:var(--ink-muted); font-size:15px;}
+.offer p b{color:var(--ink); white-space:nowrap;}
+.offer-btns{display:grid; gap:10px;}
+@media (min-width:520px){ .offer-btns{grid-template-columns:1fr 1fr;} }
 
 /* secciones */
 .section{padding:36px 20px; border-bottom:1px solid var(--line);}
 .section h2{font-size:34px; margin:0 0 8px;}
 .section .lead{color:var(--ink-muted); font-size:15px; margin:0 0 22px; max-width:40ch;}
 .kicker{font-size:12px; color:var(--copper); font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin:0 0 8px;}
+.offer + .section{border-top:none;}
 
 /* antes / después */
 .ba-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
@@ -95,8 +133,9 @@ footer{padding:28px 20px 104px; text-align:center; color:var(--ink-muted); font-
 footer p{margin:0 0 10px;}
 footer a{color:var(--ink);}
 .home-link{display:inline-block; border:1px solid var(--line); padding:10px 16px; border-radius:2px; text-decoration:none; font-weight:600; color:var(--ink); margin-bottom:18px;}
+.langs{margin-top:16px;}
 
-/* WhatsApp flotante */
+/* asesor flotante */
 .float-wa{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:20; background:var(--copper); color:#17181A; height:52px; padding:0 18px; border-radius:26px; display:flex; align-items:center; gap:8px; text-decoration:none; box-shadow:0 4px 14px rgba(0,0,0,.35); font-weight:700; font-size:14px;}
 
 @media (min-width:700px){
@@ -123,6 +162,16 @@ footer a{color:var(--ink);}
   <a class="btn btn-primary" id="cta-hero" href="#formulario">Quiero mi diagnóstico</a>
   <p class="note">Te llega por WhatsApp y correo.</p>
 </section>
+
+<aside class="offer" id="servicios">
+  <p class="kicker">¿Ya sabes lo que quieres?</p>
+  <h2>Ve directo a tu propuesta</h2>
+  <p>Planes desde <b data-price="ie"></b>. El más elegido, el Kit Local Pro (<b data-price="pro"></b>), incluye 3 propuestas visuales de tu local, plano, lista de materiales y presupuesto estimado.</p>
+  <div class="offer-btns">
+    <a class="btn btn-primary" id="cta-planes" href="/#planes">Ver planes y precios</a>
+    <a class="btn btn-ghost" id="cta-asesor" href="https://wa.me/573138287521?text=Hola%2C%20vengo%20de%20Instagram%20y%20quiero%20hablar%20con%20un%20asesor%20sobre%20sus%20servicios" target="_blank" rel="noopener">Hablar con un asesor</a>
+  </div>
+</aside>
 
 <section class="section">
   <p class="kicker">Lo que viste en Instagram</p>
@@ -171,7 +220,7 @@ footer a{color:var(--ink);}
     <li><b>Sin pagar nada</b>Solo te pedimos que sigas a @avej.innova en Instagram.</li>
   </ul>
   <div class="hl-form">
-    <iframe id="inline-1CyI1yTtw2NuGjsoy7VO" src="https://api.leadconnectorhq.com/widget/form/1CyI1yTtw2NuGjsoy7VO" style="width:100%;height:100%;border:none;border-radius:3px" data-layout="{'id':'INLINE'}" data-trigger-type="alwaysShow" data-trigger-value="" data-activation-type="alwaysActivated" data-activation-value="" data-deactivation-type="neverDeactivate" data-deactivation-value="" data-form-name="Diagnóstico gratuito AVEJ" data-height="1350" data-layout-iframe-id="inline-1CyI1yTtw2NuGjsoy7VO" data-form-id="1CyI1yTtw2NuGjsoy7VO" title="Diagnóstico gratuito AVEJ"></iframe>
+    <iframe src="https://api.leadconnectorhq.com/widget/form/1CyI1yTtw2NuGjsoy7VO" style="width:100%;height:100%;border:none;border-radius:3px" id="inline-1CyI1yTtw2NuGjsoy7VO" data-layout="{'id':'INLINE'}" data-trigger-type="alwaysShow" data-trigger-value="" data-activation-type="alwaysActivated" data-activation-value="" data-deactivation-type="neverDeactivate" data-deactivation-value="" data-form-name="Diagnóstico gratuito AVEJ" data-height="1350" data-layout-iframe-id="inline-1CyI1yTtw2NuGjsoy7VO" data-form-id="1CyI1yTtw2NuGjsoy7VO" title="Diagnóstico gratuito AVEJ"></iframe>
   </div>
 </section>
 
@@ -180,13 +229,29 @@ footer a{color:var(--ink);}
 <footer>
   <a class="home-link" href="/#casas">¿Es para tu casa? Ver diseño de casas</a>
   <p>¿Buscas otro servicio? <a href="/">Ver todo en avejinnova.com</a></p>
-  <p>AVEJ Innova · <a href="https://wa.me/573138287521">+57 313 828 7521</a> · <a href="mailto:contacto@avejinnova.com">contacto@avejinnova.com</a></p>
+  <p>AVEJ Innova · <a href="https://wa.me/573138287521?text=Hola%2C%20vengo%20de%20Instagram%20y%20quiero%20mi%20diagn%C3%B3stico%20gratis">+57 313 828 7521</a> · <a href="mailto:contacto@avejinnova.com">contacto@avejinnova.com</a></p>
   <p><a href="https://www.instagram.com/avej.innova" target="_blank" rel="noopener">Instagram @avej.innova</a></p>
+  <p class="langs">Idioma: <b>Español</b> · <a href="/en/diagnostico/?l=en" lang="en" data-l="en">English</a> · <a href="/fr/diagnostico/?l=fr" lang="fr" data-l="fr">Français</a> · <a href="/pt/diagnostico/?l=pt" lang="pt" data-l="pt">Português</a></p>
 </footer>
 
-<a class="float-wa" href="https://wa.me/573138287521?text=Hola%2C%20vengo%20de%20Instagram%20y%20quiero%20mi%20diagn%C3%B3stico%20gratis" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">💬 WhatsApp</a>
+<a class="float-wa" href="https://wa.me/573138287521?text=Hola%2C%20vengo%20de%20Instagram%20y%20quiero%20hablar%20con%20un%20asesor%20sobre%20sus%20servicios" target="_blank" rel="noopener" aria-label="Escribir a un asesor por WhatsApp">💬 Asesor</a>
 
 <script>
+/* precios según la región, con la misma lógica de la portada */
+(function(){
+  var PRECIOS={ie:{latam:'US$12,99',eu:'15,99 €',us:'US$19,99'},pro:{latam:'US$24,99',eu:'32,99 €',us:'US$39,99'}};
+  var PAIS_R={CO:'latam',MX:'latam',VE:'latam',PE:'latam',CL:'latam',AR:'latam',EC:'latam',DO:'latam',PA:'latam',CR:'latam',GT:'latam',BR:'latam',US:'us',CA:'us',ES:'eu',FR:'eu',PT:'eu',EU:'eu',LA:'latam',OT:'us'};
+  var r=null;
+  try{ var s=localStorage.getItem('avej-region'); if(PRECIOS.ie[s]) r=s; if(!r){ var p=localStorage.getItem('avej-pais'); if(PAIS_R[p]) r=PAIS_R[p]; } }catch(e){}
+  if(!r){
+    var tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
+    if(/^Europe\//.test(tz)||tz==='Atlantic/Canary'||tz==='Atlantic/Madeira') r='eu';
+    else if(/^America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Juneau|Indiana|Kentucky|North_Dakota|Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Whitehorse)/.test(tz)||tz==='Pacific/Honolulu') r='us';
+    else r='latam';
+  }
+  document.querySelectorAll('[data-price]').forEach(function(el){ var k=el.getAttribute('data-price'); if(PRECIOS[k]) el.textContent=PRECIOS[k][r]; });
+})();
+
 /* lleva los parámetros UTM de la página al formulario de HighLevel */
 (function(){
   try{
@@ -210,9 +275,13 @@ document.querySelectorAll('.ba').forEach(function(block){
 /* medición de clics */
 document.addEventListener('click',function(e){
   var a=e.target.closest('a'); if(!a) return;
-  if(a.id==='cta-hero') avejTrack('ir_formulario_diagnostico',{origen:'landing_bio'});
-  else if(/wa\.me/.test(a.href||'')) avejTrack('contacto_whatsapp',{origen:'landing_bio'},'Contact');
-  else if(/#casas$/.test(a.getAttribute('href')||'')) avejTrack('ir_casas',{origen:'landing_bio'});
+  var o={origen:'landing_bio',lang:'es'};
+  if(a.id==='cta-hero') avejTrack('ir_formulario_diagnostico',o);
+  else if(a.id==='cta-planes') avejTrack('ir_planes',o,'ViewContent');
+  else if(a.id==='cta-asesor' || a.classList.contains('float-wa')) avejTrack('contacto_asesor',o,'Contact');
+  else if(/wa\.me/.test(a.href||'')) avejTrack('contacto_whatsapp',o,'Contact');
+  else if(/#casas$/.test(a.getAttribute('href')||'')) avejTrack('ir_casas',o);
+  else if(a.hasAttribute('data-l')) avejTrack('cambio_idioma',{origen:'landing_bio',de:'es',a:a.getAttribute('data-l')});
 });
 </script>
 <script src="https://link.msgsndr.com/js/form_embed.js"></script>
