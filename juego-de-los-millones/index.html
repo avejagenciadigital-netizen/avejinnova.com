@@ -447,9 +447,15 @@
        MAIN APP
     ═══════════════════════════════════════════════════════════════════════════ */
     function App() {
-      const [store, setStore] = useState(loadStore);
-      // "setup" | "edit" | "app"
-      const [screen, setScreen] = useState(() => loadStore().config ? "app" : "setup");
+      // store y screen en UN solo estado para que nunca se desincronicen
+      const [state, setState] = useState(() => {
+        const s = loadStore();
+        return { store: s, screen: s.config ? "app" : "setup" };
+      });
+
+      const { store, screen } = state;
+      const cfg = store.config || null;
+
       const [showResetConfirm, setShowResetConfirm] = useState(false);
       const [tab, setTab]     = useState("dashboard");
       const [expWeek, setExpWeek] = useState(null);
@@ -459,26 +465,31 @@
       const [withdrawModal, setWithdrawModal] = useState(null);
       const [toast, setToast] = useState(null);
 
-      const cfg = store.config || null;
-
+      // Persist on every store change
       useEffect(() => { saveStore(store); }, [store]);
 
       const showToast = useCallback((msg, color="#d4a843") => {
         setToast({msg,color}); setTimeout(()=>setToast(null), 2800);
       }, []);
 
+      // setStore helper que preserva screen
+      function setStore(updater) {
+        setState(prev => ({ ...prev, store: typeof updater === "function" ? updater(prev.store) : updater }));
+      }
+
       function handleSaveConfig(newCfg) {
-        setStore(prev => ({ ...prev, config: newCfg }));
-        setScreen("app");
+        // Un solo setState: config y screen cambian juntos en el mismo render
+        setState(prev => ({
+          screen: "app",
+          store: { ...prev.store, config: newCfg },
+        }));
         showToast("✓ Configuración guardada", "#00e676");
       }
 
       function handleFullReset() {
-        const fresh = defaultStore();
-        setStore(fresh);
+        setState({ store: defaultStore(), screen: "setup" });
         setShowResetConfirm(false);
         setTab("dashboard");
-        setScreen("setup");
         showToast("🔄 Campaña reiniciada desde cero", "#f48fb1");
       }
 
@@ -698,7 +709,7 @@
                   <div style={{fontSize:8,color:gameLvl.color,fontWeight:700}}>{gameLvl.name}</div>
                 </div>
                 <div style={{display:"flex",gap:4}}>
-                  <button onClick={()=>setScreen("edit")} title="Editar configuración" style={{
+                  <button onClick={()=>setState(prev=>({...prev,screen:"edit"}))} title="Editar configuración" style={{
                     width:28,height:28,borderRadius:7,background:"rgba(212,168,67,0.1)",
                     border:"1px solid rgba(212,168,67,0.3)",color:C.gold,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",
                   }}>⚙</button>
@@ -1289,7 +1300,7 @@
 
               {/* Botones de gestión en Stats */}
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                <button onClick={()=>setScreen("edit")} style={{
+                <button onClick={()=>setState(prev=>({...prev,screen:"edit"}))} style={{
                   padding:"14px",background:"rgba(212,168,67,0.1)",border:"1px solid rgba(212,168,67,0.3)",
                   borderRadius:12,color:C.gold,cursor:"pointer",fontWeight:700,fontSize:13,fontFamily:"'DM Sans',sans-serif",
                 }}>⚙ Editar config</button>
