@@ -493,19 +493,16 @@
         showToast("🔄 Campaña reiniciada desde cero", "#f48fb1");
       }
 
-      if (screen === "setup") return <SetupScreen onSave={handleSaveConfig}/>;
-      if (screen === "edit") return <SetupScreen existing={cfg} onSave={handleSaveConfig}/>;
-
-      // Build from config
-      const totalWeeks = cfg.totalWeeks;
-      const initialBalance = cfg.initialBalance;
+      // ── Todos los hooks ANTES de cualquier return condicional ──
+      const totalWeeks     = cfg ? cfg.totalWeeks    : 0;
+      const initialBalance = cfg ? cfg.initialBalance : 0;
 
       const weekSchedule = useMemo(
-        () => generateTradingDays(cfg.startDate, cfg.endDate),
-        [cfg.startDate, cfg.endDate]
+        () => cfg ? generateTradingDays(cfg.startDate, cfg.endDate) : [],
+        [cfg ? cfg.startDate : null, cfg ? cfg.endDate : null]
       );
       const weeks = useMemo(
-        () => buildWeeks(weekSchedule, store.dailyActuals, initialBalance),
+        () => cfg ? buildWeeks(weekSchedule, store.dailyActuals, initialBalance) : [],
         [weekSchedule, store.dailyActuals, initialBalance]
       );
 
@@ -585,6 +582,10 @@
           }
         }
       }, [greenWeeksCount]);
+
+      // ── Returns condicionales DESPUÉS de todos los hooks ──
+      if (screen === "setup") return <SetupScreen onSave={handleSaveConfig}/>;
+      if (screen === "edit")  return <SetupScreen existing={cfg} onSave={handleSaveConfig}/>;
 
       function weeksTo(target) {
         if (avgWeekPct<=0) return 9999;
