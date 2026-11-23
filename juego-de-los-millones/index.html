@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>El Juego de los Millones</title>
+  <meta name="theme-color" content="#080808"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #080808; }
+    body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; color: #e8eef6; -webkit-font-smoothing: antialiased; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(212,168,67,0.2); border-radius: 2px; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback } = React;
+
+    /* ─── NYSE HOLIDAYS ─────────────────────────────────────────────────────── */
+    const NYSE_HOLIDAYS = new Set([
+      "2025-01-01","2025-01-20","2025-02-17","2025-04-18","2025-05-26",
+      "2025-07-04","2025-09-01","2025-11-27","2025-12-25",
+      "2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25",
+      "2026-07-03","2026-09-07","2026-11-26","2026-12-25",
+      "2027-01-01","2027-01-18","2027-02-15","2027-04-02","2027-05-31",
+      "2027-07-05","2027-09-06","2027-11-25","2027-12-24",
+    ]);
+
+    function isNYSEHoliday(ds) { return NYSE_HOLIDAYS.has(ds); }
+    function isWeekday(d) { const day = d.getDay(); return day >= 1 && day <= 5; }
+    function dateStr(d) {
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+    function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+
+    function generateTradingDays(startDate, endDate, totalWeeks) {
+      const days = [];
+      let current = new Date(startDate);
+      let weekDayCount = 0;
+      let weekNum = 1;
+      let weekDays = [];
+      while (weekNum <= totalWeeks + 2) {
+        if (current > endDate) {
+          if (weekDays.length > 0) days.push({ week: weekNum, days: [...weekDays], partial: true });
+          break;
+        }
+        if (isWeekday(current) && !isNYSEHoliday(dateStr(current))) {
+          weekDays.push({ date: dateStr(current), dayOfWeek: current.getDay() });
+          weekDayCount++;
+          if (weekDayCount === 5) {
+            days.push({ week: weekNum, days: [...weekDays], partial: false });
+            weekDays = []; weekDayCount = 0; weekNum++;
+          }
+        }
+        current = addDays(current, 1);
+      }
+      return days;
+    }
+
+    /* ─── MILESTONES ─────────────────────────────────────────────────────────── */
+    const MILESTONES = [
+      { id:1, label:"Etapa I",    amount:10000,    tier:"bronze",   emoji:"🥉" },
+      { id:2, label:"Etapa II",   amount:100000,   tier:"silver",   emoji:"🥈" },
+      { id:3, label:"Etapa III",  amount:250000,   tier:"gold",     emoji:"🥇" },
+      { id:4, label:"Etapa IV",   amount:500000,   tier:"gold",     emoji:"💎" },
+      { id:5, label:"Etapa V",    amount:1000000,  tier:"platinum", emoji:"🚀" },
+      { id:6, label:"Etapa VI",   amount:2500000,  tier:"platinum", emoji:"🌟" },
+      { id:7, label:"Etapa VII",  amount:5000000,  tier:"diamond",  emoji:"👑" },
+      { id:8, label:"Etapa VIII", amount:10000000, tier:"diamond",  emoji:"🏆" },
+    ];
+    const TIER_CLR = { bronze:"#cd9b5a", silver:"#c0c8d8", gold:"#d4a843", platinum:"#e8eef6", diamond:"#a8d8f0" };
+
+    const DAILY_MESSAGES = [
+      { type:"quote",   icon:"💬", text:"El riesgo viene de no saber lo que estás haciendo.", author:"Warren Buffett" },
+      { type:"mindset", icon:"🧠", text:"Cada operación ganadora es un ladrillo en el edificio de tu riqueza. Construye con paciencia.", author:null },
+      { type:"tip",     icon:"💡", text:"Gestiona tu riesgo antes de pensar en las ganancias. El capital protegido es capital que trabaja mañana.", author:null },
+      { type:"quote",   icon:"💬", text:"En el corto plazo el mercado es una máquina de votar; en el largo plazo, una máquina de pesar.", author:"Benjamin Graham" },
+      { type:"energy",  icon:"🔥", text:"¡Hoy es un día para ejecutar con precisión! Cada punto porcentual suma hacia tu siguiente etapa.", author:null },
+      { type:"mindset", icon:"🧠", text:"Los millonarios no nacen — se construyen operación a operación, día a día, semana a semana.", author:null },
+      { type:"tip",     icon:"💡", text:"Revisa tu plan antes de abrir posiciones. La disciplina separa a los traders exitosos.", author:null },
+      { type:"quote",   icon:"💬", text:"No intentes predecir el mercado. Aprende a reaccionar ante él.", author:"Jesse Livermore" },
+      { type:"energy",  icon:"🔥", text:"¡El 10% de hoy es el 10% que lleva tu balance un paso más cerca del millón!", author:null },
+      { type:"mindset", icon:"🧠", text:"La consistencia es la madre del dominio. Un 10% diario sostenido reescribe tu historia financiera.", author:null },
+      { type:"quote",   icon:"💬", text:"El mercado nunca está equivocado. Las opiniones sí.", author:"Jesse Livermore" },
+      { type:"tip",     icon:"💡", text:"Registra cada operación. El trader que no lleva registros no puede mejorar lo que no mide.", author:null },
+      { type:"energy",  icon:"🔥", text:"¡Semana tras semana, el interés compuesto hace su magia! Mantén el ritmo.", author:null },
+      { type:"mindset", icon:"🧠", text:"No operes por miedo ni por euforia. Opera por tu sistema, por tu plan, por tu disciplina.", author:null },
+      { type:"quote",   icon:"💬", text:"El dinero es un amplificador: amplifica quien eres, no quien quieres ser.", author:"T. Harv Eker" },
+      { type:"tip",     icon:"💡", text:"El mejor momento para revisar tu estrategia es cuando estás ganando, no cuando estás perdiendo.", author:null },
+      { type:"energy",  icon:"🔥", text:"¡Cada objetivo cumplido es una insignia ganada! Hoy sumamos otra victoria.", author:null },
+      { type:"mindset", icon:"🧠", text:"Las etapas no se alcanzan de golpe. Se construyen con victorias diarias, como la de hoy.", author:null },
+      { type:"quote",   icon:"💬", text:"Invierte en ti mismo. Tu carrera es el motor de tu riqueza.", author:"Warren Buffett" },
+      { type:"tip",     icon:"💡", text:"Separa tus emociones del capital. Tu cuenta de trading no siente — tú sí. Sé el que decide con lógica.", author:null },
+      { type:"energy",  icon:"🔥", text:"¡5 días de ejecución = 1 semana conquistada! Hoy escribes el primer capítulo de esta semana.", author:null },
+      { type:"mindset", icon:"🧠", text:"Los grandes traders pierden pequeño y ganan grande. Protege el downside y el upside llega solo.", author:null },
+      { type:"quote",   icon:"💬", text:"La riqueza es el resultado de hábitos, no de suerte.", author:"Darren Hardy" },
+      { type:"tip",     icon:"💡", text:"El 10% diario compuesto es uno de los objetivos más poderosos que puede tener un trader activo. Cuídalo.", author:null },
+      { type:"energy",  icon:"🔥", text:"¡Estás en el juego de los millones y ya vas sumando! Cada día cuenta.", author:null },
+      { type:"mindset", icon:"🧠", text:"El éxito financiero no es un destino — es una práctica diaria. Hoy practicamos excelencia.", author:null },
+      { type:"quote",   icon:"💬", text:"Regla #1: Nunca pierdas dinero. Regla #2: Nunca olvides la regla #1.", author:"Warren Buffett" },
+      { type:"tip",     icon:"💡", text:"Diversifica tu aprendizaje tanto como tu capital. El conocimiento es el activo que nadie te puede quitar.", author:null },
+    ];
+    const MSG_TYPE_COLOR = { quote:"#d4a843", mindset:"#a8d8f0", tip:"#00e676", energy:"#f48fb1" };
+
+    const WEEK_BADGES = [
+      { id:1, weeks:1,  icon:"⚡", name:"Primera Chispa",    desc:"Primera semana completada al 50%+"  },
+      { id:2, weeks:2,  icon:"🔥", name:"Llama Encendida",   desc:"2 semanas consecutivas al objetivo"  },
+      { id:3, weeks:4,  icon:"💪", name:"Mes de Hierro",     desc:"Un mes completo en verde"            },
+      { id:4, weeks:6,  icon:"🌟", name:"Trader Estelar",    desc:"6 semanas al objetivo"               },
+      { id:5, weeks:7,  icon:"🥊", name:"Guerrero del Ring", desc:"7 semanas de consistencia pura"      },
+      { id:6, weeks:8,  icon:"🏅", name:"Medio Camino",      desc:"La mitad del horizonte conquistada"  },
+      { id:7, weeks:10, icon:"🚀", name:"En Órbita",         desc:"10 semanas en la zona dorada"        },
+      { id:8, weeks:12, icon:"👑", name:"El Juego Completo", desc:"12 semanas — La corona es tuya"      },
+    ];
+
+    function getGamificationLevel(balance) {
+      if (balance < 1000)    return { level:1, name:"Aprendiz",  color:"#8898aa", next:1000    };
+      if (balance < 5000)    return { level:2, name:"Operador",  color:"#cd9b5a", next:5000    };
+      if (balance < 10000)   return { level:3, name:"Trader",    color:"#c0c8d8", next:10000   };
+      if (balance < 50000)   return { level:4, name:"Ejecutor",  color:"#d4a843", next:50000   };
+      if (balance < 100000)  return { level:5, name:"Estratega", color:"#d4a843", next:100000  };
+      if (balance < 500000)  return { level:6, name:"Maestro",   color:"#e8eef6", next:500000  };
+      if (balance < 1000000) return { level:7, name:"Elite",     color:"#a8d8f0", next:1000000 };
+      return                        { level:8, name:"Leyenda",   color:"#ffe066", next:null    };
+    }
+
+    const fmt = (n) => {
+      if (n==null||isNaN(n)) return "—";
+      const a = Math.abs(n);
+      if (a>=1_000_000) return `$${(n/1_000_000).toFixed(2)}M`;
+      if (a>=1_000)     return `$${(n/1_000).toFixed(1)}K`;
+      return `$${Number(n).toFixed(2)}`;
+    };
+    const fmtFull = (n) => n!=null&&!isNaN(n)
+      ? `$${Number(n).toLocaleString("es",{minimumFractionDigits:2,maximumFractionDigits:2})}` : "—";
+    const fmtPct = (n) => (n!=null&&!isNaN(n)) ? `${Number(n).toFixed(1)}%` : "—";
+    const DAY_NAMES = ["","Lun","Mar","Mié","Jue","Vie"];
+
+    function getDailyMessage(idx) { return DAILY_MESSAGES[idx % DAILY_MESSAGES.length]; }
+
+    /* ─── ENGINE ─────────────────────────────────────────────────────────────── */
+    function buildWeeks(weekSchedule, dailyActuals, initialBalance) {
+      const result = [];
+      let balance = initialBalance;
+      let biAccum = 0, moAccum = 0;
+      let totalDayIdx = 0;
+
+      for (let wi = 0; wi < weekSchedule.length; wi++) {
+        const wNum = wi + 1;
+        const wDays = weekSchedule[wi].days;
+        const weekDayData = [];
+        let weekStartBalance = balance;
+        let runBal = balance;
+
+        for (let di = 0; di < wDays.length; di++) {
+          const dayInfo = wDays[di];
+          const key = `${wNum}_${di}`;
+          const act = dailyActuals[key] || {};
+          const isChecked = act.checked || false;
+          const rawR = parseFloat(act.actualReturn);
+          const actualReturn = isChecked && !isNaN(rawR) ? rawR : null;
+
+          const dailyTarget = runBal * 0.10;
+          const targetEnd   = runBal + dailyTarget;
+          let achieved=null, achievedPct=null, diff=null, diffPct=null;
+
+          if (actualReturn !== null) {
+            achieved    = actualReturn;
+            achievedPct = (actualReturn/runBal)*100;
+            diff        = achieved - dailyTarget;
+            diffPct     = dailyTarget>0 ? (diff/dailyTarget)*100 : 0;
+          }
+
+          const msg = getDailyMessage(totalDayIdx);
+          weekDayData.push({
+            dayNum:di+1, date:dayInfo.date, dayOfWeek:dayInfo.dayOfWeek,
+            balance:runBal, dailyTarget, targetEnd,
+            achieved, achievedPct, diff, diffPct,
+            isChecked, msg, globalDayIdx:totalDayIdx,
+          });
+
+          const gain = actualReturn!==null ? achieved : dailyTarget;
+          biAccum += gain; moAccum += gain;
+          runBal = isChecked && actualReturn!==null ? runBal + achieved : targetEnd;
+          totalDayIdx++;
+        }
+
+        const completedDays = weekDayData.filter(d=>d.isChecked&&d.achieved!==null);
+        const weekActualGain = completedDays.reduce((s,d)=>s+(d.achieved||0),0);
+        const weekTargetGain = weekDayData.reduce((s,d)=>s+d.dailyTarget,0);
+        const weekActualPct  = weekStartBalance>0 ? (weekActualGain/weekStartBalance)*100 : 0;
+        const weekGoalMet    = completedDays.length===wDays.length && weekActualPct>=50;
+
+        const isBiweek = wNum%2===0;
+        let biWithdrawal=0;
+        if (isBiweek) { biWithdrawal=Math.max(0,biAccum)*0.10; biAccum=0; }
+
+        const isMonthEnd = wNum%4===0;
+        let moWithdrawal=0;
+        if (isMonthEnd) { moWithdrawal=Math.max(0,moAccum)*0.20; moAccum=0; }
+
+        const totalW = biWithdrawal+moWithdrawal;
+        balance = runBal - totalW;
+
+        const totalWeeks = weekSchedule.length;
+        result.push({
+          week:wNum, month:Math.ceil(wNum/4),
+          startBalance:weekStartBalance,
+          days:weekDayData,
+          weekActualGain, weekTargetGain, weekActualPct,
+          weekGoalMet,
+          biWithdrawal, moWithdrawal, totalW,
+          endBalance:balance,
+          isBiweek, isMonthEnd,
+          completedDays:completedDays.length,
+          totalDays:wDays.length,
+        });
+      }
+      return result;
+    }
+
+    /* ─── LOGO ───────────────────────────────────────────────────────────────── */
+    const Logo = ({size=56}) => (
+      <svg width={size} height={size} viewBox="0 0 120 120" fill="none">
+        <defs>
+          <linearGradient id="gG1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffe066"/><stop offset="50%" stopColor="#d4a843"/><stop offset="100%" stopColor="#ffd700"/>
+          </linearGradient>
+          <linearGradient id="gS1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fff"/><stop offset="100%" stopColor="#8898aa"/>
+          </linearGradient>
+          <filter id="glow2"><feGaussianBlur stdDeviation="2" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+        </defs>
+        <polygon points="60,4 96,20 116,56 116,64 96,100 60,116 24,100 4,64 4,56 24,20"
+          fill="#0a0800" stroke="url(#gG1)" strokeWidth="1.5"/>
+        <circle cx="60" cy="60" r="42" fill="#090909" stroke="url(#gS1)" strokeWidth="0.8" opacity="0.5"/>
+        <g filter="url(#glow2)">
+          <rect x="36" y="70" width="48" height="7" rx="2" fill="url(#gG1)"/>
+          <path d="M36 70 L36 58 L44 65 L52 44 L60 56 L68 44 L76 65 L84 58 L84 70 Z" fill="url(#gG1)"/>
+          <circle cx="52" cy="44" r="3.5" fill="#ffe566"/>
+          <circle cx="60" cy="40" r="4" fill="#fff" opacity="0.9"/>
+          <circle cx="68" cy="44" r="3.5" fill="#ffe566"/>
+          <circle cx="60" cy="40" r="2.5" fill="url(#gG1)"/>
+        </g>
+        <text x="60" y="91" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="bold"
+          fontSize="9" fill="url(#gS1)" letterSpacing="3">MILLONES</text>
+      </svg>
+    );
+
+    const GoldLine = () => (
+      <div style={{display:"flex",alignItems:"center",gap:6,margin:"6px 0"}}>
+        <div style={{flex:1,height:1,background:"linear-gradient(90deg,transparent,#d4a843,transparent)"}}/>
+        <span style={{color:"#d4a843",fontSize:8}}>◆</span>
+        <div style={{flex:1,height:1,background:"linear-gradient(90deg,transparent,#d4a843,transparent)"}}/>
+      </div>
+    );
+
+    /* ─── STORAGE ────────────────────────────────────────────────────────────── */
+    const STORE_KEY = "jdm_v7";
+    const DEFAULT_CONFIG = {
+      initialBalance: 30,
+      startDate: "2026-10-12",
+      endDate:   "2026-12-31",
+      totalWeeks: 12,
+      campaignName: "El Juego de los Millones",
+    };
+    const defaultStore = () => ({
+      config: null, // null = not configured yet
+      dailyActuals: {},
+      withdrawals: { biweekly: [], monthly: [] },
+    });
+    function loadStore() {
+      try { const s=localStorage.getItem(STORE_KEY); return s?JSON.parse(s):defaultStore(); }
+      catch { return defaultStore(); }
+    }
+    function saveStore(data) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch {}
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SETUP SCREEN
+    ═══════════════════════════════════════════════════════════════════════════ */
+    function SetupScreen({ onSave, existing }) {
+      const C = { bg:"#080808", card:"#0d0d0d", gold:"#d4a843", goldB:"#ffe066", text:"#e8eef6", muted:"#8898aa", dimmed:"#556070", green:"#00e676" };
+      const isEdit = !!existing;
+      const def = existing || DEFAULT_CONFIG;
+
+      const [form, setForm] = useState({
+        campaignName: def.campaignName,
+        initialBalance: String(def.initialBalance),
+        startDate: def.startDate,
+        endDate: def.endDate,
+        totalWeeks: String(def.totalWeeks),
+      });
+      const [err, setErr] = useState("");
+
+      function set(k, v) { setForm(f=>({...f,[k]:v})); setErr(""); }
+
+      function handleSave() {
+        const bal = parseFloat(form.initialBalance);
+        if (!form.campaignName.trim()) return setErr("El nombre de la campaña es obligatorio.");
+        if (isNaN(bal)||bal<=0) return setErr("El capital inicial debe ser mayor a 0.");
+        if (!form.startDate) return setErr("Selecciona una fecha de inicio.");
+        if (!form.endDate) return setErr("Selecciona una fecha de fin.");
+        const sd = new Date(form.startDate), ed = new Date(form.endDate);
+        if (ed<=sd) return setErr("La fecha de fin debe ser posterior al inicio.");
+        const wks = parseInt(form.totalWeeks);
+        if (isNaN(wks)||wks<1||wks>52) return setErr("Las semanas deben estar entre 1 y 52.");
+        onSave({ campaignName:form.campaignName.trim(), initialBalance:bal, startDate:form.startDate, endDate:form.endDate, totalWeeks:wks });
+      }
+
+      const inp = (extra={}) => ({
+        width:"100%", background:"rgba(255,255,255,0.05)", border:"1px solid rgba(212,168,67,0.3)",
+        borderRadius:10, padding:"13px 14px", color:"#fff", fontSize:15, outline:"none",
+        fontFamily:"'DM Sans',sans-serif", ...extra,
+      });
+      const label = { fontSize:10, letterSpacing:2, textTransform:"uppercase", color:C.muted, marginBottom:6, display:"block", fontWeight:600 };
+
+      return (
+        <div style={{minHeight:"100vh",background:C.bg,backgroundImage:"radial-gradient(ellipse 80% 30% at 50% 0%,rgba(212,168,67,0.07) 0%,transparent 70%)",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+          <div style={{width:"100%",maxWidth:420}}>
+            <div style={{textAlign:"center",marginBottom:28}}>
+              <Logo size={56}/>
+              <div style={{fontSize:8,letterSpacing:4,color:C.muted,textTransform:"uppercase",marginTop:10,marginBottom:4}}>EL JUEGO DE</div>
+              <div style={{fontSize:24,fontWeight:800,letterSpacing:2,textTransform:"uppercase",
+                background:"linear-gradient(90deg,#ffe066,#d4a843,#fff8e1,#b8860b)",
+                WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>LOS MILLONES</div>
+              <div style={{fontSize:12,color:C.muted,marginTop:8}}>{isEdit?"Editar configuración":"Nueva campaña de trading"}</div>
+            </div>
+
+            <div style={{background:"#0d0d0d",border:"1px solid rgba(212,168,67,0.25)",borderRadius:18,padding:22,display:"flex",flexDirection:"column",gap:18}}>
+
+              <div>
+                <label style={label}>Nombre de la campaña</label>
+                <input style={inp()} value={form.campaignName} onChange={e=>set("campaignName",e.target.value)} placeholder="Ej: El Juego de los Millones"/>
+              </div>
+
+              <div>
+                <label style={label}>Capital inicial ($)</label>
+                <input type="number" inputMode="decimal" style={inp()} value={form.initialBalance} onChange={e=>set("initialBalance",e.target.value)} placeholder="Ej: 30"/>
+                <div style={{fontSize:10,color:C.dimmed,marginTop:5}}>Monto con el que arranca la campaña</div>
+              </div>
+
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+                <div>
+                  <label style={label}>Fecha de inicio</label>
+                  <input type="date" style={{...inp(),colorScheme:"dark"}} value={form.startDate} onChange={e=>set("startDate",e.target.value)}/>
+                </div>
+                <div>
+                  <label style={label}>Fecha de fin</label>
+                  <input type="date" style={{...inp(),colorScheme:"dark"}} value={form.endDate} onChange={e=>set("endDate",e.target.value)}/>
+                </div>
+              </div>
+
+              <div>
+                <label style={label}>Número de semanas</label>
+                <input type="number" inputMode="numeric" style={inp()} value={form.totalWeeks} onChange={e=>set("totalWeeks",e.target.value)} placeholder="Ej: 12" min="1" max="52"/>
+                <div style={{fontSize:10,color:C.dimmed,marginTop:5}}>Semanas de trading activo en la campaña</div>
+              </div>
+
+              {err && (
+                <div style={{background:"rgba(255,82,82,0.1)",border:"1px solid rgba(255,82,82,0.3)",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#ff5252"}}>
+                  ⚠ {err}
+                </div>
+              )}
+
+              <button onClick={handleSave} style={{
+                width:"100%",padding:"15px",background:"linear-gradient(90deg,#d4a843,#ffe066)",
+                border:"none",borderRadius:12,fontWeight:800,fontSize:15,color:"#000",cursor:"pointer",
+                fontFamily:"'DM Sans',sans-serif",letterSpacing:1,
+              }}>{isEdit?"💾 Guardar cambios":"🚀 Comenzar campaña"}</button>
+
+              {isEdit && (
+                <div style={{textAlign:"center",fontSize:11,color:C.dimmed}}>
+                  Los datos de trading registrados se mantienen al editar la configuración.
+                </div>
+              )}
+            </div>
+
+            <div style={{marginTop:16,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,textAlign:"center"}}>
+              {[["10%","Objetivo diario"],["50%","Objetivo semanal"],["8 Etapas","Hasta $10M"]].map(([v,l],i)=>(
+                <div key={i} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(212,168,67,0.1)",borderRadius:10,padding:"10px 6px"}}>
+                  <div style={{fontSize:16,fontWeight:800,color:C.gold}}>{v}</div>
+                  <div style={{fontSize:9,color:C.dimmed,marginTop:2}}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       MAIN APP
+    ═══════════════════════════════════════════════════════════════════════════ */
+    function App() {
+      const [store, setStore] = useState(loadStore);
+      const [showSetup, setShowSetup] = useState(false);
+      const [showResetConfirm, setShowResetConfirm] = useState(false);
+      const [tab, setTab]     = useState("dashboard");
+      const [expWeek, setExpWeek] = useState(null);
+      const [expDay, setExpDay]   = useState(null);
+      const [expM, setExpM]       = useState(null);
+      const [showBadge, setShowBadge] = useState(null);
+      const [withdrawModal, setWithdrawModal] = useState(null);
+      const [toast, setToast] = useState(null);
+
+      const cfg = store.config || null;
+
+      useEffect(() => { saveStore(store); }, [store]);
+
+      const showToast = useCallback((msg, color="#d4a843") => {
+        setToast({msg,color}); setTimeout(()=>setToast(null), 2800);
+      }, []);
+
+      function handleSaveConfig(newCfg) {
+        setStore(prev => ({ ...prev, config: newCfg }));
+        setShowSetup(false);
+        showToast("✓ Configuración guardada", "#00e676");
+      }
+
+      function handleFullReset() {
+        const fresh = defaultStore();
+        setStore(fresh);
+        setShowResetConfirm(false);
+        setShowSetup(false);
+        setTab("dashboard");
+        showToast("🔄 Campaña reiniciada desde cero", "#f48fb1");
+      }
+
+      // If not configured yet, show setup
+      if (!cfg && !showSetup) {
+        return <SetupScreen onSave={handleSaveConfig}/>;
+      }
+      if (showSetup) {
+        return <SetupScreen existing={cfg} onSave={handleSaveConfig}/>;
+      }
+
+      // Build from config
+      const startDate  = new Date(cfg.startDate);
+      const endDate    = new Date(cfg.endDate);
+      const totalWeeks = cfg.totalWeeks;
+      const initialBalance = cfg.initialBalance;
+
+      const weekSchedule = useMemo(
+        () => generateTradingDays(startDate, endDate, totalWeeks),
+        [cfg.startDate, cfg.endDate, cfg.totalWeeks]
+      );
+      const weeks = useMemo(
+        () => buildWeeks(weekSchedule, store.dailyActuals, initialBalance),
+        [weekSchedule, store.dailyActuals, initialBalance]
+      );
+
+      const allCompletedDays = weeks.flatMap(w=>w.days.filter(d=>d.isChecked&&d.achieved!==null));
+      const completedWeeks   = weeks.filter(w=>w.weekGoalMet);
+      const lastWeekWithData = [...weeks].reverse().find(w=>w.completedDays>0);
+      const curBal           = lastWeekWithData ? lastWeekWithData.endBalance : initialBalance;
+
+      const avgDayPct = allCompletedDays.length>0
+        ? allCompletedDays.reduce((s,d)=>s+(d.achievedPct||0),0)/allCompletedDays.length
+        : 10;
+      const avgWeekPct = avgDayPct*5;
+      const gameLvl = getGamificationLevel(curBal);
+      const nextM   = MILESTONES.find(m=>curBal<m.amount);
+      const greenWeeksCount = completedWeeks.length;
+      const earnedBadges = WEEK_BADGES.filter(b=>greenWeeksCount>=b.weeks);
+
+      const totalBiConfirmed = (store.withdrawals.biweekly||[]).filter(w=>w.confirmed).reduce((s,w)=>s+w.amount,0);
+      const totalMoConfirmed = (store.withdrawals.monthly||[]).filter(w=>w.confirmed).reduce((s,w)=>s+w.amount,0);
+      const pendingBi = (store.withdrawals.biweekly||[]).filter(w=>!w.confirmed).reduce((s,w)=>s+w.amount,0);
+      const pendingMo = (store.withdrawals.monthly||[]).filter(w=>!w.confirmed).reduce((s,w)=>s+w.amount,0);
+
+      function updateDaily(weekNum, dayIdx, field, value) {
+        const key = `${weekNum}_${dayIdx}`;
+        setStore(prev => ({
+          ...prev,
+          dailyActuals:{...prev.dailyActuals,[key]:{...(prev.dailyActuals[key]||{}),[field]:value}}
+        }));
+      }
+
+      function handleConfirmWithdrawal(w) {
+        setStore(prev=>{
+          const type = w.type==="biweekly" ? "biweekly" : "monthly";
+          const list = (prev.withdrawals[type]||[]).map(x=>
+            x.id===w.id ? {...x,confirmed:true,confirmedAt:new Date().toISOString()} : x
+          );
+          return {...prev,withdrawals:{...prev.withdrawals,[type]:list}};
+        });
+        showToast(`✓ Retiro de ${fmt(w.amount)} confirmado`, "#00e676");
+        setWithdrawModal(null);
+      }
+
+      useEffect(() => {
+        weeks.forEach(week => {
+          if (week.completedDays===week.totalDays&&week.totalDays>0) {
+            if (week.isBiweek && week.biWithdrawal>0) {
+              const exists = (store.withdrawals.biweekly||[]).find(w=>w.weekNum===week.week);
+              if (!exists) {
+                setStore(prev=>({...prev,withdrawals:{...prev.withdrawals,
+                  biweekly:[...(prev.withdrawals.biweekly||[]),{
+                    id:`bi_${week.week}`,weekNum:week.week,amount:week.biWithdrawal,confirmed:false,confirmedAt:null,
+                  }]
+                }}));
+              }
+            }
+            if (week.isMonthEnd && week.moWithdrawal>0) {
+              const exists = (store.withdrawals.monthly||[]).find(w=>w.weekNum===week.week);
+              if (!exists) {
+                setStore(prev=>({...prev,withdrawals:{...prev.withdrawals,
+                  monthly:[...(prev.withdrawals.monthly||[]),{
+                    id:`mo_${week.week}`,weekNum:week.week,amount:week.moWithdrawal,confirmed:false,confirmedAt:null,
+                  }]
+                }}));
+              }
+            }
+          }
+        });
+      }, [weeks]);
+
+      useEffect(() => {
+        const lastBadge = earnedBadges[earnedBadges.length-1];
+        if (lastBadge) {
+          const key = `badge_shown_${lastBadge.id}`;
+          if (!store[key]) {
+            setShowBadge(lastBadge);
+            setStore(prev=>({...prev,[key]:true}));
+          }
+        }
+      }, [greenWeeksCount]);
+
+      function weeksTo(target) {
+        if (avgWeekPct<=0) return 9999;
+        return Math.ceil(Math.log(target/curBal)/Math.log(1+avgWeekPct/100));
+      }
+      function weeksToTime(w) {
+        if(!isFinite(w)||w<=0) return "—";
+        const m=Math.floor(w/4), s=Math.round(w%4);
+        if(m===0) return `${s} sem`;
+        if(s===0) return `${m} meses`;
+        return `${m}m ${s}sem`;
+      }
+
+      const TABS = [
+        {id:"dashboard",label:"📊"},
+        {id:"daily",    label:"📅"},
+        {id:"etapas",   label:"🏆"},
+        {id:"retiros",  label:"💸"},
+        {id:"stats",    label:"📈"},
+        {id:"logros",   label:"🎖️"},
+      ];
+
+      const C = {
+        bg:"#080808", card:"#0d0d0d", cardGold:"linear-gradient(135deg,#1a1200,#0d0d0d)",
+        gold:"#d4a843", goldB:"#ffe066", silver:"#c0c8d8",
+        text:"#e8eef6", muted:"#8898aa", dimmed:"#556070",
+        green:"#00e676", red:"#ff5252", amber:"#ffb74d",
+      };
+      const card = (extra={}) => ({
+        background:C.card, border:"1px solid rgba(255,255,255,0.07)", borderRadius:16, ...extra,
+      });
+      const goldCard = (extra={}) => ({
+        background:C.cardGold, border:"1px solid rgba(212,168,67,0.4)",
+        borderRadius:16, boxShadow:"0 0 20px rgba(212,168,67,0.1)", ...extra,
+      });
+
+      const todayMsg = getDailyMessage(Math.floor(Date.now()/86400000)%DAILY_MESSAGES.length);
+      const isAhead = avgWeekPct > 50 && allCompletedDays.length > 0;
+      const numMonths = Math.ceil(totalWeeks / 4);
+
+      return (
+        <div style={{minHeight:"100vh",background:C.bg,backgroundImage:"radial-gradient(ellipse 80% 30% at 50% 0%,rgba(212,168,67,0.05) 0%,transparent 70%)",fontFamily:"'DM Sans','Helvetica',sans-serif",color:C.text,paddingBottom:80}}>
+
+          {/* TOAST */}
+          {toast && (
+            <div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",zIndex:999,
+              background:"#111",border:`1px solid ${toast.color}`,borderRadius:12,padding:"10px 20px",
+              fontSize:13,color:toast.color,fontWeight:700,boxShadow:"0 4px 20px rgba(0,0,0,0.8)",whiteSpace:"nowrap"}}>{toast.msg}</div>
+          )}
+
+          {/* BADGE MODAL */}
+          {showBadge && (
+            <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",zIndex:900,display:"flex",alignItems:"center",justifyContent:"center"}}
+              onClick={()=>setShowBadge(null)}>
+              <div style={{...goldCard({padding:32,maxWidth:320,width:"90%",textAlign:"center"})}} onClick={e=>e.stopPropagation()}>
+                <div style={{fontSize:60,marginBottom:8}}>{showBadge.icon}</div>
+                <div style={{fontSize:10,letterSpacing:3,color:C.gold,textTransform:"uppercase",marginBottom:6}}>¡INSIGNIA DESBLOQUEADA!</div>
+                <div style={{fontSize:22,fontWeight:800,color:"#fff",fontFamily:"Georgia,serif",marginBottom:8}}>{showBadge.name}</div>
+                <GoldLine/>
+                <div style={{fontSize:13,color:C.muted,marginTop:8}}>{showBadge.desc}</div>
+                <button onClick={()=>setShowBadge(null)} style={{marginTop:20,width:"100%",padding:"12px",background:"linear-gradient(90deg,#d4a843,#ffe066)",border:"none",borderRadius:10,fontWeight:800,fontSize:14,color:"#000",cursor:"pointer"}}>¡A por la siguiente! 🚀</button>
+              </div>
+            </div>
+          )}
+
+          {/* RESET CONFIRM MODAL */}
+          {showResetConfirm && (
+            <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",zIndex:900,display:"flex",alignItems:"center",justifyContent:"center"}}
+              onClick={()=>setShowResetConfirm(false)}>
+              <div style={{...card({padding:28,maxWidth:320,width:"90%",border:"1px solid rgba(255,82,82,0.4)"}),background:"rgba(20,0,0,0.98)"}} onClick={e=>e.stopPropagation()}>
+                <div style={{fontSize:36,textAlign:"center",marginBottom:12}}>⚠️</div>
+                <div style={{fontSize:16,fontWeight:800,textAlign:"center",marginBottom:8}}>Reiniciar campaña</div>
+                <div style={{fontSize:12,color:C.muted,textAlign:"center",lineHeight:1.6,marginBottom:20}}>
+                  Se borrarán <strong style={{color:"#fff"}}>todos los datos registrados</strong>: días marcados, retiros confirmados e insignias. Podrás configurar una nueva campaña desde cero.
+                </div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>setShowResetConfirm(false)} style={{flex:1,padding:"12px",background:"transparent",border:"1px solid rgba(255,255,255,0.15)",borderRadius:10,color:C.muted,cursor:"pointer",fontSize:13}}>Cancelar</button>
+                  <button onClick={handleFullReset} style={{flex:2,padding:"12px",background:"linear-gradient(90deg,#c62828,#ff5252)",border:"none",borderRadius:10,fontWeight:800,fontSize:13,color:"#fff",cursor:"pointer"}}>🔄 Sí, reiniciar todo</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* WITHDRAWAL MODAL */}
+          {withdrawModal && (
+            <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",zIndex:900,display:"flex",alignItems:"center",justifyContent:"center"}}
+              onClick={()=>setWithdrawModal(null)}>
+              <div style={{...card({padding:24,maxWidth:320,width:"90%",border:"1px solid rgba(0,230,118,0.3)"}),}} onClick={e=>e.stopPropagation()}>
+                <div style={{fontSize:10,letterSpacing:3,color:C.green,textTransform:"uppercase",marginBottom:12}}>Confirmar Retiro</div>
+                <div style={{fontSize:13,color:C.muted,marginBottom:8}}>{withdrawModal.type==="biweekly"?"⬡ Retiro Quincenal (10%)":"◆ Reinversión Mensual (20%)"}</div>
+                <div style={{fontSize:32,fontWeight:800,color:C.gold,fontFamily:"Georgia,serif",marginBottom:4}}>{fmt(withdrawModal.amount)}</div>
+                <div style={{fontSize:11,color:C.dimmed,marginBottom:16}}>Semana {withdrawModal.weekNum}</div>
+                <GoldLine/>
+                <div style={{fontSize:12,color:C.muted,margin:"12px 0",lineHeight:1.6}}>
+                  Al confirmar, este retiro quedará registrado como <strong style={{color:"#fff"}}>ejecutado</strong>.
+                </div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>setWithdrawModal(null)} style={{flex:1,padding:"11px",background:"transparent",border:"1px solid rgba(255,255,255,0.15)",borderRadius:10,color:C.muted,cursor:"pointer",fontSize:13}}>Cancelar</button>
+                  <button onClick={()=>handleConfirmWithdrawal(withdrawModal)} style={{flex:2,padding:"11px",background:"linear-gradient(90deg,#00c853,#00e676)",border:"none",borderRadius:10,fontWeight:800,fontSize:13,color:"#000",cursor:"pointer"}}>✓ Confirmar Retiro</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* HEADER */}
+          <div style={{background:"rgba(6,4,0,0.97)",borderBottom:"1px solid rgba(212,168,67,0.18)",padding:"12px 14px 10px",position:"sticky",top:0,zIndex:200}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <Logo size={40}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:7,letterSpacing:3,color:C.muted,textTransform:"uppercase"}}>CAMPAÑA ACTIVA</div>
+                <div style={{fontSize:15,fontWeight:800,letterSpacing:1,textTransform:"uppercase",lineHeight:1.1,
+                  background:"linear-gradient(90deg,#ffe066,#d4a843,#fff8e1,#b8860b)",
+                  WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",
+                  overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",
+                }}>{cfg.campaignName}</div>
+                <div style={{fontSize:8,color:C.dimmed,marginTop:1}}>{cfg.startDate} → {cfg.endDate} · {cfg.totalWeeks} sem</div>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:7,color:C.dimmed,letterSpacing:1}}>BALANCE</div>
+                  <div style={{fontSize:16,fontWeight:800,color:C.green,fontFamily:"Georgia,serif"}}>{fmt(curBal)}</div>
+                  <div style={{fontSize:8,color:gameLvl.color,fontWeight:700}}>{gameLvl.name}</div>
+                </div>
+                <div style={{display:"flex",gap:4}}>
+                  <button onClick={()=>setShowSetup(true)} title="Editar configuración" style={{
+                    width:28,height:28,borderRadius:7,background:"rgba(212,168,67,0.1)",
+                    border:"1px solid rgba(212,168,67,0.3)",color:C.gold,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",
+                  }}>⚙</button>
+                  <button onClick={()=>setShowResetConfirm(true)} title="Reiniciar campaña" style={{
+                    width:28,height:28,borderRadius:7,background:"rgba(255,82,82,0.08)",
+                    border:"1px solid rgba(255,82,82,0.25)",color:"#ff5252",cursor:"pointer",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",
+                  }}>↺</button>
+                </div>
+              </div>
+            </div>
+            {gameLvl.next && (
+              <div style={{marginTop:7}}>
+                <div style={{height:3,background:"rgba(255,255,255,0.06)",borderRadius:2,overflow:"hidden"}}>
+                  <div style={{height:"100%",width:`${Math.min(100,(curBal/gameLvl.next)*100)}%`,background:`linear-gradient(90deg,${gameLvl.color}88,${gameLvl.color})`,borderRadius:2,transition:"width 0.5s"}}/>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* TAB BAR */}
+          <div style={{display:"flex",background:"rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(212,168,67,0.12)",overflowX:"auto",scrollbarWidth:"none"}}>
+            {TABS.map(t=>(
+              <button key={t.id} onClick={()=>setTab(t.id)} style={{
+                flex:"1 0 auto",padding:"11px 6px",border:"none",background:"transparent",cursor:"pointer",
+                fontSize:18,borderBottom:tab===t.id?"2px solid #d4a843":"2px solid transparent",
+                opacity:tab===t.id?1:0.45,transition:"all 0.2s",
+              }}>{t.label}</button>
+            ))}
+          </div>
+
+          <div style={{padding:12}}>
+
+          {/* ══════════ DASHBOARD ══════════ */}
+          {tab==="dashboard" && (
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+
+              <div style={{...card({padding:14,border:`1px solid ${MSG_TYPE_COLOR[todayMsg.type]}33`})}}>
+                <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
+                  <div style={{fontSize:24,flexShrink:0}}>{todayMsg.icon}</div>
+                  <div>
+                    <div style={{fontSize:8,letterSpacing:2,color:MSG_TYPE_COLOR[todayMsg.type],textTransform:"uppercase",marginBottom:4,fontWeight:700}}>
+                      {todayMsg.type==="quote"?"FRASE CÉLEBRE":todayMsg.type==="tip"?"CONSEJO DEL DÍA":todayMsg.type==="mindset"?"MINDSET":"ENERGÍA"}
+                    </div>
+                    <div style={{fontSize:13,color:C.text,lineHeight:1.5,fontStyle:todayMsg.type==="quote"?"italic":"normal"}}>
+                      "{todayMsg.text}"
+                    </div>
+                    {todayMsg.author && <div style={{fontSize:10,color:C.gold,marginTop:4,fontWeight:600}}>— {todayMsg.author}</div>}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{...goldCard({padding:18})}}>
+                <div style={{fontSize:8,letterSpacing:3,textTransform:"uppercase",color:C.muted,marginBottom:2,fontWeight:600}}>PATRIMONIO</div>
+                <div style={{fontSize:32,fontWeight:800,fontFamily:"Georgia,serif",
+                  background:"linear-gradient(90deg,#ffe066,#d4a843,#fff8e1)",
+                  WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1,
+                }}>{fmtFull(curBal)}</div>
+                <GoldLine/>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:8}}>
+                  {[
+                    {l:"Capital inicial",v:fmt(initialBalance),c:C.muted},
+                    {l:"Ganancia",v:fmt(curBal-initialBalance),c:C.gold},
+                    {l:"ROI",v:fmtPct(((curBal-initialBalance)/initialBalance)*100),c:C.green},
+                  ].map((k,i)=>(
+                    <div key={i} style={{textAlign:"center"}}>
+                      <div style={{fontSize:15,fontWeight:800,color:k.c,fontFamily:"Georgia,serif"}}>{k.v}</div>
+                      <div style={{fontSize:8,color:C.dimmed,letterSpacing:1,textTransform:"uppercase",marginTop:2}}>{k.l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{...card({padding:14,background:isAhead?"rgba(0,20,5,0.9)":"rgba(20,10,0,0.9)",
+                border:`1px solid ${isAhead?"rgba(0,230,118,0.3)":"rgba(212,168,67,0.35)"}`})}}>
+                <div style={{fontSize:9,letterSpacing:2,color:isAhead?C.green:C.gold,textTransform:"uppercase",fontWeight:700,marginBottom:10}}>
+                  {isAhead?"▲ RITMO ADELANTADO":"◆ RITMO EN SEGUIMIENTO"} · {allCompletedDays.length} días completados
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
+                  {[
+                    {l:"Diario real",v:fmtPct(avgDayPct),c:avgDayPct>=10?C.green:C.red},
+                    {l:"Semanal real",v:fmtPct(avgWeekPct),c:avgWeekPct>=50?C.green:C.red},
+                    {l:"vs Meta",v:fmtPct(avgWeekPct-50),c:avgWeekPct>=50?C.green:C.red},
+                  ].map((k,i)=>(
+                    <div key={i} style={{textAlign:"center",background:"rgba(0,0,0,0.4)",borderRadius:10,padding:"10px 6px"}}>
+                      <div style={{fontSize:16,fontWeight:800,color:k.c,fontFamily:"Georgia,serif"}}>{k.v}</div>
+                      <div style={{fontSize:8,color:C.dimmed,marginTop:3,letterSpacing:1,textTransform:"uppercase"}}>{k.l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{...card({padding:14,border:`1px solid ${gameLvl.color}44`,background:`linear-gradient(135deg,${gameLvl.color}08,#0d0d0d)`})}}>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{width:44,height:44,borderRadius:12,background:`${gameLvl.color}22`,border:`1px solid ${gameLvl.color}55`,
+                    display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:900,color:gameLvl.color,fontFamily:"Georgia,serif"}}>
+                    {gameLvl.level}
+                  </div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:9,color:C.muted,letterSpacing:2,textTransform:"uppercase"}}>NIVEL ACTUAL</div>
+                    <div style={{fontSize:18,fontWeight:800,color:gameLvl.color}}>{gameLvl.name}</div>
+                    {gameLvl.next && (
+                      <>
+                        <div style={{fontSize:10,color:C.dimmed,marginTop:2}}>{fmt(gameLvl.next-curBal)} para subir de nivel</div>
+                        <div style={{height:4,background:"rgba(255,255,255,0.06)",borderRadius:2,marginTop:6,overflow:"hidden"}}>
+                          <div style={{height:"100%",width:`${Math.min(100,(curBal/gameLvl.next)*100)}%`,background:gameLvl.color,borderRadius:2,transition:"width 0.5s"}}/>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div style={{textAlign:"right"}}>
+                    <div style={{fontSize:9,color:C.dimmed}}>Insignias</div>
+                    <div style={{fontSize:22,fontWeight:800,color:C.gold}}>{earnedBadges.length}</div>
+                    <div style={{fontSize:9,color:C.dimmed}}>de {WEEK_BADGES.length}</div>
+                  </div>
+                </div>
+              </div>
+
+              {nextM && (()=>{
+                const tc=TIER_CLR[nextM.tier], pct=Math.min(100,(curBal/nextM.amount)*100), wks=weeksTo(nextM.amount);
+                return (
+                  <div style={{...card({padding:14,background:`linear-gradient(135deg,${tc}08,#0d0d0d)`,border:`1px solid ${tc}33`})}}>
+                    <div style={{fontSize:8,letterSpacing:2,color:C.muted,textTransform:"uppercase",marginBottom:10}}>PRÓXIMA CONQUISTA</div>
+                    <div style={{display:"flex",alignItems:"center",gap:12}}>
+                      <div style={{width:40,height:40,borderRadius:10,background:`${tc}22`,border:`1px solid ${tc}44`,
+                        display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>{nextM.emoji}</div>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:14,fontWeight:700,color:"#fff"}}>{nextM.label} — {fmt(nextM.amount)}</div>
+                        <div style={{fontSize:11,color:C.dimmed,marginTop:2}}>Falta <span style={{color:tc,fontWeight:600}}>{fmt(nextM.amount-curBal)}</span> · ~{weeksToTime(wks)}</div>
+                        <div style={{height:5,background:"rgba(255,255,255,0.06)",borderRadius:3,marginTop:8,overflow:"hidden"}}>
+                          <div style={{height:"100%",width:`${pct}%`,background:`linear-gradient(90deg,${tc}66,${tc})`,boxShadow:`0 0 8px ${tc}66`,borderRadius:3,transition:"width 0.5s"}}/>
+                        </div>
+                        <div style={{fontSize:10,color:tc,marginTop:4,fontWeight:600}}>{fmtPct(pct)} completado</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div style={{...card({padding:14})}}>
+                <div style={{fontSize:8,letterSpacing:2,color:C.muted,textTransform:"uppercase",marginBottom:10}}>SEMANAS — VISTA RÁPIDA</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                  {weeks.map((w,i)=>{
+                    const done=w.completedDays, green=w.weekGoalMet, partial=done>0&&!green;
+                    return (
+                      <div key={i} onClick={()=>{setTab("daily");setExpWeek(i);}} style={{
+                        width:30,height:30,borderRadius:8,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",
+                        fontSize:9,fontWeight:700,fontFamily:"Georgia,serif",
+                        background:green?"linear-gradient(135deg,#00c853,#00e676)":partial?"rgba(255,183,77,0.2)":"rgba(255,255,255,0.04)",
+                        border:`1px solid ${green?"rgba(0,230,118,0.5)":partial?"rgba(255,183,77,0.4)":"rgba(255,255,255,0.07)"}`,
+                        color:green?"#000":partial?C.amber:C.dimmed,
+                        boxShadow:green?"0 0 10px rgba(0,230,118,0.3)":"none",
+                      }}>{green?"✓":done>0?done:"·"}</div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {(pendingBi>0||pendingMo>0) && (
+                <div style={{...card({padding:14,border:"1px solid rgba(255,183,77,0.4)",background:"rgba(30,20,0,0.9)"})}}>
+                  <div style={{fontSize:9,letterSpacing:2,color:C.amber,textTransform:"uppercase",fontWeight:700,marginBottom:8}}>⚠️ RETIROS PENDIENTES</div>
+                  {pendingBi>0 && (
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6,padding:"8px 10px",background:"rgba(192,200,216,0.06)",borderRadius:10}}>
+                      <div style={{fontSize:12,color:C.silver}}>⬡ Quincenal</div>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        <div style={{fontSize:14,fontWeight:700,color:C.silver}}>{fmt(pendingBi)}</div>
+                        <button onClick={()=>{const w=(store.withdrawals.biweekly||[]).find(x=>!x.confirmed);if(w)setWithdrawModal({...w,type:"biweekly"});}} style={{padding:"5px 10px",background:"rgba(192,200,216,0.15)",border:"1px solid rgba(192,200,216,0.4)",borderRadius:8,color:C.silver,fontSize:10,cursor:"pointer",fontWeight:600}}>Confirmar</button>
+                      </div>
+                    </div>
+                  )}
+                  {pendingMo>0 && (
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(212,168,67,0.06)",borderRadius:10}}>
+                      <div style={{fontSize:12,color:C.gold}}>◆ Mensual</div>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        <div style={{fontSize:14,fontWeight:700,color:C.gold}}>{fmt(pendingMo)}</div>
+                        <button onClick={()=>{const w=(store.withdrawals.monthly||[]).find(x=>!x.confirmed);if(w)setWithdrawModal({...w,type:"monthly"});}} style={{padding:"5px 10px",background:"rgba(212,168,67,0.12)",border:"1px solid rgba(212,168,67,0.4)",borderRadius:8,color:C.gold,fontSize:10,cursor:"pointer",fontWeight:600}}>Confirmar</button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ══════════ DAILY TRACKER ══════════ */}
+          {tab==="daily" && (
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {weeks.map((week,wi)=>{
+                const isExpW=expWeek===wi, green=week.weekGoalMet, partial=week.completedDays>0&&!green;
+                return (
+                  <div key={wi} style={{borderRadius:16,overflow:"hidden",
+                    background:green?"rgba(0,25,5,0.95)":partial?"rgba(25,15,0,0.9)":"#0d0d0d",
+                    border:`1px solid ${green?"rgba(0,230,118,0.35)":partial?"rgba(255,183,77,0.25)":"rgba(255,255,255,0.07)"}`,
+                    boxShadow:green?"0 0 15px rgba(0,230,118,0.1)":"none",
+                  }}>
+                    <div onClick={()=>setExpWeek(isExpW?null:wi)} style={{padding:"13px",cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+                      <div style={{width:34,height:34,borderRadius:9,flexShrink:0,
+                        background:green?"linear-gradient(135deg,#00c853,#00e676)":partial?"rgba(255,183,77,0.15)":"rgba(255,255,255,0.04)",
+                        border:`1px solid ${green?"transparent":partial?"rgba(255,183,77,0.3)":"rgba(255,255,255,0.08)"}`,
+                        display:"flex",alignItems:"center",justifyContent:"center",
+                        fontSize:green?14:12,color:green?"#000":partial?C.amber:C.dimmed,fontWeight:800,
+                      }}>{green?"✓":week.week}</div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                          <span style={{fontSize:13,fontWeight:700}}>Semana {week.week}</span>
+                          <span style={{fontSize:9,color:C.dimmed}}>· Mes {week.month}</span>
+                          {week.isBiweek&&<span style={{fontSize:8,background:"rgba(192,200,216,0.1)",color:C.silver,padding:"2px 6px",borderRadius:8,letterSpacing:1}}>QUINCENAL</span>}
+                          {week.isMonthEnd&&<span style={{fontSize:8,background:"rgba(212,168,67,0.1)",color:C.gold,padding:"2px 6px",borderRadius:8,letterSpacing:1}}>FIN MES</span>}
+                          {green&&<span style={{fontSize:9,background:"rgba(0,230,118,0.15)",color:C.green,padding:"2px 8px",borderRadius:8,fontWeight:700}}>✦ META</span>}
+                        </div>
+                        <div style={{fontSize:10,color:C.dimmed,marginTop:2}}>{week.completedDays}/{week.totalDays} días · Inicio: {fmt(week.startBalance)}</div>
+                        {week.completedDays>0&&(
+                          <div style={{fontSize:10,color:week.weekGoalMet?C.green:C.amber,marginTop:1,fontWeight:600}}>
+                            {fmtPct(week.weekActualPct)} semanal logrado / Meta 50%
+                          </div>
+                        )}
+                      </div>
+                      <div style={{textAlign:"right",flexShrink:0}}>
+                        {week.completedDays>0&&<div style={{fontSize:14,fontWeight:800,color:green?C.green:partial?C.amber:C.silver,fontFamily:"Georgia,serif"}}>{fmtPct(week.weekActualPct)}</div>}
+                        <div style={{fontSize:11,color:C.dimmed}}>{isExpW?"▲":"▼"}</div>
+                      </div>
+                    </div>
+
+                    {isExpW && (
+                      <div style={{borderTop:"1px solid rgba(255,255,255,0.05)"}}>
+                        {week.days.map((day,di)=>{
+                          const dk=`${week.week}_${di}`, isExpD=expDay===dk;
+                          const hasData=day.isChecked&&day.achieved!==null, ok=hasData&&day.diff>=0;
+                          return (
+                            <div key={di} style={{borderBottom:"1px solid rgba(255,255,255,0.04)",background:hasData?(ok?"rgba(0,15,3,0.8)":"rgba(20,0,0,0.8)"):"transparent"}}>
+                              <div onClick={()=>setExpDay(isExpD?null:dk)} style={{padding:"11px 13px",cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+                                <div onClick={e=>{e.stopPropagation();updateDaily(week.week,di,"checked",!day.isChecked);}} style={{
+                                  width:26,height:26,borderRadius:7,flexShrink:0,cursor:"pointer",
+                                  background:hasData?(ok?"linear-gradient(135deg,#00e676,#00c853)":"linear-gradient(135deg,#ff5252,#c62828)")
+                                    :day.isChecked?"rgba(255,255,255,0.1)":"transparent",
+                                  border:`2px solid ${hasData?"transparent":"rgba(212,168,67,0.25)"}`,
+                                  display:"flex",alignItems:"center",justifyContent:"center",
+                                  fontSize:12,color:"#000",fontWeight:900,
+                                }}>{day.isChecked?"✓":""}</div>
+                                <div style={{flex:1,minWidth:0}}>
+                                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                                    <span style={{fontSize:12,fontWeight:700}}>{DAY_NAMES[day.dayOfWeek]} {day.date.slice(5).replace("-","/")} </span>
+                                    <span style={{fontSize:9,color:MSG_TYPE_COLOR[day.msg.type],padding:"1px 5px",background:`${MSG_TYPE_COLOR[day.msg.type]}18`,borderRadius:6,letterSpacing:1,fontWeight:600,textTransform:"uppercase"}}>D{di+1}</span>
+                                  </div>
+                                  <div style={{fontSize:9,color:C.dimmed,marginTop:1}}>
+                                    {fmt(day.balance)} → Meta: <span style={{color:C.silver}}>{fmt(day.targetEnd)}</span> <span style={{color:C.dimmed}}>(+10%)</span>
+                                  </div>
+                                </div>
+                                <div style={{textAlign:"right",flexShrink:0}}>
+                                  {hasData
+                                    ? <><div style={{fontSize:14,fontWeight:800,color:ok?C.green:C.red,fontFamily:"Georgia,serif"}}>{fmtPct(day.achievedPct)}</div>
+                                        <div style={{fontSize:9,color:C.dimmed}}>{fmt(day.achieved)}</div></>
+                                    : <div style={{fontSize:11,color:C.dimmed}}>{day.isChecked?"⌛":"◌"}</div>}
+                                </div>
+                                <div style={{color:C.dimmed,fontSize:10}}>{isExpD?"▲":"▼"}</div>
+                              </div>
+
+                              {isExpD && (
+                                <div style={{padding:"0 13px 14px"}}>
+                                  <div style={{marginBottom:12,padding:"10px 12px",background:`${MSG_TYPE_COLOR[day.msg.type]}0d`,border:`1px solid ${MSG_TYPE_COLOR[day.msg.type]}33`,borderRadius:10}}>
+                                    <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+                                      <span style={{fontSize:16,flexShrink:0}}>{day.msg.icon}</span>
+                                      <div>
+                                        <div style={{fontSize:11,color:C.text,lineHeight:1.5,fontStyle:day.msg.type==="quote"?"italic":"normal"}}>"{day.msg.text}"</div>
+                                        {day.msg.author&&<div style={{fontSize:9,color:C.gold,marginTop:3}}>— {day.msg.author}</div>}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div style={{marginBottom:10}}>
+                                    <div style={{fontSize:10,color:C.muted,marginBottom:5,letterSpacing:1,textTransform:"uppercase"}}>Ganancia real del día ($)</div>
+                                    <input type="number" inputMode="decimal"
+                                      value={(store.dailyActuals[dk]||{}).actualReturn||""}
+                                      onChange={e=>updateDaily(week.week,di,"actualReturn",e.target.value)}
+                                      onFocus={e=>e.target.select()}
+                                      placeholder="Ej: 3.50"
+                                      style={{width:"100%",boxSizing:"border-box",background:"rgba(255,255,255,0.05)",
+                                        border:"1px solid rgba(212,168,67,0.35)",borderRadius:10,padding:"12px 14px",
+                                        color:"#fff",fontSize:16,outline:"none",fontFamily:"sans-serif"}}/>
+                                  </div>
+                                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+                                    {[
+                                      ["Meta $",fmt(day.dailyTarget),C.silver],["Meta %","10%",C.silver],
+                                      ["Logrado $",hasData?fmt(day.achieved):"—",ok?C.green:C.red],["Logrado %",hasData?fmtPct(day.achievedPct):"—",ok?C.green:C.red],
+                                      ["Diferencia $",hasData?fmt(day.diff):"—",ok?C.green:C.red],["Diferencia %",hasData?fmtPct(day.diffPct):"—",ok?C.green:C.red],
+                                    ].map(([l,v,c],i)=>(
+                                      <div key={i} style={{background:"rgba(0,0,0,0.45)",borderRadius:9,padding:"9px 11px",border:"1px solid rgba(255,255,255,0.05)"}}>
+                                        <div style={{fontSize:9,color:C.dimmed,letterSpacing:1,textTransform:"uppercase"}}>{l}</div>
+                                        <div style={{fontSize:15,fontWeight:700,color:c,marginTop:3,fontFamily:"Georgia,serif"}}>{v}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+
+                        <div style={{padding:"12px 13px",background:"rgba(0,0,0,0.3)"}}>
+                          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+                            {[
+                              {l:"Meta sem.",v:fmtPct(50),c:C.silver},
+                              {l:"Logrado",v:fmtPct(week.weekActualPct),c:week.weekGoalMet?C.green:week.completedDays>0?C.amber:C.dimmed},
+                              {l:"Ganancia",v:week.completedDays>0?fmt(week.weekActualGain):"—",c:C.gold},
+                            ].map((k,i)=>(
+                              <div key={i} style={{textAlign:"center",background:"rgba(0,0,0,0.3)",borderRadius:8,padding:"8px 4px"}}>
+                                <div style={{fontSize:14,fontWeight:800,color:k.c,fontFamily:"Georgia,serif"}}>{k.v}</div>
+                                <div style={{fontSize:8,color:C.dimmed,marginTop:2,letterSpacing:1,textTransform:"uppercase"}}>{k.l}</div>
+                              </div>
+                            ))}
+                          </div>
+                          {(week.biWithdrawal>0||week.moWithdrawal>0) && (
+                            <div style={{marginTop:10,display:"flex",flexDirection:"column",gap:6}}>
+                              {week.biWithdrawal>0&&(()=>{
+                                const wRec=(store.withdrawals.biweekly||[]).find(w=>w.weekNum===week.week);
+                                const confirmed=wRec?.confirmed||false;
+                                return (
+                                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(192,200,216,0.06)",border:"1px solid rgba(192,200,216,0.2)",borderRadius:9}}>
+                                    <div style={{fontSize:11,color:C.silver}}>⬡ Quincenal (10%) — {fmt(week.biWithdrawal)}</div>
+                                    {confirmed
+                                      ? <span style={{fontSize:10,color:C.green,fontWeight:700}}>✓ Confirmado</span>
+                                      : <button onClick={()=>wRec&&setWithdrawModal({...wRec,type:"biweekly"})} style={{padding:"4px 10px",background:"rgba(192,200,216,0.15)",border:"1px solid rgba(192,200,216,0.35)",borderRadius:7,color:C.silver,fontSize:10,cursor:"pointer",fontWeight:600}}>Confirmar</button>
+                                    }
+                                  </div>
+                                );
+                              })()}
+                              {week.moWithdrawal>0&&(()=>{
+                                const wRec=(store.withdrawals.monthly||[]).find(w=>w.weekNum===week.week);
+                                const confirmed=wRec?.confirmed||false;
+                                return (
+                                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 10px",background:"rgba(212,168,67,0.06)",border:"1px solid rgba(212,168,67,0.2)",borderRadius:9}}>
+                                    <div style={{fontSize:11,color:C.gold}}>◆ Mensual (20%) — {fmt(week.moWithdrawal)}</div>
+                                    {confirmed
+                                      ? <span style={{fontSize:10,color:C.green,fontWeight:700}}>✓ Confirmado</span>
+                                      : <button onClick={()=>wRec&&setWithdrawModal({...wRec,type:"monthly"})} style={{padding:"4px 10px",background:"rgba(212,168,67,0.1)",border:"1px solid rgba(212,168,67,0.35)",borderRadius:7,color:C.gold,fontSize:10,cursor:"pointer",fontWeight:600}}>Confirmar</button>
+                                    }
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ══════════ ETAPAS ══════════ */}
+          {tab==="etapas" && (
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <div style={{...card({padding:12,border:"1px solid rgba(212,168,67,0.15)"}),fontSize:11,color:C.muted,lineHeight:1.6}}>
+                Etapas desbloqueadas automáticamente. Tiempo adaptativo basado en tu rendimiento real.
+              </div>
+              {MILESTONES.map((m,idx)=>{
+                const tc=TIER_CLR[m.tier], reached=curBal>=m.amount, unlocked=idx===0||curBal>=MILESTONES[idx-1].amount;
+                const pct=Math.min(100,(curBal/m.amount)*100), wks=reached?0:weeksTo(m.amount), isEx=expM===idx;
+                return (
+                  <div key={m.id} style={{borderRadius:14,overflow:"hidden",
+                    border:`1px solid ${reached?tc+"66":unlocked?"rgba(255,255,255,0.09)":"rgba(255,255,255,0.04)"}`,
+                    background:reached?`linear-gradient(135deg,${tc}0d,#0d0d0d)`:"#0d0d0d",
+                    opacity:unlocked?1:0.45,boxShadow:reached?`0 0 18px ${tc}22`:"none"}}>
+                    <div onClick={()=>unlocked&&setExpM(isEx?null:idx)} style={{padding:14,cursor:unlocked?"pointer":"default"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:12}}>
+                        <div style={{width:44,height:44,borderRadius:11,flexShrink:0,
+                          background:reached?`${tc}22`:"rgba(255,255,255,0.04)",
+                          border:`1px solid ${reached?tc+"55":"rgba(255,255,255,0.07)"}`,
+                          display:"flex",alignItems:"center",justifyContent:"center",
+                          boxShadow:reached?`0 0 12px ${tc}44`:"none"}}>
+                          {unlocked?<span style={{fontSize:20}}>{m.emoji}</span>:<span>🔒</span>}
+                        </div>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                            <span style={{fontSize:13,fontWeight:700,color:reached?tc:unlocked?"#e8eef6":"#446"}}>{m.label}</span>
+                            {reached
+                              ? <span style={{fontSize:9,color:tc,background:`${tc}1a`,padding:"3px 8px",borderRadius:16,fontWeight:700,letterSpacing:1}}>✦ LOGRADA</span>
+                              : unlocked?<span style={{fontSize:9,color:C.muted}}>~{weeksToTime(wks)}</span>
+                              : <span style={{fontSize:9,color:"#334"}}>Bloqueada</span>}
+                          </div>
+                          <div style={{fontSize:10,color:C.dimmed,marginTop:2}}>{fmtFull(m.amount)}</div>
+                          <div style={{marginTop:7,height:4,background:"rgba(255,255,255,0.05)",borderRadius:2,overflow:"hidden"}}>
+                            <div style={{height:"100%",width:`${pct}%`,background:`linear-gradient(90deg,${tc}55,${tc})`,borderRadius:2,transition:"width 0.5s"}}/>
+                          </div>
+                          <div style={{marginTop:4,fontSize:10,color:tc,fontWeight:600}}>{fmtPct(pct)}</div>
+                        </div>
+                      </div>
+                    </div>
+                    {isEx&&unlocked&&(
+                      <div style={{padding:"0 14px 14px",borderTop:"1px solid rgba(255,255,255,0.05)"}}>
+                        <div style={{paddingTop:12,display:"grid",gridTemplateColumns:"1fr 1fr",gap:7}}>
+                          {[
+                            ["Balance",fmt(curBal),tc],["Meta",fmtFull(m.amount),tc],
+                            ["Falta",fmt(Math.max(0,m.amount-curBal)),C.amber],["Progreso",fmtPct(pct),tc],
+                            ["Rend. sem.",fmtPct(avgWeekPct),avgWeekPct>=50?C.green:C.red],["Tiempo est.",weeksToTime(wks),tc],
+                          ].map(([l,v,c],i)=>(
+                            <div key={i} style={{background:"rgba(0,0,0,0.45)",borderRadius:9,padding:"10px 11px"}}>
+                              <div style={{fontSize:9,color:C.dimmed,letterSpacing:1,textTransform:"uppercase"}}>{l}</div>
+                              <div style={{fontSize:15,fontWeight:700,color:c,marginTop:3,fontFamily:"Georgia,serif"}}>{v}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ══════════ RETIROS ══════════ */}
+          {tab==="retiros" && (
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              <div style={{...goldCard({padding:18})}}>
+                <div style={{fontSize:8,letterSpacing:3,textTransform:"uppercase",color:C.muted,marginBottom:2}}>TOTAL RETIRADO (CONFIRMADO)</div>
+                <div style={{fontSize:30,fontWeight:800,fontFamily:"Georgia,serif",
+                  background:"linear-gradient(90deg,#ffe066,#d4a843,#fff8e1)",
+                  WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",
+                }}>{fmtFull(totalBiConfirmed+totalMoConfirmed)}</div>
+                <GoldLine/>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginTop:8}}>
+                  <div style={{background:"rgba(192,200,216,0.06)",borderRadius:12,padding:12,border:"1px solid rgba(192,200,216,0.15)"}}>
+                    <div style={{fontSize:8,color:C.muted,letterSpacing:1,textTransform:"uppercase"}}>Quincenal confirmado</div>
+                    <div style={{fontSize:18,fontWeight:700,color:C.silver,marginTop:3,fontFamily:"Georgia,serif"}}>{fmt(totalBiConfirmed)}</div>
+                    <div style={{fontSize:8,color:C.dimmed,marginTop:2}}>10% ganancia c/2 sem</div>
+                  </div>
+                  <div style={{background:"rgba(212,168,67,0.06)",borderRadius:12,padding:12,border:"1px solid rgba(212,168,67,0.2)"}}>
+                    <div style={{fontSize:8,color:C.muted,letterSpacing:1,textTransform:"uppercase"}}>Mensual confirmado</div>
+                    <div style={{fontSize:18,fontWeight:700,color:C.gold,marginTop:3,fontFamily:"Georgia,serif"}}>{fmt(totalMoConfirmed)}</div>
+                    <div style={{fontSize:8,color:C.dimmed,marginTop:2}}>20% otras inversiones</div>
+                  </div>
+                </div>
+              </div>
+
+              {(pendingBi>0||pendingMo>0) && (
+                <div style={{...card({padding:14,border:"1px solid rgba(255,183,77,0.4)",background:"rgba(25,18,0,0.95)"})}}>
+                  <div style={{fontSize:9,letterSpacing:2,color:C.amber,textTransform:"uppercase",fontWeight:700,marginBottom:10}}>⚠️ PENDIENTES DE CONFIRMAR</div>
+                  {(store.withdrawals.biweekly||[]).filter(w=>!w.confirmed).map(w=>(
+                    <div key={w.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",background:"rgba(192,200,216,0.06)",border:"1px solid rgba(192,200,216,0.2)",borderRadius:10,marginBottom:6}}>
+                      <div>
+                        <div style={{fontSize:11,color:C.silver,fontWeight:600}}>⬡ Quincenal · Semana {w.weekNum}</div>
+                        <div style={{fontSize:10,color:C.dimmed}}>10% del período</div>
+                      </div>
+                      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                        <div style={{fontSize:15,fontWeight:800,color:C.silver,fontFamily:"Georgia,serif"}}>{fmt(w.amount)}</div>
+                        <button onClick={()=>setWithdrawModal({...w,type:"biweekly"})} style={{padding:"6px 12px",background:"rgba(192,200,216,0.15)",border:"1px solid rgba(192,200,216,0.4)",borderRadius:8,color:C.silver,fontSize:11,cursor:"pointer",fontWeight:700}}>Confirmar</button>
+                      </div>
+                    </div>
+                  ))}
+                  {(store.withdrawals.monthly||[]).filter(w=>!w.confirmed).map(w=>(
+                    <div key={w.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",background:"rgba(212,168,67,0.06)",border:"1px solid rgba(212,168,67,0.2)",borderRadius:10,marginBottom:6}}>
+                      <div>
+                        <div style={{fontSize:11,color:C.gold,fontWeight:600}}>◆ Mensual · Semana {w.weekNum}</div>
+                        <div style={{fontSize:10,color:C.dimmed}}>20% otras inversiones</div>
+                      </div>
+                      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                        <div style={{fontSize:15,fontWeight:800,color:C.gold,fontFamily:"Georgia,serif"}}>{fmt(w.amount)}</div>
+                        <button onClick={()=>setWithdrawModal({...w,type:"monthly"})} style={{padding:"6px 12px",background:"rgba(212,168,67,0.12)",border:"1px solid rgba(212,168,67,0.4)",borderRadius:8,color:C.gold,fontSize:11,cursor:"pointer",fontWeight:700}}>Confirmar</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div style={{fontSize:9,letterSpacing:2,textTransform:"uppercase",color:C.muted,padding:"2px 0"}}>HISTORIAL CONFIRMADO</div>
+              {[...(store.withdrawals.biweekly||[]).filter(w=>w.confirmed).map(w=>({...w,type:"biweekly"})),
+                ...(store.withdrawals.monthly||[]).filter(w=>w.confirmed).map(w=>({...w,type:"monthly"}))
+              ].sort((a,b)=>a.weekNum-b.weekNum).map((w,i)=>(
+                <div key={i} style={{...card({padding:13})}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                    <div>
+                      <div style={{fontSize:12,fontWeight:700}}>{w.type==="biweekly"?"⬡ Retiro Quincenal":"◆ Reinversión Mensual"}</div>
+                      <div style={{fontSize:10,color:C.dimmed,marginTop:2}}>Semana {w.weekNum} · {w.confirmedAt?new Date(w.confirmedAt).toLocaleDateString("es"):""}</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{fontSize:16,fontWeight:800,color:w.type==="biweekly"?C.silver:C.gold,fontFamily:"Georgia,serif"}}>{fmt(w.amount)}</div>
+                      <div style={{fontSize:9,color:C.green,fontWeight:600}}>✓ Confirmado</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {(store.withdrawals.biweekly||[]).filter(w=>w.confirmed).length===0&&
+               (store.withdrawals.monthly||[]).filter(w=>w.confirmed).length===0 && (
+                <div style={{...card({padding:24,textAlign:"center"})}}>
+                  <div style={{fontSize:28,marginBottom:8}}>◆</div>
+                  <div style={{fontSize:11,color:C.dimmed}}>Aún no hay retiros confirmados</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ══════════ STATS ══════════ */}
+          {tab==="stats" && (
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              <div style={{...card({padding:14})}}>
+                <div style={{fontSize:9,letterSpacing:2,textTransform:"uppercase",color:C.muted,marginBottom:12}}>RENDIMIENTO DIARIO %</div>
+                <div style={{position:"relative",height:90}}>
+                  <div style={{position:"absolute",top:"50%",left:0,right:0,borderTop:"1px dashed rgba(212,168,67,0.3)"}}>
+                    <span style={{position:"absolute",right:0,top:-10,fontSize:8,color:C.gold}}>10%</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"flex-end",height:"100%",gap:1,overflowX:"auto",paddingBottom:12}}>
+                    {weeks.flatMap(w=>w.days).map((d,i)=>{
+                      const pct=d.isChecked&&d.achievedPct?d.achievedPct:0;
+                      const bH=d.isChecked?Math.max(2,(pct/20)*100):2;
+                      return (
+                        <div key={i} style={{flex:"0 0 auto",width:8}}>
+                          <div style={{height:`${bH}%`,minHeight:2,borderRadius:"2px 2px 0 0",
+                            background:d.isChecked?(pct>=10?"linear-gradient(180deg,#ffe066,#d4a843)":"linear-gradient(180deg,#ff6b6b,#8b0000)"):"rgba(255,255,255,0.05)",
+                            boxShadow:d.isChecked&&pct>=10?"0 0 4px rgba(212,168,67,0.5)":"none"}}/>
+                          {i%5===0&&<div style={{fontSize:6,color:"#334",textAlign:"center"}}>S{Math.floor(i/5)+1}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{...card({padding:14})}}>
+                <div style={{fontSize:9,letterSpacing:2,textTransform:"uppercase",color:C.muted,marginBottom:12}}>RENDIMIENTO SEMANAL %</div>
+                <div style={{position:"relative",height:80}}>
+                  <div style={{position:"absolute",top:"50%",left:0,right:0,borderTop:"1px dashed rgba(212,168,67,0.3)"}}>
+                    <span style={{position:"absolute",right:0,top:-9,fontSize:8,color:C.gold}}>50%</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"flex-end",height:"100%",gap:3}}>
+                    {weeks.map((w,i)=>{
+                      const bH=w.completedDays>0?Math.max(2,(w.weekActualPct/100)*100):2;
+                      return (
+                        <div key={i} style={{flex:1}}>
+                          <div style={{height:`${bH}%`,minHeight:2,borderRadius:"2px 2px 0 0",
+                            background:w.completedDays>0
+                              ?(w.weekGoalMet?"linear-gradient(180deg,#ffe066,#d4a843)":"linear-gradient(180deg,#ff6b6b,#8b0000)")
+                              :"rgba(255,255,255,0.05)",
+                            boxShadow:w.weekGoalMet?"0 0 6px rgba(212,168,67,0.4)":"none"}}/>
+                          {i%4===0&&<div style={{fontSize:7,color:"#334",textAlign:"center"}}>M{Math.floor(i/4)+1}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{...card({padding:14})}}>
+                <div style={{fontSize:9,letterSpacing:2,textTransform:"uppercase",color:C.muted,marginBottom:12}}>TIEMPO A CADA ETAPA</div>
+                {MILESTONES.map(m=>{
+                  const tc=TIER_CLR[m.tier], reached=curBal>=m.amount;
+                  const pct=Math.min(100,(curBal/m.amount)*100), wks=reached?0:weeksTo(m.amount);
+                  return (
+                    <div key={m.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:m.id<8?"1px solid rgba(255,255,255,0.04)":"none"}}>
+                      <span style={{fontSize:14,flexShrink:0}}>{m.emoji}</span>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{display:"flex",justifyContent:"space-between"}}>
+                          <span style={{fontSize:11,color:reached?tc:"#c0c8d8",fontWeight:reached?700:400}}>{m.label}</span>
+                          <span style={{fontSize:11,color:tc,fontWeight:700}}>{reached?"✦":weeksToTime(wks)}</span>
+                        </div>
+                        <div style={{height:3,background:"rgba(255,255,255,0.05)",borderRadius:2,marginTop:5,overflow:"hidden"}}>
+                          <div style={{height:"100%",width:`${pct}%`,background:reached?tc:`${tc}88`,borderRadius:2}}/>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{...goldCard({padding:14})}}>
+                <div style={{fontSize:9,letterSpacing:2,textTransform:"uppercase",color:C.muted,marginBottom:12}}>ESTADÍSTICAS GLOBALES</div>
+                {[
+                  ["Campaña", cfg.campaignName],
+                  ["Período", `${cfg.startDate} → ${cfg.endDate}`],
+                  ["Total semanas", cfg.totalWeeks],
+                  ["Capital Inicial", fmtFull(initialBalance)],
+                  ["Balance Actual", fmtFull(curBal)],
+                  ["Ganancia", fmtFull(curBal-initialBalance)],
+                  ["ROI", fmtPct(((curBal-initialBalance)/initialBalance)*100)],
+                  ["Rend. prom. diario", fmtPct(avgDayPct)],
+                  ["Rend. prom. semanal", fmtPct(avgWeekPct)],
+                  ["Días completados", `${allCompletedDays.length} / ${totalWeeks*5}`],
+                  ["Semanas en verde", `${completedWeeks.length} / ${totalWeeks}`],
+                  ["Nivel actual", gameLvl.name],
+                  ["Insignias ganadas", `${earnedBadges.length} / ${WEEK_BADGES.length}`],
+                  ["Retiros confirmados", fmtFull(totalBiConfirmed+totalMoConfirmed)],
+                  ["Próxima etapa", nextM?nextM.label:"¡Todas logradas!"],
+                ].map(([l,v],i,arr)=>(
+                  <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 0",borderBottom:i<arr.length-1?"1px solid rgba(255,255,255,0.04)":"none"}}>
+                    <span style={{fontSize:11,color:C.muted}}>{l}</span>
+                    <span style={{fontSize:11,fontWeight:700,color:C.text}}>{v}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Botones de gestión en Stats */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                <button onClick={()=>setShowSetup(true)} style={{
+                  padding:"14px",background:"rgba(212,168,67,0.1)",border:"1px solid rgba(212,168,67,0.3)",
+                  borderRadius:12,color:C.gold,cursor:"pointer",fontWeight:700,fontSize:13,fontFamily:"'DM Sans',sans-serif",
+                }}>⚙ Editar config</button>
+                <button onClick={()=>setShowResetConfirm(true)} style={{
+                  padding:"14px",background:"rgba(255,82,82,0.08)",border:"1px solid rgba(255,82,82,0.25)",
+                  borderRadius:12,color:"#ff5252",cursor:"pointer",fontWeight:700,fontSize:13,fontFamily:"'DM Sans',sans-serif",
+                }}>↺ Nueva campaña</button>
+              </div>
+            </div>
+          )}
+
+          {/* ══════════ LOGROS ══════════ */}
+          {tab==="logros" && (
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <div style={{...card({padding:16,border:`1px solid ${gameLvl.color}44`,background:`linear-gradient(135deg,${gameLvl.color}08,#0d0d0d)`})}}>
+                <div style={{textAlign:"center",marginBottom:12}}>
+                  <div style={{fontSize:9,letterSpacing:3,textTransform:"uppercase",color:C.muted,marginBottom:4}}>NIVEL DE TRADER</div>
+                  <div style={{fontSize:48,fontWeight:900,color:gameLvl.color,fontFamily:"Georgia,serif",lineHeight:1}}>{gameLvl.level}</div>
+                  <div style={{fontSize:22,fontWeight:800,color:"#fff",marginTop:4}}>{gameLvl.name}</div>
+                  {gameLvl.next && <div style={{fontSize:11,color:C.muted,marginTop:4}}>Siguiente nivel: {fmt(gameLvl.next)}</div>}
+                </div>
+                <GoldLine/>
+                <div style={{marginTop:10,display:"flex",gap:10}}>
+                  {[
+                    {l:"Días OK",v:allCompletedDays.length,c:C.green},
+                    {l:"Semanas Verde",v:completedWeeks.length,c:C.gold},
+                    {l:"Insignias",v:earnedBadges.length,c:C.silver},
+                  ].map((k,i)=>(
+                    <div key={i} style={{flex:1,textAlign:"center",background:"rgba(0,0,0,0.4)",borderRadius:10,padding:"10px 6px"}}>
+                      <div style={{fontSize:22,fontWeight:800,color:k.c,fontFamily:"Georgia,serif"}}>{k.v}</div>
+                      <div style={{fontSize:8,color:C.dimmed,marginTop:3,letterSpacing:1,textTransform:"uppercase"}}>{k.l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{...card({padding:14})}}>
+                <div style={{fontSize:9,letterSpacing:2,textTransform:"uppercase",color:C.muted,marginBottom:12}}>INSIGNIAS</div>
+                <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                  {WEEK_BADGES.map(b=>{
+                    const earned=greenWeeksCount>=b.weeks;
+                    return (
+                      <div key={b.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px",borderRadius:12,
+                        background:earned?"rgba(212,168,67,0.06)":"rgba(255,255,255,0.02)",
+                        border:`1px solid ${earned?"rgba(212,168,67,0.3)":"rgba(255,255,255,0.06)"}`,
+                        boxShadow:earned?"0 0 12px rgba(212,168,67,0.1)":"none",opacity:earned?1:0.4}}>
+                        <div style={{width:44,height:44,borderRadius:12,flexShrink:0,
+                          background:earned?"linear-gradient(135deg,#1a1200,#2a1a00)":"rgba(255,255,255,0.04)",
+                          border:`1px solid ${earned?"rgba(212,168,67,0.4)":"rgba(255,255,255,0.07)"}`,
+                          display:"flex",alignItems:"center",justifyContent:"center",fontSize:earned?22:16,filter:earned?"none":"grayscale(1)"}}>
+                          {earned?b.icon:"🔒"}
+                        </div>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:13,fontWeight:700,color:earned?"#fff":"#556070"}}>{b.name}</div>
+                          <div style={{fontSize:10,color:C.dimmed,marginTop:2}}>{b.desc}</div>
+                          <div style={{fontSize:9,color:earned?C.gold:C.dimmed,marginTop:3,fontWeight:600}}>
+                            {earned?"✦ OBTENIDA":`Requiere ${b.weeks} sem. en verde · Actual: ${greenWeeksCount}`}
+                          </div>
+                        </div>
+                        {earned && <div style={{fontSize:18}}>✦</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App/>);
+  </script>
+</body>
+</html>
