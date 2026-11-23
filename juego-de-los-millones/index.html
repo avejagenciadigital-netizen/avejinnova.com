@@ -45,17 +45,35 @@
     }
     function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
 
-    function generateTradingDays(startDate, endDate, totalWeeks) {
+    // Calcula automáticamente las semanas de trading entre dos fechas
+    function calcWeeksFromDates(startDateStr, endDateStr) {
+      const sd = new Date(startDateStr + "T12:00:00");
+      const ed = new Date(endDateStr + "T12:00:00");
+      let current = new Date(sd);
+      let weekDayCount = 0, weeks = 0;
+      while (current <= ed) {
+        if (isWeekday(current) && !isNYSEHoliday(dateStr(current))) {
+          weekDayCount++;
+          if (weekDayCount === 5) { weeks++; weekDayCount = 0; }
+        }
+        current = addDays(current, 1);
+      }
+      return weeks || 1;
+    }
+
+    function generateTradingDays(startDate, endDate) {
       const days = [];
-      let current = new Date(startDate);
+      // Usar mediodía para evitar desfase de zona horaria
+      let current = new Date(
+        typeof startDate === "string" ? startDate + "T12:00:00" : startDate
+      );
+      const end = new Date(
+        typeof endDate === "string" ? endDate + "T12:00:00" : endDate
+      );
       let weekDayCount = 0;
       let weekNum = 1;
       let weekDays = [];
-      while (weekNum <= totalWeeks + 2) {
-        if (current > endDate) {
-          if (weekDays.length > 0) days.push({ week: weekNum, days: [...weekDays], partial: true });
-          break;
-        }
+      while (current <= end) {
         if (isWeekday(current) && !isNYSEHoliday(dateStr(current))) {
           weekDays.push({ date: dateStr(current), dayOfWeek: current.getDay() });
           weekDayCount++;
@@ -65,6 +83,10 @@
           }
         }
         current = addDays(current, 1);
+      }
+      // Semana parcial al final si quedan días
+      if (weekDays.length > 0) {
+        days.push({ week: weekNum, days: [...weekDays], partial: true });
       }
       return days;
     }
@@ -273,7 +295,6 @@
       initialBalance: 30,
       startDate: "2026-10-12",
       endDate:   "2026-12-31",
-      totalWeeks: 12,
       campaignName: "El Juego de los Millones",
     };
     const defaultStore = () => ({
@@ -302,11 +323,19 @@
         initialBalance: String(def.initialBalance),
         startDate: def.startDate,
         endDate: def.endDate,
-        totalWeeks: String(def.totalWeeks),
       });
       const [err, setErr] = useState("");
 
       function set(k, v) { setForm(f=>({...f,[k]:v})); setErr(""); }
+
+      // Calcular semanas preview en tiempo real
+      const previewWeeks = React.useMemo(() => {
+        if (!form.startDate || !form.endDate) return null;
+        const sd = new Date(form.startDate + "T12:00:00");
+        const ed = new Date(form.endDate + "T12:00:00");
+        if (ed <= sd) return null;
+        return calcWeeksFromDates(form.startDate, form.endDate);
+      }, [form.startDate, form.endDate]);
 
       function handleSave() {
         const bal = parseFloat(form.initialBalance);
@@ -314,11 +343,18 @@
         if (isNaN(bal)||bal<=0) return setErr("El capital inicial debe ser mayor a 0.");
         if (!form.startDate) return setErr("Selecciona una fecha de inicio.");
         if (!form.endDate) return setErr("Selecciona una fecha de fin.");
-        const sd = new Date(form.startDate), ed = new Date(form.endDate);
-        if (ed<=sd) return setErr("La fecha de fin debe ser posterior al inicio.");
-        const wks = parseInt(form.totalWeeks);
-        if (isNaN(wks)||wks<1||wks>52) return setErr("Las semanas deben estar entre 1 y 52.");
-        onSave({ campaignName:form.campaignName.trim(), initialBalance:bal, startDate:form.startDate, endDate:form.endDate, totalWeeks:wks });
+        const sd = new Date(form.startDate + "T12:00:00");
+        const ed = new Date(form.endDate + "T12:00:00");
+        if (ed <= sd) return setErr("La fecha de fin debe ser posterior al inicio.");
+        const wks = calcWeeksFromDates(form.startDate, form.endDate);
+        if (wks < 1) return setErr("El período seleccionado no contiene semanas de trading completas.");
+        onSave({
+          campaignName: form.campaignName.trim(),
+          initialBalance: bal,
+          startDate: form.startDate,
+          endDate: form.endDate,
+          totalWeeks: wks,
+        });
       }
 
       const inp = (extra={}) => ({
@@ -364,11 +400,16 @@
                 </div>
               </div>
 
-              <div>
-                <label style={label}>Número de semanas</label>
-                <input type="number" inputMode="numeric" style={inp()} value={form.totalWeeks} onChange={e=>set("totalWeeks",e.target.value)} placeholder="Ej: 12" min="1" max="52"/>
-                <div style={{fontSize:10,color:C.dimmed,marginTop:5}}>Semanas de trading activo en la campaña</div>
-              </div>
+              {/* Preview de semanas calculadas automáticamente */}
+              {previewWeeks !== null && (
+                <div style={{background:"rgba(0,230,118,0.06)",border:"1px solid rgba(0,230,118,0.25)",borderRadius:10,padding:"11px 14px",display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontSize:18}}>📅</span>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:C.green}}>{previewWeeks} semanas de trading</div>
+                    <div style={{fontSize:10,color:C.dimmed,marginTop:1}}>Calculado automáticamente según el calendario NYSE</div>
+                  </div>
+                </div>
+              )}
 
               {err && (
                 <div style={{background:"rgba(255,82,82,0.1)",border:"1px solid rgba(255,82,82,0.3)",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#ff5252"}}>
@@ -407,7 +448,8 @@
     ═══════════════════════════════════════════════════════════════════════════ */
     function App() {
       const [store, setStore] = useState(loadStore);
-      const [showSetup, setShowSetup] = useState(false);
+      // "setup" | "edit" | "app"
+      const [screen, setScreen] = useState(() => loadStore().config ? "app" : "setup");
       const [showResetConfirm, setShowResetConfirm] = useState(false);
       const [tab, setTab]     = useState("dashboard");
       const [expWeek, setExpWeek] = useState(null);
@@ -427,7 +469,7 @@
 
       function handleSaveConfig(newCfg) {
         setStore(prev => ({ ...prev, config: newCfg }));
-        setShowSetup(false);
+        setScreen("app");
         showToast("✓ Configuración guardada", "#00e676");
       }
 
@@ -435,28 +477,21 @@
         const fresh = defaultStore();
         setStore(fresh);
         setShowResetConfirm(false);
-        setShowSetup(false);
         setTab("dashboard");
+        setScreen("setup");
         showToast("🔄 Campaña reiniciada desde cero", "#f48fb1");
       }
 
-      // If not configured yet, show setup
-      if (!cfg && !showSetup) {
-        return <SetupScreen onSave={handleSaveConfig}/>;
-      }
-      if (showSetup) {
-        return <SetupScreen existing={cfg} onSave={handleSaveConfig}/>;
-      }
+      if (screen === "setup") return <SetupScreen onSave={handleSaveConfig}/>;
+      if (screen === "edit") return <SetupScreen existing={cfg} onSave={handleSaveConfig}/>;
 
       // Build from config
-      const startDate  = new Date(cfg.startDate);
-      const endDate    = new Date(cfg.endDate);
       const totalWeeks = cfg.totalWeeks;
       const initialBalance = cfg.initialBalance;
 
       const weekSchedule = useMemo(
-        () => generateTradingDays(startDate, endDate, totalWeeks),
-        [cfg.startDate, cfg.endDate, cfg.totalWeeks]
+        () => generateTradingDays(cfg.startDate, cfg.endDate),
+        [cfg.startDate, cfg.endDate]
       );
       const weeks = useMemo(
         () => buildWeeks(weekSchedule, store.dailyActuals, initialBalance),
@@ -663,7 +698,7 @@
                   <div style={{fontSize:8,color:gameLvl.color,fontWeight:700}}>{gameLvl.name}</div>
                 </div>
                 <div style={{display:"flex",gap:4}}>
-                  <button onClick={()=>setShowSetup(true)} title="Editar configuración" style={{
+                  <button onClick={()=>setScreen("edit")} title="Editar configuración" style={{
                     width:28,height:28,borderRadius:7,background:"rgba(212,168,67,0.1)",
                     border:"1px solid rgba(212,168,67,0.3)",color:C.gold,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",
                   }}>⚙</button>
@@ -1254,7 +1289,7 @@
 
               {/* Botones de gestión en Stats */}
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                <button onClick={()=>setShowSetup(true)} style={{
+                <button onClick={()=>setScreen("edit")} style={{
                   padding:"14px",background:"rgba(212,168,67,0.1)",border:"1px solid rgba(212,168,67,0.3)",
                   borderRadius:12,color:C.gold,cursor:"pointer",fontWeight:700,fontSize:13,fontFamily:"'DM Sans',sans-serif",
                 }}>⚙ Editar config</button>
